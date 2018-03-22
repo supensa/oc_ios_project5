@@ -1,5 +1,5 @@
 //
-//  RootView.swift
+//  IntroView.swift
 //  Gridy
 //
 //  Created by Spencer Forrest on 18/03/2018.
@@ -8,17 +8,15 @@
 
 import UIKit
 
-protocol RootViewDelegate {
+protocol IntroViewDelegate {
   func takeRandomImage() -> UIImage?
   func takeCameraImage() -> UIImage?
   func takePhotoLibraryImage() -> UIImage?
 }
 
-class RootView: UIView {
+class IntroView: UIView {
   
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-  }
+  required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
   
   private var titleLabel: UILabel!
   private var commentLabel: UILabel!
@@ -45,14 +43,14 @@ class RootView: UIView {
   private var secondStackView: UIStackView!
   private var horizontalStackView: UIStackView!
   
-  var delegate: RootViewDelegate!
+  var delegate: IntroViewDelegate!
   
   override init(frame: CGRect) {
     super.init(frame: frame)
     self.translatesAutoresizingMaskIntoConstraints = false
     self.backgroundColor = UIColor.white
     
-    instantiateStackViews()
+    setupStackViews()
     setupLayout()
     setupGestureRecognizers()
   }
@@ -69,44 +67,27 @@ class RootView: UIView {
     mainStackView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: 16).isActive = true
   }
   
-  private func instantiateStackViews() {
+  private func setupStackViews() {
     self.instantiateSubviews()
-    self.instantiateHorizontalStackView()
-    self.instantiateSecondStackView()
-    self.instantiateFirstStackView()
-    self.instantiateMaintStackView()
+    self.instantiateStackViews()
+    self.setup(stackView: horizontalStackView, axis: .horizontal)
+    self.setup(stackView: secondStackView)
+    self.setup(stackView: firstStackView)
+    self.setup(stackView: mainStackView)
   }
   
-  private func instantiateHorizontalStackView() {
+  private func setup(stackView: UIStackView, axis: UILayoutConstraintAxis = .vertical) {
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.axis = axis
+    stackView.alignment = .fill
+    stackView.distribution = .fillEqually
+  }
+  
+  func instantiateStackViews() {
     horizontalStackView = UIStackView.init(arrangedSubviews: [cameraImageView!, photosImageView!])
-    horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
-    horizontalStackView.axis = .horizontal
-    horizontalStackView.alignment = .fill
-    horizontalStackView.distribution = .fillEqually
-  }
-  
-  private func instantiateSecondStackView() {
     secondStackView = UIStackView.init(arrangedSubviews: [randomImageView!, choiceLabel!, horizontalStackView!])
-    secondStackView.translatesAutoresizingMaskIntoConstraints = false
-    secondStackView.axis = .vertical
-    secondStackView.alignment = .fill
-    secondStackView.distribution = .fillEqually
-  }
-  
-  private func instantiateFirstStackView() {
     firstStackView = UIStackView.init(arrangedSubviews: [titleLabel!, commentLabel!])
-    firstStackView.translatesAutoresizingMaskIntoConstraints = false
-    firstStackView.axis = .vertical
-    firstStackView.alignment = .fill
-    firstStackView.distribution = .fillEqually
-  }
-  
-  private func instantiateMaintStackView() {
     mainStackView = UIStackView.init(arrangedSubviews: [firstStackView!, secondStackView!])
-    mainStackView.translatesAutoresizingMaskIntoConstraints = false
-    mainStackView.axis = .vertical
-    mainStackView.alignment = .fill
-    mainStackView.distribution = .fillEqually
   }
   
   /// Call before instantiating the stackViews or app will crash
@@ -126,7 +107,7 @@ class RootView: UIView {
     imageView.contentMode = .scaleAspectFit
     imageView.layer.cornerRadius = 10
     imageView.layer.masksToBounds = true
-        
+    
     return imageView
   }
   

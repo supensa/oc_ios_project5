@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  IntroViewController.swift
 //  Gridy
 //
 //  Created by Spencer Forrest on 17/03/2018.
@@ -8,14 +8,14 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class IntroViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib!
   }
   
   override func loadView() {
-    self.view = RootView.init()
+    self.view = IntroView()
   }
 }
 
