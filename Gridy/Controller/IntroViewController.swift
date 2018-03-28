@@ -8,14 +8,35 @@
 
 import UIKit
 
-class IntroViewController: UIViewController {
+class IntroViewController: UIViewController, IntroViewDelegate {
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib!
   }
   
   override func loadView() {
-    self.view = IntroView()
+    let introView = IntroView()
+    introView.delegate = self
+    self.view = introView
+  }
+  
+  // Delegate method: IntroViewDelegate
+  func takeRandomImage() -> UIImage? {
+    print("Random Picture")
+    return nil
+  }
+  
+  // Delegate method: IntroViewDelegate
+  func takeCameraImage() -> UIImage? {
+    print("Camera Picture")
+    return nil
+  }
+  
+  // Delegate method: IntroViewDelegate
+  func takePhotoLibraryImage() -> UIImage? {
+    print("Library Picture")
+    return nil
   }
 }
 

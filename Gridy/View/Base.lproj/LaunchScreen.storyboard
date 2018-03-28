@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="ipad12_9" orientation="portrait">
+    <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -10,9 +10,6 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
-        <array key="HelveticaNeue.ttc">
-            <string>HelveticaNeue</string>
-        </array>
         <array key="timeburnernormal.ttf">
             <string>TimeBurner</string>
         </array>
@@ -23,63 +20,23 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="pSC-AR-8zE" userLabel="Main">
-                                <rect key="frame" x="0.0" y="20" width="1024" height="1330"/>
-                                <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="KpU-YJ-Qh1" userLabel="First">
-                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="660"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Gridy" textAlignment="center" lineBreakMode="tailTruncation" minimumScaleFactor="0.10000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="Ed6-jM-tqc" userLabel="Title">
-                                                <rect key="frame" x="0.0" y="0.0" width="1024" height="330"/>
-                                                <fontDescription key="fontDescription" name="TimeBurner" family="TimeBurner" pointSize="100"/>
-                                                <color key="textColor" red="0.53333333333333333" green="0.83137254901960778" blue="0.59607843137254901" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Challenge yourself with a photo puzzle" textAlignment="center" lineBreakMode="tailTruncation" minimumScaleFactor="0.10000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="mmP-RP-zyH" userLabel="Comment">
-                                                <rect key="frame" x="0.0" y="330" width="1024" height="330"/>
-                                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="30"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="f8p-XK-eaa" userLabel="Second">
-                                        <rect key="frame" x="0.0" y="670" width="1024" height="660"/>
-                                        <subviews>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" image="Random" translatesAutoresizingMaskIntoConstraints="NO" id="TK0-Ut-zSu">
-                                                <rect key="frame" x="0.0" y="0.0" width="1024" height="220"/>
-                                            </imageView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="- OR load your own -" textAlignment="center" lineBreakMode="tailTruncation" minimumScaleFactor="0.10000000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="tWm-V0-Tp2" userLabel="Choice">
-                                                <rect key="frame" x="0.0" y="220" width="1024" height="220"/>
-                                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
-                                                <color key="textColor" red="0.58431372549019611" green="0.59607843137254901" blue="0.60392156862745094" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="3S2-eP-K8g" userLabel="Horizontal">
-                                                <rect key="frame" x="0.0" y="440" width="1024" height="220"/>
-                                                <subviews>
-                                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" image="Camera" translatesAutoresizingMaskIntoConstraints="NO" id="1Pv-8S-5II">
-                                                        <rect key="frame" x="0.0" y="0.0" width="512" height="220"/>
-                                                    </imageView>
-                                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" image="Photos" translatesAutoresizingMaskIntoConstraints="NO" id="ce6-2M-rKc">
-                                                        <rect key="frame" x="512" y="0.0" width="512" height="220"/>
-                                                    </imageView>
-                                                </subviews>
-                                            </stackView>
-                                        </subviews>
-                                    </stackView>
-                                </subviews>
-                            </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="G" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="crl-Gm-sTT">
+                                <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                                <color key="backgroundColor" red="0.53333333329999999" green="0.83137254900000002" blue="0.59607843140000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" name="TimeBurner" family="TimeBurner" pointSize="200"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="pSC-AR-8zE" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="3H7-k7-T3Q"/>
-                            <constraint firstItem="pSC-AR-8zE" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="akV-pw-HGY"/>
-                            <constraint firstAttribute="trailing" secondItem="pSC-AR-8zE" secondAttribute="trailing" id="bM2-i8-DL1"/>
-                            <constraint firstAttribute="bottom" secondItem="pSC-AR-8zE" secondAttribute="bottom" constant="16" id="eay-SU-Uus"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="crl-Gm-sTT" secondAttribute="trailing" id="4cb-3D-g4O"/>
+                            <constraint firstItem="crl-Gm-sTT" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="7Vj-iQ-WeD"/>
+                            <constraint firstItem="crl-Gm-sTT" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="ARf-3j-Qbi"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="crl-Gm-sTT" secondAttribute="bottom" id="iwM-n3-z1A"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -89,9 +46,4 @@
             <point key="canvasLocation" x="49.275362318840585" y="373.36956521739131"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="Camera" width="234" height="180"/>
-        <image name="Photos" width="234" height="180"/>
-        <image name="Random" width="234" height="180"/>
-    </resources>
 </document>

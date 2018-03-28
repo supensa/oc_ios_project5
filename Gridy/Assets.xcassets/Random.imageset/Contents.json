@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Random.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "iPad Pro 2@2x.png",
       "scale" : "2x"
     },
     {
