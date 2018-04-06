@@ -11,6 +11,13 @@
 		594E56EC2060630300E4C63D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 594E56EB2060630200E4C63D /* Assets.xcassets */; };
 		594E56EF20606C0C00E4C63D /* timeburnernormal.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */; };
 		594E56F020606C0C00E4C63D /* timeburnerbold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 594E56EE20606C0C00E4C63D /* timeburnerbold.ttf */; };
+		5951B2B2206BDA820067BBE2 /* EditingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5951B2B1206BDA820067BBE2 /* EditingViewController.swift */; };
+		5951B2B4206BDDEA0067BBE2 /* EditingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5951B2B3206BDDEA0067BBE2 /* EditingView.swift */; };
+		5951B2B7206BE25D0067BBE2 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5951B2B6206BE25D0067BBE2 /* Label.swift */; };
+		5951B2B9206BE73F0067BBE2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5951B2B8206BE73F0067BBE2 /* Constants.swift */; };
+		5951B2BB206C41C70067BBE2 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5951B2BA206C41C70067BBE2 /* Button.swift */; };
+		598077B82076B99D00C3E41A /* PlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598077B72076B99D00C3E41A /* PlayView.swift */; };
+		598077BA2076B9B400C3E41A /* PlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598077B92076B9B400C3E41A /* PlayViewController.swift */; };
 		59BD7012205DB1E00061E82C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BD7011205DB1E00061E82C /* AppDelegate.swift */; };
 		59BD7014205DB1E00061E82C /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BD7013205DB1E00061E82C /* IntroViewController.swift */; };
 		59BD701C205DB1E00061E82C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59BD701A205DB1E00061E82C /* LaunchScreen.storyboard */; };
@@ -22,6 +29,13 @@
 		594E56EB2060630200E4C63D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = timeburnernormal.ttf; sourceTree = "<group>"; };
 		594E56EE20606C0C00E4C63D /* timeburnerbold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = timeburnerbold.ttf; sourceTree = "<group>"; };
+		5951B2B1206BDA820067BBE2 /* EditingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingViewController.swift; sourceTree = "<group>"; };
+		5951B2B3206BDDEA0067BBE2 /* EditingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingView.swift; sourceTree = "<group>"; };
+		5951B2B6206BE25D0067BBE2 /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
+		5951B2B8206BE73F0067BBE2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		5951B2BA206C41C70067BBE2 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
+		598077B72076B99D00C3E41A /* PlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayView.swift; sourceTree = "<group>"; };
+		598077B92076B9B400C3E41A /* PlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayViewController.swift; sourceTree = "<group>"; };
 		59BD700E205DB1E00061E82C /* Gridy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gridy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59BD7011205DB1E00061E82C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		59BD7013205DB1E00061E82C /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
@@ -41,6 +55,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5951B2B5206BDE890067BBE2 /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				5951B2B6206BE25D0067BBE2 /* Label.swift */,
+				5951B2BA206C41C70067BBE2 /* Button.swift */,
+			);
+			name = Custom;
+			sourceTree = "<group>";
+		};
 		59BD7005205DB1E00061E82C = {
 			isa = PBXGroup;
 			children = (
@@ -60,9 +83,9 @@
 		59BD7010205DB1E00061E82C /* Gridy */ = {
 			isa = PBXGroup;
 			children = (
-				59BD7025205DB22A0061E82C /* Controller */,
-				59BD7024205DB2200061E82C /* View */,
 				59BD7023205DB2090061E82C /* Model */,
+				59BD7024205DB2200061E82C /* View */,
+				59BD7025205DB22A0061E82C /* Controller */,
 				59BD7026205DB2350061E82C /* Other Files */,
 			);
 			path = Gridy;
@@ -81,6 +104,9 @@
 			children = (
 				59BD701A205DB1E00061E82C /* LaunchScreen.storyboard */,
 				59BD7027205DE51A0061E82C /* IntroVIew.swift */,
+				5951B2B3206BDDEA0067BBE2 /* EditingView.swift */,
+				598077B72076B99D00C3E41A /* PlayView.swift */,
+				5951B2B5206BDE890067BBE2 /* Custom */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -88,8 +114,10 @@
 		59BD7025205DB22A0061E82C /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				59BD7011205DB1E00061E82C /* AppDelegate.swift */,
 				59BD7013205DB1E00061E82C /* IntroViewController.swift */,
+				5951B2B1206BDA820067BBE2 /* EditingViewController.swift */,
+				598077B92076B9B400C3E41A /* PlayViewController.swift */,
+				59BD7011205DB1E00061E82C /* AppDelegate.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -97,6 +125,7 @@
 		59BD7026205DB2350061E82C /* Other Files */ = {
 			isa = PBXGroup;
 			children = (
+				5951B2B8206BE73F0067BBE2 /* Constants.swift */,
 				594E56EB2060630200E4C63D /* Assets.xcassets */,
 				594E56EE20606C0C00E4C63D /* timeburnerbold.ttf */,
 				594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */,
@@ -132,7 +161,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Spencer Forrest";
 				TargetAttributes = {
 					59BD700D205DB1E00061E82C = {
@@ -179,9 +208,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				59BD7014205DB1E00061E82C /* IntroViewController.swift in Sources */,
+				5951B2B2206BDA820067BBE2 /* EditingViewController.swift in Sources */,
 				59BD7028205DE51A0061E82C /* IntroVIew.swift in Sources */,
 				594AC07B20600D0A00091A72 /* GridyColor.swift in Sources */,
+				598077BA2076B9B400C3E41A /* PlayViewController.swift in Sources */,
 				59BD7012205DB1E00061E82C /* AppDelegate.swift in Sources */,
+				5951B2B7206BE25D0067BBE2 /* Label.swift in Sources */,
+				5951B2B4206BDDEA0067BBE2 /* EditingView.swift in Sources */,
+				5951B2BB206C41C70067BBE2 /* Button.swift in Sources */,
+				598077B82076B99D00C3E41A /* PlayView.swift in Sources */,
+				5951B2B9206BE73F0067BBE2 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +249,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -220,6 +257,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -270,6 +308,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -277,6 +316,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -315,7 +355,7 @@
 				DEVELOPMENT_TEAM = HT9N5JEKMU;
 				INFOPLIST_FILE = Gridy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.devmob.Gridy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devmob.project5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
@@ -332,7 +372,7 @@
 				DEVELOPMENT_TEAM = HT9N5JEKMU;
 				INFOPLIST_FILE = Gridy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.devmob.Gridy;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devmob.project5;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;

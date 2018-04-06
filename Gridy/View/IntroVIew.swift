@@ -9,9 +9,9 @@
 import UIKit
 
 protocol IntroViewDelegate {
-  func takeRandomImage() -> UIImage?
-  func takeCameraImage() -> UIImage?
-  func takePhotoLibraryImage() -> UIImage?
+  func takeRandomImage()
+  func takeCameraImage()
+  func takePhotoLibraryImage()
 }
 
 class IntroView: UIView {
@@ -22,38 +22,38 @@ class IntroView: UIView {
   var commentLabel: UILabel!
   private var choiceLabel: UILabel!
   
-  private let title = "Gridy"
-  private let comment = "Challenge yourself with a photo puzzle"
-  private let choice = "- OR load your own -"
-  
-  private let helveticaNeueFontName = "Helvetica Neue"
-  private let timeBurnerFontName = "TimeBurner"
-  
-  private var randomButton: UIButton!
-  private var photosButton: UIButton!
-  private var cameraButton: UIButton!
-  
-  private let nameRandomImage = "Random"
-  private let namePhotosImage = "Photos"
-  private let nameCameraImage = "Camera"
+  private var randomButton: Button!
+  private var photosButton: Button!
+  private var cameraButton: Button!
   
   private var buttonStackView: UIStackView!
   private var verticalStackView: UIStackView!
-  var horizontalStackView: UIStackView!
+  private var horizontalStackView: UIStackView!
   
-  var titleLabelHeightConstraint: NSLayoutConstraint!
-  var commentLabelHeightCosntraint: NSLayoutConstraint!
+  private var titleLabelHeightConstraint: NSLayoutConstraint!
+  private var commentLabelHeightConstraint: NSLayoutConstraint!
+  private var buttonStackViewHeightConstraint: NSLayoutConstraint!
+  private var horizontalStackViewSpacing: NSLayoutConstraint!
   
-  var delegate: IntroViewDelegate!
+  var delegate: IntroViewDelegate?
   
   override init(frame: CGRect) {
     super.init(frame: frame)
+    
     self.translatesAutoresizingMaskIntoConstraints = false
     self.backgroundColor = UIColor.white
     
-    setupStackViews()
-    setupLayout()
-    setupActions()
+    instantiateSubviews()
+    layOutSubviews()
+    detectUserActions()
+  }
+  
+  func setupIn(parentView view: UIView) {
+    view.addSubview(self)
+    self.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+    self.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    self.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+    self.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
   }
   
   // Delegate method: UITraitEnvironment
@@ -64,57 +64,66 @@ class IntroView: UIView {
     let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
     let iPads = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
     
-    if sizeClass == iPads {
-      self.horizontalStackView.spacing = 200
-    } else {
-      self.horizontalStackView.spacing = 50
+    if horizontalStackViewSpacing == nil {
+      let spacing = sizeClass == iPads ? K.Layout.Spacing.buttonStackViewiPad * 1.5 : K.Layout.Spacing.buttonStackViewiPhone
+      self.horizontalStackView.spacing = spacing
     }
+    
+    if buttonStackViewHeightConstraint == nil {
+       let size = sizeClass == iPads ? K.Layout.Height.buttonStackView * 1.5 : K.Layout.Height.buttonStackView
+      buttonStackViewHeightConstraint = buttonStackView.heightAnchor.constraint(equalToConstant: size)
+      buttonStackViewHeightConstraint.isActive = true
+    }
+    
+    let forIpad = sizeClass == iPads
+    randomButton.setupSizeConstraint(forIpad: forIpad)
+    cameraButton.setupSizeConstraint(forIpad: forIpad)
+    photosButton.setupSizeConstraint(forIpad: forIpad)
     
     if let titleLabelHeightConstraint = self.titleLabelHeightConstraint {
       titleLabelHeightConstraint.isActive = false
     }
     
-    var height = self.bounds.height / 4
+    var height = UIScreen.main.bounds.height * K.Layout.HeightRatio.titleLabel
     self.titleLabelHeightConstraint = self.titleLabel.heightAnchor.constraint(equalToConstant: height)
     self.titleLabelHeightConstraint.isActive = true
-    self.titleLabel.font = self.titleLabel.font.withSize(height * 0.9)
+    self.titleLabel.font = self.titleLabel.font.withSize(height * K.Font.sizeRatio.titleLabel)
     
-    if let commentLabelHeightCosntraint = self.commentLabelHeightCosntraint {
+    if let commentLabelHeightCosntraint = self.commentLabelHeightConstraint {
       commentLabelHeightCosntraint.isActive = false
     }
     
-    height = self.titleLabel.font.pointSize / 5
-    self.commentLabelHeightCosntraint = self.commentLabel.heightAnchor.constraint(equalToConstant: height)
-    self.commentLabelHeightCosntraint.isActive = true
-    self.commentLabel.font = self.commentLabel.font.withSize(height * 0.8)
+    height = self.titleLabel.font.pointSize * K.Layout.HeightRatio.commentLabel
+    self.commentLabelHeightConstraint = self.commentLabel.heightAnchor.constraint(equalToConstant: height)
+    self.commentLabelHeightConstraint.isActive = true
+    self.commentLabel.font = self.commentLabel.font.withSize(height * K.Font.sizeRatio.commentLabel)
   }
   
-  private func setupActions() {
+  private func detectUserActions() {
     randomButton.addTarget(self, action: #selector(pushedRandomButton), for: UIControlEvents.touchUpInside)
     cameraButton.addTarget(self, action: #selector(pushedCameraButton), for: UIControlEvents.touchUpInside)
     photosButton.addTarget(self, action: #selector(pushedPotosButton), for: UIControlEvents.touchUpInside)
   }
   
   @objc private func pushedRandomButton() {
-    _ = delegate.takeRandomImage()
+    delegate?.takeRandomImage()
   }
   
   @objc private func pushedCameraButton() {
-    _ = delegate.takeCameraImage()
+    delegate?.takeCameraImage()
   }
   
   @objc private func pushedPotosButton() {
-    _ = delegate.takePhotoLibraryImage()
+    delegate?.takePhotoLibraryImage()
   }
   
-  /// To be called on "ViewDidLoad" in the viewController
-  private func setupLayout() {
+  private func layOutSubviews() {
     let safeArea = self.safeAreaLayoutGuide
     
     self.addSubview(titleLabel)
     titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
-    titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16).isActive = true
-    titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16).isActive = true
+    titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: K.Layout.Padding.titleLabel).isActive = true
+    titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -K.Layout.Padding.titleLabel).isActive = true
     
     self.addSubview(commentLabel)
     commentLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0).isActive = true
@@ -126,7 +135,6 @@ class IntroView: UIView {
     containerView.translatesAutoresizingMaskIntoConstraints = false
     
     containerView.addSubview(buttonStackView)
-    buttonStackView.heightAnchor.constraint(equalToConstant: 200).isActive = true
     buttonStackView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
     buttonStackView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
     
@@ -137,9 +145,21 @@ class IntroView: UIView {
     containerView.leftAnchor.constraint(equalTo: safeArea.leftAnchor, constant: 0).isActive = true
   }
   
-  private func setupStackViews() {
-    self.instantiateSubviews()
-    self.instantiateStackViews()
+  private func instantiateSubviews() {
+    randomButton = Button(imageName: K.ImageName.random)
+    photosButton = Button(imageName: K.ImageName.photos)
+    cameraButton = Button(imageName: K.ImageName.camera)
+    titleLabel = Label(text: K.String.title, fontSize: K.Font.size.titleLabel, useCustomFont: true)
+    commentLabel = Label(text: K.String.comment, fontSize: K.Font.size.commentLabel)
+    choiceLabel = Label(text: K.String.choice, fontSize: K.Font.size.choiceLabel)
+    instantiateStackViews()
+  }
+  
+  private func instantiateStackViews() {
+    verticalStackView = UIStackView.init(arrangedSubviews: [randomButton!, choiceLabel!])
+    horizontalStackView = UIStackView.init(arrangedSubviews: [cameraButton!, photosButton!])
+    buttonStackView = UIStackView.init(arrangedSubviews: [verticalStackView!, horizontalStackView!])
+    
     self.setup(stackView: horizontalStackView, axis: .horizontal)
     self.setup(stackView: verticalStackView)
     self.setup(stackView: buttonStackView)
@@ -150,59 +170,5 @@ class IntroView: UIView {
     stackView.axis = axis
     stackView.alignment = .center
     stackView.distribution = .fill
-  }
-  
-  func instantiateStackViews() {
-    verticalStackView = UIStackView.init(arrangedSubviews: [randomButton!, choiceLabel!])
-    horizontalStackView = UIStackView.init(arrangedSubviews: [cameraButton!, photosButton!])
-    buttonStackView = UIStackView.init(arrangedSubviews: [verticalStackView!, horizontalStackView!])
-  }
-  
-  /// Call before instantiating the stackViews or app will crash
-  private func instantiateSubviews() {
-    randomButton = createButton(imageName: nameRandomImage)
-    photosButton = createButton(imageName: namePhotosImage)
-    cameraButton = createButton(imageName: nameCameraImage)
-    titleLabel = createLabel(text: title, fontName: timeBurnerFontName, fontSize: 1, textColor: GridyColor.vistaBlue)
-    commentLabel = createLabel(text: comment, fontName: helveticaNeueFontName, fontSize: 1)
-    choiceLabel = createLabel(text: choice, fontName: helveticaNeueFontName, fontSize: 17, textColor: GridyColor.olsoGray)
-  }
-  
-  private func createButton(imageName: String) -> UIButton {
-    let image = UIImage.init(named: imageName)
-    let button = UIButton.init(type: .custom)
-    button.setImage(image, for: .normal)
-    button.imageView?.contentMode = .scaleAspectFit
-    button.translatesAutoresizingMaskIntoConstraints = false
-    button.layer.cornerRadius = 5
-    button.layer.masksToBounds = true
-    button.isUserInteractionEnabled = true
-    
-    button.backgroundColor = GridyColor.janna
-    
-    button.widthAnchor.constraint(equalToConstant: 115).isActive = true
-    button.heightAnchor.constraint(equalToConstant: 88).isActive = true
-    
-    return button
-  }
-  
-  private func createLabel(text: String?,
-                           fontName: String,
-                           fontSize: CGFloat,
-                           textColor: UIColor = UIColor.black) -> UILabel {
-    let label = UILabel()
-    label.translatesAutoresizingMaskIntoConstraints = false
-    label.text = text
-    label.numberOfLines = 1
-    label.baselineAdjustment = .alignCenters
-    label.textAlignment = .center
-    label.textColor = textColor
-    
-    let font = UIFont.init(name: fontName, size: fontSize)!
-    label.font = font
-    label.minimumScaleFactor = 0.1
-    label.adjustsFontSizeToFitWidth = true
-    
-    return label
   }
 }
