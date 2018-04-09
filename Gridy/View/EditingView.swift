@@ -124,29 +124,13 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
   }
   
   private func createMaskLayer() -> CAShapeLayer {
+    // MARK: Need it as UTILITY
     let path = CGMutablePath()
     path.addRect(CGRect(origin: .zero, size: UIScreen.main.bounds.size))
     
-    let safeArea = (self.superview?.safeAreaInsets)!
-    let height = UIScreen.main.bounds.height - safeArea.top - safeArea.bottom
-    let width = UIScreen.main.bounds.width - safeArea.right - safeArea.left
-    var size = self.isLandscapeOrientation ? height * 0.2 : width * 0.2
-    let allSquareSize = size * 4 + 3
-    let marginX = ((width - allSquareSize) / 2)
-    let marginY = ((height - allSquareSize) / 2)
-    
-    size = ceil(size)
-    
-    imagesBound = [CGRect]()
-    
-    for a in 0...3 {
-      for b in 0...3 {
-        let i = CGFloat(a)
-        let j = CGFloat(b)
-        let square = CGRect(origin: .init(x: marginX + size * j + j, y: marginY + size * i + i), size: CGSize(width: size, height: size))
-        imagesBound.append(square)
-        path.addRect(square)
-      }
+    imagesBound = Position.rectanglesIn(parentView: self, isEditingView: true)
+    for square in imagesBound {
+      path.addRect(square)
     }
     
     let maskLayer = CAShapeLayer()
@@ -157,28 +141,35 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
   }
   
   private func updateLayOutConstraints() {
+    updateStartButtonConstraints()
+    updateInstructionsLabelConstraints()
+  }
+  
+  private func updateStartButtonConstraints() {
     if startButtonTopConstraint != nil
       && startButtonLeftConstraint != nil {
       startButtonTopConstraint.isActive = false
       startButtonLeftConstraint.isActive = false
     }
     
-    let startButtonConstraints = createConstraints(forStartButton: true)
+    let startButtonConstraints = createDynamicConstraints(forStartButton: true)
     startButtonTopConstraint = startButtonConstraints.0
     startButtonLeftConstraint = startButtonConstraints.1
-    
+  }
+  
+  private func updateInstructionsLabelConstraints() {
     if instructionLabelTopConstraint != nil
       && instructionLabelLeftConstraint != nil {
       instructionLabelTopConstraint.isActive = false
       instructionLabelLeftConstraint.isActive = false
     }
     
-    let instructionLabelConstraints = createConstraints(forStartButton: false)
+    let instructionLabelConstraints = createDynamicConstraints(forStartButton: false)
     instructionLabelTopConstraint = instructionLabelConstraints.0
     instructionLabelLeftConstraint = instructionLabelConstraints.1
   }
   
-  private func createConstraints(forStartButton: Bool) -> (NSLayoutConstraint, NSLayoutConstraint) {
+  private func createDynamicConstraints(forStartButton: Bool) -> (NSLayoutConstraint, NSLayoutConstraint) {
     
     var topConstraint = NSLayoutConstraint()
     var leftConstraint = NSLayoutConstraint()
@@ -203,6 +194,7 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
   }
   
   private func calculateOffset(forStartButton: Bool) -> CGFloat {
+    // MARK: Need it as UTILITY
     let safeArea = (self.superview?.safeAreaInsets)!
     let height = UIScreen.main.bounds.height - safeArea.top - safeArea.bottom
     let width = UIScreen.main.bounds.width - safeArea.right - safeArea.left
@@ -211,7 +203,7 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
     let long = isLandscapeOrientation ? width : height
     let viewOffset = isLandscapeOrientation ? K.Layout.Width.button : K.Layout.Height.button
     
-    let size = short * 0.2
+    let size = short * 0.9 / 4
     let allSquareSize = size * 4 + 3
     let maxSquare = forStartButton ? ((long - allSquareSize) / 2) + allSquareSize : ((long - allSquareSize) / 2)
     let margin = forStartButton ? (long - maxSquare) / 2 - viewOffset / 2 : (maxSquare) / 2 + viewOffset / 2
@@ -220,23 +212,37 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
     
     return offset
   }
- 
+  
   private func instantiateSubViews(image: UIImage) {
+    instantiateImageView(image: image)
+    instantiateClearView()
+    instantiateQuitButton()
+    instantiateStartButton()
+    instantiateInstructionLabel()
+  }
+  
+  private func instantiateImageView(image: UIImage) {
     imageView = UIImageView(image: image)
     imageView.translatesAutoresizingMaskIntoConstraints = false
     imageView.contentMode = .scaleAspectFill
-    
+  }
+  
+  private func instantiateClearView() {
     clearView = UIView(frame: CGRect())
     clearView.translatesAutoresizingMaskIntoConstraints = false
     clearView.backgroundColor = GridyColor.transparent
     clearView.isUserInteractionEnabled = false
-    
+  }
+  
+  private func instantiateQuitButton() {
     quitButton = UIButton(type: .custom)
     quitButton.translatesAutoresizingMaskIntoConstraints = false
     quitButton.setTitle("X", for: .normal)
     quitButton.setTitleColor(GridyColor.olsoGray, for: .normal)
     quitButton.titleLabel?.font = UIFont(name: K.Font.Name.timeBurner, size: K.Font.size.quitButtonLabel)
-    
+  }
+  
+  private func instantiateStartButton() {
     startButton = UIButton(type: .custom)
     startButton.translatesAutoresizingMaskIntoConstraints = false
     startButton.setTitle("Start", for: .normal)
@@ -245,7 +251,9 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
     startButton.titleLabel?.font = UIFont(name: K.Font.Name.timeBurner, size: K.Font.size.choiceLabel)
     startButton.layer.cornerRadius = 10
     startButton.clipsToBounds = true
-    
+  }
+  
+  private func instantiateInstructionLabel() {
     instructionLabel = UILabel()
     instructionLabel.translatesAutoresizingMaskIntoConstraints = false
     instructionLabel.text = "Adjust the puzzle image:\nzoom, rotate, reposition\nDouble tap to resest"
@@ -259,27 +267,44 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
   
   private func layOutSubviews() {
     let safeArea = self.safeAreaLayoutGuide
-    
+    // Order important
+    layOutImageView(safeArea: safeArea)
+    layOutClearView(safeArea: safeArea)
+    // Order not important
+    layOutStartButton()
+    layOutQuitButton()
+    layOutInstructionLabel()
+  }
+  
+  private func layOutImageView(safeArea: UILayoutGuide) {
     addSubview(imageView)
     imageView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     imageView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
     imageView.leftAnchor.constraint(equalTo: safeArea.leftAnchor).isActive = true
     imageView.rightAnchor.constraint(equalTo: safeArea.rightAnchor).isActive = true
-    
+  }
+  
+  private func layOutClearView(safeArea: UILayoutGuide) {
     addSubview(clearView)
     clearView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     clearView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
     clearView.leftAnchor.constraint(equalTo: safeArea.leftAnchor).isActive = true
     clearView.rightAnchor.constraint(equalTo: safeArea.rightAnchor).isActive = true
-    
+  }
+  
+  private func layOutQuitButton() {
     addSubview(quitButton)
     quitButton.topAnchor.constraint(equalTo: clearView.topAnchor, constant: 0).isActive = true
     quitButton.rightAnchor.constraint(equalTo: clearView.rightAnchor, constant: -16).isActive = true
-    
+  }
+  
+  private func layOutStartButton() {
     addSubview(startButton)
     startButton.widthAnchor.constraint(equalToConstant: K.Layout.Width.button).isActive = true
     startButton.heightAnchor.constraint(equalToConstant: K.Layout.Height.button).isActive = true
-    
+  }
+  
+  private func layOutInstructionLabel() {
     addSubview(instructionLabel)
     instructionLabel.widthAnchor.constraint(equalToConstant: K.Layout.Width.button).isActive = true
     instructionLabel.heightAnchor.constraint(equalToConstant: K.Layout.Height.button).isActive = true

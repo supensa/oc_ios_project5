@@ -8,18 +8,12 @@
 
 import UIKit
 
-protocol PlayViewControllerDelegate {
-  func dismissParentViewController()
-}
-
 class PlayViewController: UIViewController {
-  var images: [UIImage]?
-  var delegate: PlayViewControllerDelegate!
+  var images: [UIImage]!
   
   override func viewDidLoad() {
     super.viewDidLoad()
-//    let image = UIImage(named: "Logo")
-    let playView = PlayView(image: images![1])
+    let playView = PlayView.init(images: images!)
     playView.delegate = self
     playView.setupIn(parentView: self.view)
   }
@@ -28,6 +22,6 @@ class PlayViewController: UIViewController {
 extension PlayViewController: PlayViewDelegate {
   // Delegate function: PlayViewDelegate
   func startNewGame() {
-    self.delegate.dismissParentViewController()
+    dismiss(animated: true, completion: nil)
   }
 }

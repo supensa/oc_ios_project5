@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		591C96F2207928680023FA29 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591C96F1207928680023FA29 /* ImageView.swift */; };
 		594AC07B20600D0A00091A72 /* GridyColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594AC07A20600D0A00091A72 /* GridyColor.swift */; };
 		594E56EC2060630300E4C63D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 594E56EB2060630200E4C63D /* Assets.xcassets */; };
 		594E56EF20606C0C00E4C63D /* timeburnernormal.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */; };
@@ -18,6 +19,7 @@
 		5951B2BB206C41C70067BBE2 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5951B2BA206C41C70067BBE2 /* Button.swift */; };
 		598077B82076B99D00C3E41A /* PlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598077B72076B99D00C3E41A /* PlayView.swift */; };
 		598077BA2076B9B400C3E41A /* PlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598077B92076B9B400C3E41A /* PlayViewController.swift */; };
+		59940FA0207BB20D00D80676 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59940F9F207BB20D00D80676 /* Position.swift */; };
 		59BD7012205DB1E00061E82C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BD7011205DB1E00061E82C /* AppDelegate.swift */; };
 		59BD7014205DB1E00061E82C /* IntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59BD7013205DB1E00061E82C /* IntroViewController.swift */; };
 		59BD701C205DB1E00061E82C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59BD701A205DB1E00061E82C /* LaunchScreen.storyboard */; };
@@ -25,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		591C96F1207928680023FA29 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		594AC07A20600D0A00091A72 /* GridyColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridyColor.swift; sourceTree = "<group>"; };
 		594E56EB2060630200E4C63D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = timeburnernormal.ttf; sourceTree = "<group>"; };
@@ -36,6 +39,7 @@
 		5951B2BA206C41C70067BBE2 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		598077B72076B99D00C3E41A /* PlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayView.swift; sourceTree = "<group>"; };
 		598077B92076B9B400C3E41A /* PlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayViewController.swift; sourceTree = "<group>"; };
+		59940F9F207BB20D00D80676 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
 		59BD700E205DB1E00061E82C /* Gridy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gridy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59BD7011205DB1E00061E82C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		59BD7013205DB1E00061E82C /* IntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroViewController.swift; sourceTree = "<group>"; };
@@ -60,8 +64,17 @@
 			children = (
 				5951B2B6206BE25D0067BBE2 /* Label.swift */,
 				5951B2BA206C41C70067BBE2 /* Button.swift */,
+				591C96F1207928680023FA29 /* ImageView.swift */,
 			);
 			name = Custom;
+			sourceTree = "<group>";
+		};
+		59940F9E207BAA3300D80676 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				59940F9F207BB20D00D80676 /* Position.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		59BD7005205DB1E00061E82C = {
@@ -86,6 +99,7 @@
 				59BD7023205DB2090061E82C /* Model */,
 				59BD7024205DB2200061E82C /* View */,
 				59BD7025205DB22A0061E82C /* Controller */,
+				59940F9E207BAA3300D80676 /* Utilities */,
 				59BD7026205DB2350061E82C /* Other Files */,
 			);
 			path = Gridy;
@@ -207,8 +221,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				591C96F2207928680023FA29 /* ImageView.swift in Sources */,
 				59BD7014205DB1E00061E82C /* IntroViewController.swift in Sources */,
 				5951B2B2206BDA820067BBE2 /* EditingViewController.swift in Sources */,
+				59940FA0207BB20D00D80676 /* Position.swift in Sources */,
 				59BD7028205DE51A0061E82C /* IntroVIew.swift in Sources */,
 				594AC07B20600D0A00091A72 /* GridyColor.swift in Sources */,
 				598077BA2076B9B400C3E41A /* PlayViewController.swift in Sources */,

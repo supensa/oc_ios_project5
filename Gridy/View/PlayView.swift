@@ -15,21 +15,21 @@ protocol PlayViewDelegate {
 class PlayView: UIView {
   
   required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
-  override init(frame: CGRect) { super.init(frame: frame) }
+//  override init(frame: CGRect) { super.init(frame: frame) }
   
-  private var image:UIImage?
-  private var imageView: UIImageView!
+  private var images: [UIImage]!
+  private var imageViews: [ImageView]!
   private var newGameButton: UIButton!
+  
+  private var imageView: ImageView!
   
   var delegate: PlayViewDelegate!
   
-  convenience init(image: UIImage?) {
-    self.init(frame: CGRect())
+  init(images: [UIImage]) {
+    super.init(frame: CGRect())
     self.translatesAutoresizingMaskIntoConstraints = false
     self.backgroundColor = UIColor.white
-    if let image = image {
-      self.image = image
-    }
+    self.images = images
     
     instantiateSubviews()
     layOutSubviews()
@@ -47,10 +47,18 @@ class PlayView: UIView {
   }
   
   private func instantiateSubviews() {
-    imageView = UIImageView(image: image)
+    instantiateImageViews()
+    
+    imageView = ImageView.init(image: images![1])
     imageView.translatesAutoresizingMaskIntoConstraints = false
     imageView.contentMode = .scaleAspectFit
+    imageView.layer.borderWidth = 1
+    imageView.layer.borderColor = GridyColor.janna.cgColor
     
+    instantiateNewGameButton()
+  }
+  
+  private func instantiateNewGameButton() {
     newGameButton = UIButton(type: .custom)
     newGameButton.translatesAutoresizingMaskIntoConstraints = false
     newGameButton.layer.cornerRadius = 10
@@ -61,16 +69,43 @@ class PlayView: UIView {
     newGameButton.backgroundColor = GridyColor.vistaBlue
   }
   
+  private func instantiateImageViews() {
+    self.imageViews = [ImageView]()
+    for image in images {
+      let imageView = ImageView(image: image)
+      imageView.translatesAutoresizingMaskIntoConstraints = false
+      imageView.contentMode = .scaleAspectFit
+      imageView.layer.borderWidth = 1
+      imageView.layer.borderColor = GridyColor.janna.cgColor
+      self.imageViews.append(imageView)
+    }
+  }
+  
   private func layOutSubviews() {
+    let safeArea = self.safeAreaLayoutGuide
     addSubview(imageView)
     imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
     imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
     
+    layOutNewGameButton(safeArea: safeArea)
+    layOutBigImageViews()
+  }
+  
+  private func layOutNewGameButton(safeArea: UILayoutGuide) {
     addSubview(newGameButton)
-    newGameButton.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-    newGameButton.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -100).isActive = true
+    newGameButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 16).isActive = true
+    newGameButton.leftAnchor.constraint(equalTo: safeArea.leftAnchor, constant: 16).isActive = true
     newGameButton.heightAnchor.constraint(equalToConstant: K.Layout.Height.thinButton).isActive = true
     newGameButton.widthAnchor.constraint(equalToConstant: K.Layout.Width.thinButton).isActive = true
+  }
+  
+  private func layOutBigImageViews() {
+    imageViews = Array<ImageView>()
+    let max = images.count - 1
+    for index in 0...max {
+      let position = max - index
+      imageViews.append(ImageView.init(position: position))
+    }
   }
   
   private func detectUserActions() {

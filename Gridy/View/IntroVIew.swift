@@ -62,38 +62,54 @@ class IntroView: UIView {
     super.traitCollectionDidChange(previousTraitCollection)
     
     let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
-    let iPads = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
+    let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
+    let forIpad = sizeClass == iPad
     
+    updateHorizontalStackViewConstraint(forIpad: forIpad)
+    updateButtonStackViewConstraint(forIpad: forIpad)
+    updateButtonConstraints(forIpad: forIpad)
+    updateTitleLabelConstraint()
+    updateCommentLabelConstraint()
+  }
+  
+  private func updateHorizontalStackViewConstraint(forIpad: Bool) {
     if horizontalStackViewSpacing == nil {
-      let spacing = sizeClass == iPads ? K.Layout.Spacing.buttonStackViewiPad * 1.5 : K.Layout.Spacing.buttonStackViewiPhone
+      let spacing = forIpad ? K.Layout.Spacing.buttonStackViewiPad * 1.5 : K.Layout.Spacing.buttonStackViewiPhone
       self.horizontalStackView.spacing = spacing
     }
-    
+  }
+  
+  private func updateButtonStackViewConstraint(forIpad: Bool) {
     if buttonStackViewHeightConstraint == nil {
-       let size = sizeClass == iPads ? K.Layout.Height.buttonStackView * 1.5 : K.Layout.Height.buttonStackView
+      let size = forIpad ? K.Layout.Height.buttonStackView * 1.5 : K.Layout.Height.buttonStackView
       buttonStackViewHeightConstraint = buttonStackView.heightAnchor.constraint(equalToConstant: size)
       buttonStackViewHeightConstraint.isActive = true
     }
-    
-    let forIpad = sizeClass == iPads
+  }
+  
+  private func updateButtonConstraints(forIpad: Bool) {
     randomButton.setupSizeConstraint(forIpad: forIpad)
     cameraButton.setupSizeConstraint(forIpad: forIpad)
     photosButton.setupSizeConstraint(forIpad: forIpad)
-    
+  }
+  
+  private func updateTitleLabelConstraint() {
     if let titleLabelHeightConstraint = self.titleLabelHeightConstraint {
       titleLabelHeightConstraint.isActive = false
     }
     
-    var height = UIScreen.main.bounds.height * K.Layout.HeightRatio.titleLabel
+    let height = UIScreen.main.bounds.height * K.Layout.HeightRatio.titleLabel
     self.titleLabelHeightConstraint = self.titleLabel.heightAnchor.constraint(equalToConstant: height)
     self.titleLabelHeightConstraint.isActive = true
     self.titleLabel.font = self.titleLabel.font.withSize(height * K.Font.sizeRatio.titleLabel)
-    
+  }
+  
+  private func updateCommentLabelConstraint() {
     if let commentLabelHeightCosntraint = self.commentLabelHeightConstraint {
       commentLabelHeightCosntraint.isActive = false
     }
     
-    height = self.titleLabel.font.pointSize * K.Layout.HeightRatio.commentLabel
+    let height = self.titleLabel.font.pointSize * K.Layout.HeightRatio.commentLabel
     self.commentLabelHeightConstraint = self.commentLabel.heightAnchor.constraint(equalToConstant: height)
     self.commentLabelHeightConstraint.isActive = true
     self.commentLabel.font = self.commentLabel.font.withSize(height * K.Font.sizeRatio.commentLabel)
@@ -119,21 +135,27 @@ class IntroView: UIView {
   
   private func layOutSubviews() {
     let safeArea = self.safeAreaLayoutGuide
-    
+    layOutTitleLabel(safeArea: safeArea)
+    layOutCommentLabel(safeArea: safeArea)
+    layOutButtonStackView(safeArea: safeArea)
+  }
+  
+  private func layOutTitleLabel(safeArea: UILayoutGuide) {
     self.addSubview(titleLabel)
     titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
     titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: K.Layout.Padding.titleLabel).isActive = true
     titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -K.Layout.Padding.titleLabel).isActive = true
-    
+  }
+  
+  private func layOutCommentLabel(safeArea: UILayoutGuide) {
     self.addSubview(commentLabel)
     commentLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0).isActive = true
     commentLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 0).isActive = true
     commentLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: 0).isActive = true
-    
-    let containerView = UIView.init()
-    containerView.backgroundColor = UIColor.clear
-    containerView.translatesAutoresizingMaskIntoConstraints = false
-    
+  }
+  
+  private func layOutButtonStackView(safeArea: UILayoutGuide) {
+    let containerView = createContainerView()
     containerView.addSubview(buttonStackView)
     buttonStackView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
     buttonStackView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
@@ -145,14 +167,29 @@ class IntroView: UIView {
     containerView.leftAnchor.constraint(equalTo: safeArea.leftAnchor, constant: 0).isActive = true
   }
   
+  private func createContainerView() -> UIView {
+    let containerView = UIView.init()
+    containerView.backgroundColor = UIColor.clear
+    containerView.translatesAutoresizingMaskIntoConstraints = false
+    return containerView
+  }
+  
   private func instantiateSubviews() {
+    instantiateButtons()
+    instantiateLabels()
+    instantiateStackViews()
+  }
+  
+  private func instantiateButtons() {
     randomButton = Button(imageName: K.ImageName.random)
     photosButton = Button(imageName: K.ImageName.photos)
     cameraButton = Button(imageName: K.ImageName.camera)
+  }
+  
+  private func instantiateLabels() {
     titleLabel = Label(text: K.String.title, fontSize: K.Font.size.titleLabel, useCustomFont: true)
     commentLabel = Label(text: K.String.comment, fontSize: K.Font.size.commentLabel)
     choiceLabel = Label(text: K.String.choice, fontSize: K.Font.size.choiceLabel)
-    instantiateStackViews()
   }
   
   private func instantiateStackViews() {

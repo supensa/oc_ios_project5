@@ -17,22 +17,25 @@ class EditingViewController: UIViewController {
     editingView = EditingView.init(image: image!)
     editingView.delegate = self
     editingView.setupIn(parentView: self.view)
-
   }
 }
 
-extension EditingViewController: EditingViewDelegate, PlayViewControllerDelegate {
+extension EditingViewController: EditingViewDelegate {
+  // Delegate method: EditingViewDelegate
+  func goBackMainMenu() {
+    self.dismiss(animated: true, completion: nil)
+  }
+  
   // Delegate method: EditingViewDelegate
   func startPuzzle() {
     self.imagesBound = editingView.imagesBound
     
     let playViewController = PlayViewController()
-    playViewController.delegate = self
     playViewController.images = getSnapshots()
     self.present(playViewController, animated: true)
   }
   
-  func getSnapshots() -> [UIImage] {
+  private func getSnapshots() -> [UIImage] {
     var images = [UIImage]()
     if let imagesBound = imagesBound {
       let wholeImage = snapshotWholeScreen()
@@ -44,10 +47,7 @@ extension EditingViewController: EditingViewDelegate, PlayViewControllerDelegate
     return images
   }
   
-  /// Snapshot the whole screen
-  ///
-  /// - Returns: image of the current screen
-   private func snapshotWholeScreen() -> UIImage {
+  private func snapshotWholeScreen() -> UIImage {
     let bounds = self.editingView.snapshotBounds
     
     UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
@@ -66,16 +66,5 @@ extension EditingViewController: EditingViewDelegate, PlayViewControllerDelegate
                             height: rectangle.size.height * scale)
     let cgImage = image.cgImage?.cropping(to: scaledRect)
     return UIImage(cgImage: cgImage!, scale: scale, orientation: .up)
-  }
-  
-  // Delegate method: EditingViewDelegate
-  func goBackMainMenu() {
-    self.dismiss(animated: true, completion: nil)
-  }
-  
-  // Delegate method: PlayViewControllerDelegate
-  func dismissParentViewController() {
-//    self.presentingViewController?.dismiss(animated: true, completion: nil)
-    dismiss(animated: true, completion: nil)
   }
 }
