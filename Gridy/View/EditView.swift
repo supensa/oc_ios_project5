@@ -1,5 +1,5 @@
 //
-//  EditingView.swift
+//  EditView.swift
 //  Gridy
 //
 //  Created by Spencer Forrest on 28/03/2018.
@@ -8,14 +8,12 @@
 
 import UIKit
 
-protocol EditingViewDelegate {
+protocol EditViewDelegate {
   func startPuzzle()
   func goBackMainMenu()
 }
 
-class EditingView: UIView, UIGestureRecognizerDelegate {
-  required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
-  override init(frame: CGRect) { super.init(frame: frame) }
+class EditView: UIView {
   
   private var imageView: UIImageView!
   private var clearView: UIView!
@@ -35,15 +33,16 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
     return UIScreen.main.bounds.width > UIScreen.main.bounds.height
   }
   
-  var delegate: EditingViewDelegate!
+  var delegate: EditViewDelegate!
   var imagesBound: [CGRect]!
   var snapshotBounds: CGRect {
     return self.clearView.bounds
   }
-
   
-  convenience init(image: UIImage) {
-    self.init(frame: UIScreen.main.bounds)
+  required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
+  
+  init(image: UIImage) {
+    super.init(frame: UIScreen.main.bounds)
     self.clipsToBounds = true
     self.backgroundColor = UIColor.lightGray
     self.translatesAutoresizingMaskIntoConstraints = false
@@ -61,42 +60,6 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
     self.leftAnchor.constraint(equalTo: safeArea.leftAnchor, constant: 0).isActive = true
     self.rightAnchor.constraint(equalTo: safeArea.rightAnchor, constant: 0).isActive = true
     self.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
-  }
-  
-  // Delegate method: UIGestureRecognizerDelegate
-  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-    if gestureRecognizer.view != imageView {
-      return false
-    }
-    
-    if otherGestureRecognizer.view != imageView {
-      return false
-    }
-    
-    if gestureRecognizer is UITapGestureRecognizer
-      || otherGestureRecognizer is UITapGestureRecognizer
-      || gestureRecognizer is UIPanGestureRecognizer
-      || otherGestureRecognizer is UIPanGestureRecognizer {
-      return false
-    }
-    return true
-  }
-  
-  // Delegate method: UIGestureRecognizerDelegate
-  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-    var beReceived = true
-    if let view = touch.view {
-      beReceived = view.isDescendant(of: self) ? true : false
-    }
-    return beReceived
-  }
-  
-  // Delegate method: UITraitEnvironment
-  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-    initialUIImageViewCenter = nil
-    setupOverlay(view:clearView)
-    updateLayOutConstraints()
   }
   
   private func setupOverlay(view: UIView) {
@@ -124,11 +87,10 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
   }
   
   private func createMaskLayer() -> CAShapeLayer {
-    // MARK: Need it as UTILITY
     let path = CGMutablePath()
     path.addRect(CGRect(origin: .zero, size: UIScreen.main.bounds.size))
     
-    imagesBound = Position.rectanglesIn(parentView: self, isEditingView: true)
+    imagesBound = Position.init(parentView: self, isEditingView: true).getSquares()
     for square in imagesBound {
       path.addRect(square)
     }
@@ -194,7 +156,6 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
   }
   
   private func calculateOffset(forStartButton: Bool) -> CGFloat {
-    // MARK: Need it as UTILITY
     let safeArea = (self.superview?.safeAreaInsets)!
     let height = UIScreen.main.bounds.height - safeArea.top - safeArea.bottom
     let width = UIScreen.main.bounds.width - safeArea.right - safeArea.left
@@ -382,5 +343,43 @@ class EditingView: UIView, UIGestureRecognizerDelegate {
   @objc private func scaleImageView(_ sender: UIPinchGestureRecognizer) {
     imageView.transform = imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
     sender.scale = 1
+  }
+}
+
+extension EditView: UIGestureRecognizerDelegate {
+  // Delegate method: UIGestureRecognizerDelegate
+  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    if gestureRecognizer.view != imageView {
+      return false
+    }
+    
+    if otherGestureRecognizer.view != imageView {
+      return false
+    }
+    
+    if gestureRecognizer is UITapGestureRecognizer
+      || otherGestureRecognizer is UITapGestureRecognizer
+      || gestureRecognizer is UIPanGestureRecognizer
+      || otherGestureRecognizer is UIPanGestureRecognizer {
+      return false
+    }
+    return true
+  }
+  
+  // Delegate method: UIGestureRecognizerDelegate
+  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    var beReceived = true
+    if let view = touch.view {
+      beReceived = view.isDescendant(of: self) ? true : false
+    }
+    return beReceived
+  }
+  
+  // Delegate method: UITraitEnvironment
+  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    initialUIImageViewCenter = nil
+    setupOverlay(view:clearView)
+    updateLayOutConstraints()
   }
 }

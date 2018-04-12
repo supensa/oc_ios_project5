@@ -9,7 +9,7 @@
 import UIKit
 
 class PlayViewController: UIViewController {
-  var images: [UIImage]!
+  var images: [Image]!
   
   override func viewDidLoad() {
     super.viewDidLoad()

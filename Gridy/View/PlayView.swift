@@ -14,19 +14,19 @@ protocol PlayViewDelegate {
 
 class PlayView: UIView {
   
-  required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
-//  override init(frame: CGRect) { super.init(frame: frame) }
-  
-  private var images: [UIImage]!
+  private var images: [Image]!
   private var imageViews: [ImageView]!
+  private var bigViews: [View]!
+  private var smallViews: [View]!
   private var newGameButton: UIButton!
-  
-  private var imageView: ImageView!
   
   var delegate: PlayViewDelegate!
   
-  init(images: [UIImage]) {
-    super.init(frame: CGRect())
+  required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
+  
+  init(images: [Image]) {
+    super.init(frame: UIScreen.main.bounds)
+    self.isUserInteractionEnabled = true
     self.translatesAutoresizingMaskIntoConstraints = false
     self.backgroundColor = UIColor.white
     self.images = images
@@ -36,10 +36,10 @@ class PlayView: UIView {
     detectUserActions()
   }
   
-  func setupIn(parentView: UIView) {
-    parentView.backgroundColor = UIColor.white
-    parentView.addSubview(self)
-    let safeArea = parentView.safeAreaLayoutGuide
+  func setupIn(parentView view: UIView) {
+    view.backgroundColor = UIColor.white
+    view.addSubview(self)
+    let safeArea = view.safeAreaLayoutGuide
     self.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     self.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
     self.rightAnchor.constraint(equalTo: safeArea.rightAnchor).isActive = true
@@ -47,15 +47,28 @@ class PlayView: UIView {
   }
   
   private func instantiateSubviews() {
-    instantiateImageViews()
-    
-    imageView = ImageView.init(image: images![1])
-    imageView.translatesAutoresizingMaskIntoConstraints = false
-    imageView.contentMode = .scaleAspectFit
-    imageView.layer.borderWidth = 1
-    imageView.layer.borderColor = GridyColor.janna.cgColor
-    
     instantiateNewGameButton()
+    // order matters
+    instantiateContainerViews()
+    instantiateImageViews()
+  }
+  
+  private func layOutSubviews() {
+    let safeArea = self.safeAreaLayoutGuide
+    layOutNewGameButton(safeArea: safeArea)
+  }
+  
+  private func detectUserActions() {
+    newGameButton.addTarget(self, action: #selector(startNewGame), for: .touchUpInside)
+    setupGestureRecognizers()
+  }
+  
+  func setupGestureRecognizers() {
+    for imageView in imageViews {
+      let panGestureRecognizer = UIPanGestureRecognizer.init(target: self, action: #selector(moveImageView))
+      panGestureRecognizer.delegate = self
+      imageView.addGestureRecognizer(panGestureRecognizer)
+    }
   }
   
   private func instantiateNewGameButton() {
@@ -69,26 +82,33 @@ class PlayView: UIView {
     newGameButton.backgroundColor = GridyColor.vistaBlue
   }
   
-  private func instantiateImageViews() {
-    self.imageViews = [ImageView]()
-    for image in images {
-      let imageView = ImageView(image: image)
-      imageView.translatesAutoresizingMaskIntoConstraints = false
-      imageView.contentMode = .scaleAspectFit
-      imageView.layer.borderWidth = 1
-      imageView.layer.borderColor = GridyColor.janna.cgColor
-      self.imageViews.append(imageView)
+  private func instantiateContainerViews() {
+    self.smallViews = [View]()
+    self.bigViews = [View]()
+    let max = images.count - 1
+    for index in 0...max {
+      var view = View()
+      view.translatesAutoresizingMaskIntoConstraints = true
+      view.backgroundColor = UIColor.lightGray
+      self.smallViews.append(view)
+      addSubview(self.smallViews[index])
+      view = View.init(position: index)
+      view.translatesAutoresizingMaskIntoConstraints = true
+      view.backgroundColor = UIColor.lightGray
+      self.bigViews.append(view)
+      addSubview(self.bigViews[index])
     }
   }
   
-  private func layOutSubviews() {
-    let safeArea = self.safeAreaLayoutGuide
-    addSubview(imageView)
-    imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
-    imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-    
-    layOutNewGameButton(safeArea: safeArea)
-    layOutBigImageViews()
+  private func instantiateImageViews() {
+    self.imageViews = [ImageView]()
+    let max = images.count - 1
+    for index in 0...max {
+      let imageView = ImageView.init(defaultImage: images[index])
+      imageView.set(ContainerView: self.smallViews[index])
+      self.imageViews.append(imageView)
+      addSubview(self.imageViews[index])
+    }
   }
   
   private func layOutNewGameButton(safeArea: UILayoutGuide) {
@@ -99,20 +119,78 @@ class PlayView: UIView {
     newGameButton.widthAnchor.constraint(equalToConstant: K.Layout.Width.thinButton).isActive = true
   }
   
-  private func layOutBigImageViews() {
-    imageViews = Array<ImageView>()
-    let max = images.count - 1
+  private func layOutSmallContainerViews() {
+    let margin = Position.init(parentView: self, isEditingView: false).margin
+    layOutContainerViews(views: smallViews, forSmallSquares: true, margin: margin)
+  }
+  
+  private func layOutBigContainerViews() {
+    layOutContainerViews(views: bigViews, forSmallSquares: false, margin: 0)
+  }
+  
+  private func layOutContainerViews(views: [UIView], forSmallSquares: Bool, margin: CGFloat) {
+    let margin = margin
+    let position = Position.init(parentView: self, isEditingView: false, forSmallSquares: forSmallSquares, margin: margin)
+    let rectangles = position.getContainerSquares()
+    
+    let max = rectangles.count - 1
     for index in 0...max {
-      let position = max - index
-      imageViews.append(ImageView.init(position: position))
+      let view = views[index]
+      view.frame = rectangles[index]
+      view.layer.borderWidth = 1
+      view.layer.borderColor = GridyColor.janna.cgColor
     }
   }
   
-  private func detectUserActions() {
-    newGameButton.addTarget(self, action: #selector(startNewGame), for: .touchUpInside)
+  func layOutImageViews() {
+    let max = smallViews.count - 1
+    for index in 0...max {
+      self.imageViews[index].position()
+    }
   }
   
+  @objc private func moveImageView(_ sender: UIPanGestureRecognizer) {
+    if let view = sender.view {
+      bringSubview(toFront: view)
+      let translation = sender.translation(in: self)
+      let newPoint = CGPoint(x: view.center.x + translation.x,
+                             y: view.center.y + translation.y)
+      view.center = newPoint
+      sender.setTranslation(CGPoint.zero, in: self)
+      
+      if sender.state == UIGestureRecognizerState.ended {
+        self.positionImageView(view: view as! ImageView)
+      }
+    }
+  }
+
   @objc private func startNewGame() {
     delegate.startNewGame()
+  }
+  
+  private func positionImageView(view: ImageView) {
+    var isOutBigViews = true
+    for bigView in bigViews {
+      if bigView.frame.contains(view.center) {
+        isOutBigViews = false
+        if view.change(ContainerView: bigView) {
+          // TODO: Notify controller it is a different container view
+        }
+      }
+    }
+    if isOutBigViews {
+      if view.resetFrame() {
+        // TODO: Notify controller it is a different container view
+      }
+    }
+  }
+}
+
+extension PlayView: UIGestureRecognizerDelegate {
+  // Delegate method: UITraitEnvironment
+  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    layOutSmallContainerViews()
+    layOutBigContainerViews()
+    layOutImageViews()
   }
 }

@@ -37,8 +37,8 @@ class IntroView: UIView {
   
   var delegate: IntroViewDelegate?
   
-  override init(frame: CGRect) {
-    super.init(frame: frame)
+  init() {
+    super.init(frame: CGRect())
     
     self.translatesAutoresizingMaskIntoConstraints = false
     self.backgroundColor = UIColor.white
@@ -54,22 +54,6 @@ class IntroView: UIView {
     self.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
     self.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
     self.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-  }
-  
-  // Delegate method: UITraitEnvironment
-  // UIView and UIViewController conform to it
-  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-    super.traitCollectionDidChange(previousTraitCollection)
-    
-    let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
-    let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
-    let forIpad = sizeClass == iPad
-    
-    updateHorizontalStackViewConstraint(forIpad: forIpad)
-    updateButtonStackViewConstraint(forIpad: forIpad)
-    updateButtonConstraints(forIpad: forIpad)
-    updateTitleLabelConstraint()
-    updateCommentLabelConstraint()
   }
   
   private func updateHorizontalStackViewConstraint(forIpad: Bool) {
@@ -207,5 +191,23 @@ class IntroView: UIView {
     stackView.axis = axis
     stackView.alignment = .center
     stackView.distribution = .fill
+  }
+}
+
+extension IntroView {
+  // Delegate method: UITraitEnvironment
+  // UIView and UIViewController conform to it
+  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    super.traitCollectionDidChange(previousTraitCollection)
+    
+    let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
+    let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
+    let forIpad = sizeClass == iPad
+    
+    updateHorizontalStackViewConstraint(forIpad: forIpad)
+    updateButtonStackViewConstraint(forIpad: forIpad)
+    updateButtonConstraints(forIpad: forIpad)
+    updateTitleLabelConstraint()
+    updateCommentLabelConstraint()
   }
 }

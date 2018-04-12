@@ -9,10 +9,11 @@
 import UIKit
 
 class Button: UIButton {
-  required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
   
   private var heightConstraint: NSLayoutConstraint!
   private var widthConstraint: NSLayoutConstraint!
+  
+  required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
   
   init(imageName: String, forIpad: Bool = false) {
     super.init(frame: CGRect())

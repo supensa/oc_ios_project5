@@ -1,5 +1,5 @@
 //
-//  EditingViewController.swift
+//  EditViewController.swift
 //  Gridy
 //
 //  Created by Spencer Forrest on 28/03/2018.
@@ -8,39 +8,41 @@
 
 import UIKit
 
-class EditingViewController: UIViewController {
+class EditViewController: UIViewController {
   var image: UIImage!
   var imagesBound: [CGRect]!
-  weak var editingView: EditingView!
+  weak var editView: EditView!
   
   override func viewDidLoad() {
-    editingView = EditingView.init(image: image!)
-    editingView.delegate = self
-    editingView.setupIn(parentView: self.view)
+    editView = EditView.init(image: image!)
+    editView.delegate = self
+    editView.setupIn(parentView: self.view)
   }
 }
 
-extension EditingViewController: EditingViewDelegate {
-  // Delegate method: EditingViewDelegate
+extension EditViewController: EditViewDelegate {
+  // Delegate method: EditViewDelegate
   func goBackMainMenu() {
     self.dismiss(animated: true, completion: nil)
   }
   
-  // Delegate method: EditingViewDelegate
+  // Delegate method: EditViewDelegate
   func startPuzzle() {
-    self.imagesBound = editingView.imagesBound
+    self.imagesBound = editView.imagesBound
     
     let playViewController = PlayViewController()
     playViewController.images = getSnapshots()
     self.present(playViewController, animated: true)
   }
   
-  private func getSnapshots() -> [UIImage] {
-    var images = [UIImage]()
+  private func getSnapshots() -> [Image] {
+    var images = [Image]()
     if let imagesBound = imagesBound {
       let wholeImage = snapshotWholeScreen()
-      for imageBound in imagesBound {
-        let image = cropImage(image: wholeImage, rectangle: imageBound)
+      let max = imagesBound.count - 1
+      for index in 0...max {
+        let bound = imagesBound[index]
+        let image = cropImage(image: wholeImage, rectangle: bound, position: index)
         images.append(image)
       }
     }
@@ -48,23 +50,24 @@ extension EditingViewController: EditingViewDelegate {
   }
   
   private func snapshotWholeScreen() -> UIImage {
-    let bounds = self.editingView.snapshotBounds
+    let bounds = self.editView.snapshotBounds
     
     UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
-    self.editingView.drawHierarchy(in: bounds, afterScreenUpdates: true)
+    self.editView.drawHierarchy(in: bounds, afterScreenUpdates: true)
     let snapshot = UIGraphicsGetImageFromCurrentImageContext()!
     UIGraphicsEndImageContext()
     
     return snapshot
   }
   
-  private func cropImage(image: UIImage, rectangle: CGRect) -> UIImage {
+  private func cropImage(image: UIImage, rectangle: CGRect, position: Int) -> Image {
     let scale = image.scale
     let scaledRect = CGRect(x: rectangle.origin.x * scale,
                             y: rectangle.origin.y * scale,
                             width: rectangle.size.width * scale,
                             height: rectangle.size.height * scale)
     let cgImage = image.cgImage?.cropping(to: scaledRect)
-    return UIImage(cgImage: cgImage!, scale: scale, orientation: .up)
+    let uiimage = UIImage(cgImage: cgImage!, scale: scale, orientation: .up)
+    return Image(image: uiimage, position: position)
   }
 }

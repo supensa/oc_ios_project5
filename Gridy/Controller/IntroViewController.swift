@@ -13,8 +13,7 @@ import Photos
 class IntroViewController: UIViewController {
   
   override func viewDidLoad() {
-    let frame = UIScreen.main.bounds
-    let introView =  IntroView.init(frame: frame)
+    let introView =  IntroView.init()
     introView.delegate = self
     introView.setupIn(parentView: self.view)
   }
@@ -34,7 +33,7 @@ extension IntroViewController: UIImagePickerControllerDelegate, UINavigationCont
     }
     
     if let image = image {
-      let editingViewController = EditingViewController()
+      let editingViewController = EditViewController()
       editingViewController.image = image
       self.present(editingViewController, animated: true, completion: nil)
     }
