@@ -11,10 +11,12 @@ import UIKit
 class Image {
   
   private(set) var image: UIImage!
-  private(set) var position: Int!
+  private(set) var originalPosition: Int!
+  var actualPosition: Int!
   
   init(image: UIImage, position: Int) {
-    self.position = position
+    self.originalPosition = position
+    self.actualPosition = position
     self.image = image
   }
 }

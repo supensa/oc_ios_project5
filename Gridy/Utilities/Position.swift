@@ -13,14 +13,15 @@ class Position {
   private var height: CGFloat
   private var width: CGFloat
   private var isLandscape: Bool
-  private var gapLength: CGFloat
+  private var gapLength: CGFloat = 0
   private var allGaps: CGFloat
-  private var countInRow: CGFloat
+  private var countInRow: CGFloat = 0
   private var length: CGFloat = 0
   private var allSquares: CGFloat
   private var offset: CGFloat
   private var marginX: CGFloat = 0
   private var marginY: CGFloat = 0
+  private var numberSquares: Int = 0
   
   var margin: CGFloat {
     return isLandscape ? marginX : marginY
@@ -52,7 +53,7 @@ class Position {
   
   private func getSquares(borderWidth: CGFloat) -> [CGRect] {
     var rectangles = [CGRect]()
-    let numberSquares = 16
+    numberSquares = 16
     var row: CGFloat = 0
     var column: CGFloat = 0
     

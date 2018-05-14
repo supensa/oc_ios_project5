@@ -49,12 +49,12 @@ struct K {
     struct Height {
       static let button: CGFloat = 88
       static let buttonStackView: CGFloat = 200
-      static let thinButton: CGFloat = 44
+      static let thinButton: CGFloat = 35
     }
     
     struct Width {
       static let button: CGFloat = 115
-      static let thinButton: CGFloat = 115
+      static let thinButton: CGFloat = 100
     }
     
     struct Spacing {
