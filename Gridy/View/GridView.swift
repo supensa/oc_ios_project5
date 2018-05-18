@@ -26,8 +26,6 @@ class GridView: UIView {
   
   init(tag: Int) {
     super.init(frame: CGRect())
-    self.translatesAutoresizingMaskIntoConstraints = false
-    self.backgroundColor = GridyColor.pixieGreen
     self.tag = tag
   }
   
@@ -45,15 +43,15 @@ class GridView: UIView {
       }
     }
     
-    let size = getTileSize()
+    let tileSize = getTileSize()
     
-    let origins = calculateOrigins(size: size, tileCount: tileCount)
+    let origins = calculateOrigins(size: tileSize, tileCount: tileCount)
     
     // Set frame and origin of each tile
     for index in 0..<tileCount {
       let tile = self.subviews[index]
       let origin = origins[index]
-      tile.frame = CGRect.init(origin: origin, size: size)
+      tile.frame = CGRect.init(origin: origin, size: tileSize)
     }
   }
   
@@ -62,10 +60,9 @@ class GridView: UIView {
     if let number =  self.datasource?.numberOfTilesPerRow(gridView: tag),
       let gap = delegate?.gapLength(gridView: tag) {
       let tilePerRow = CGFloat(number)
-      let tilePerColumn = CGFloat(numberOfRows())
       let width = (self.frame.width - gap * (tilePerRow + 1)) / tilePerRow
-      let height = (self.frame.height - gap * (tilePerColumn + 1)) / tilePerRow
-      size = CGSize(width: width, height: height)
+      // Tiles are squares
+      size = CGSize(width: width, height: width)
     }
     return size
   }
@@ -95,7 +92,7 @@ class GridView: UIView {
     return origins
   }
   
-  private func numberOfRows() -> Int {
+  func numberOfRows() -> Int {
     var numberOfRows: CGFloat = 1
     if let tilesCount = datasource?.numberOfTiles(gridView: tag),
       let tilesPerRow = datasource?.numberOfTilesPerRow(gridView: tag) {
