@@ -16,17 +16,37 @@ protocol GridViewDataSource: AnyObject {
 
 protocol GridViewDelegate: AnyObject {
   func gapLength(gridView tag: Int) -> CGFloat
+  func eyeImageViewTapped()
 }
 
 class GridView: UIView {
   weak var datasource: GridViewDataSource?
   weak var delegate: GridViewDelegate?
   
+  var isLandscape: Bool!
+  var tilesFrame: [CGRect]!
+  var eyeOption: Bool!
+  
+  private var eyeImageView: UIImageView?
+  private var eyeImageViewWidthAnchor: NSLayoutConstraint?
+  private var eyeImageViewHeightAnchor: NSLayoutConstraint?
+  
   required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
   
-  init(tag: Int) {
+  init(tag: Int, eyeOption: Bool = false) {
     super.init(frame: CGRect())
     self.tag = tag
+    self.eyeOption = eyeOption
+    tilesFrame = [CGRect]()
+    isLandscape = true
+    if eyeOption {
+      let image = UIImage(named: "eye")
+      self.eyeImageView = UIImageView(image: image)
+      eyeImageView?.translatesAutoresizingMaskIntoConstraints = false
+      eyeImageView?.isUserInteractionEnabled = true
+      let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(eyeImageViewTapped))
+      eyeImageView?.addGestureRecognizer(tapGestureRecognizer)
+    }
   }
   
   override func layoutSubviews() {
@@ -47,12 +67,21 @@ class GridView: UIView {
     
     let origins = calculateOrigins(size: tileSize, tileCount: tileCount)
     
+    tilesFrame.removeAll()
+    
     // Set frame and origin of each tile
     for index in 0..<tileCount {
       let tile = self.subviews[index]
       let origin = origins[index]
-      tile.frame = CGRect.init(origin: origin, size: tileSize)
+      let frame = CGRect.init(origin: origin, size: tileSize)
+      tile.frame = frame
+      tilesFrame.append(frame)
     }
+    updateEyeImageView(origin: origins.last!)
+  }
+  
+  @objc func eyeImageViewTapped() {
+    delegate?.eyeImageViewTapped()
   }
   
   func getTileSize() -> CGSize {
@@ -100,5 +129,29 @@ class GridView: UIView {
     }
     numberOfRows = numberOfRows.rounded(.up)
     return Int(numberOfRows)
+  }
+  
+  func updateEyeImageView(origin: CGPoint) {
+    guard let view = eyeImageView else { return }
+    if !view.isDescendant(of: self) {
+      self.addSubview(view)
+      view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5).isActive = true
+      view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -5).isActive = true
+    }
+    
+    if eyeImageViewWidthAnchor != nil && eyeImageViewHeightAnchor != nil {
+      eyeImageViewWidthAnchor?.isActive = false
+      eyeImageViewHeightAnchor?.isActive = false
+    }
+    
+    let tileLength: CGFloat = getTileSize().width
+    let height = tileLength * 1
+    let width = tileLength * 2
+    
+    eyeImageViewWidthAnchor = eyeImageView?.widthAnchor.constraint(equalToConstant: width)
+    eyeImageViewHeightAnchor = eyeImageView?.heightAnchor.constraint(equalToConstant: height)
+
+    eyeImageViewWidthAnchor?.isActive = true
+    eyeImageViewHeightAnchor?.isActive = true
   }
 }

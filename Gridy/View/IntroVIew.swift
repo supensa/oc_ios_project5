@@ -58,14 +58,14 @@ class IntroView: UIView {
   
   private func updateHorizontalStackViewConstraint(forIpad: Bool) {
     if horizontalStackViewSpacing == nil {
-      let spacing = forIpad ? K.Layout.Spacing.buttonStackViewiPad * 1.5 : K.Layout.Spacing.buttonStackViewiPhone
+      let spacing = forIpad ? Constant.Layout.Spacing.buttonStackViewiPad * 1.5 : Constant.Layout.Spacing.buttonStackViewiPhone
       self.horizontalStackView.spacing = spacing
     }
   }
   
   private func updateButtonStackViewConstraint(forIpad: Bool) {
     if buttonStackViewHeightConstraint == nil {
-      let size = forIpad ? K.Layout.Height.buttonStackView * 1.5 : K.Layout.Height.buttonStackView
+      let size = forIpad ? Constant.Layout.Height.buttonStackView * 1.5 : Constant.Layout.Height.buttonStackView
       buttonStackViewHeightConstraint = buttonStackView.heightAnchor.constraint(equalToConstant: size)
       buttonStackViewHeightConstraint.isActive = true
     }
@@ -82,10 +82,10 @@ class IntroView: UIView {
       titleLabelHeightConstraint.isActive = false
     }
     
-    let height = UIScreen.main.bounds.height * K.Layout.HeightRatio.titleLabel
+    let height = UIScreen.main.bounds.height * Constant.Layout.HeightRatio.titleLabel
     self.titleLabelHeightConstraint = self.titleLabel.heightAnchor.constraint(equalToConstant: height)
     self.titleLabelHeightConstraint.isActive = true
-    self.titleLabel.font = self.titleLabel.font.withSize(height * K.Font.sizeRatio.titleLabel)
+    self.titleLabel.font = self.titleLabel.font.withSize(height * Constant.Font.sizeRatio.titleLabel)
   }
   
   private func updateCommentLabelConstraint() {
@@ -93,10 +93,10 @@ class IntroView: UIView {
       commentLabelHeightCosntraint.isActive = false
     }
     
-    let height = self.titleLabel.font.pointSize * K.Layout.HeightRatio.commentLabel
+    let height = self.titleLabel.font.pointSize * Constant.Layout.HeightRatio.commentLabel
     self.commentLabelHeightConstraint = self.commentLabel.heightAnchor.constraint(equalToConstant: height)
     self.commentLabelHeightConstraint.isActive = true
-    self.commentLabel.font = self.commentLabel.font.withSize(height * K.Font.sizeRatio.commentLabel)
+    self.commentLabel.font = self.commentLabel.font.withSize(height * Constant.Font.sizeRatio.commentLabel)
   }
   
   private func detectUserActions() {
@@ -127,8 +127,8 @@ class IntroView: UIView {
   private func layOutTitleLabel(safeArea: UILayoutGuide) {
     self.addSubview(titleLabel)
     titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
-    titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: K.Layout.Padding.titleLabel).isActive = true
-    titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -K.Layout.Padding.titleLabel).isActive = true
+    titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constant.Layout.Padding.titleLabel).isActive = true
+    titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constant.Layout.Padding.titleLabel).isActive = true
   }
   
   private func layOutCommentLabel(safeArea: UILayoutGuide) {
@@ -165,15 +165,15 @@ class IntroView: UIView {
   }
   
   private func instantiateButtons() {
-    randomButton = Button(imageName: K.ImageName.random)
-    photosButton = Button(imageName: K.ImageName.photos)
-    cameraButton = Button(imageName: K.ImageName.camera)
+    randomButton = Button(imageName: Constant.ImageName.random)
+    photosButton = Button(imageName: Constant.ImageName.photos)
+    cameraButton = Button(imageName: Constant.ImageName.camera)
   }
   
   private func instantiateLabels() {
-    titleLabel = Label(text: K.String.title, fontSize: K.Font.size.titleLabel, useCustomFont: true)
-    commentLabel = Label(text: K.String.comment, fontSize: K.Font.size.commentLabel)
-    choiceLabel = Label(text: K.String.choice, fontSize: K.Font.size.choiceLabel)
+    titleLabel = Label(text: Constant.String.title, fontSize: Constant.Font.size.titleLabel, useCustomFont: true)
+    commentLabel = Label(text: Constant.String.comment, fontSize: Constant.Font.size.commentLabel)
+    choiceLabel = Label(text: Constant.String.choice, fontSize: Constant.Font.size.choiceLabel)
   }
   
   private func instantiateStackViews() {

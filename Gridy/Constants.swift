@@ -8,10 +8,19 @@
 
 import UIKit
 
-struct K {
+struct Constant {
   
-  struct Pieces {
-    static let count = 16
+  struct Tiles {
+    
+    static let totalCount = 16
+    
+    struct Big {
+      static let countByRow = 4
+    }
+    
+    struct Small {
+      static let countByRow = 4
+    }
   }
   
   struct Font {

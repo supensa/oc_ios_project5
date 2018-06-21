@@ -19,7 +19,7 @@ class Label: UILabel {
     self.textAlignment = .center
     self.textColor = useCustomFont ? GridyColor.vistaBlue : UIColor.black
     
-    let fontName = useCustomFont ? K.Font.Name.timeBurner : K.Font.Name.helveticaNeue
+    let fontName = useCustomFont ? Constant.Font.Name.timeBurner : Constant.Font.Name.helveticaNeue
     
     let font = UIFont.init(name: fontName, size: fontSize)!
     self.font = font

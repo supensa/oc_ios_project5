@@ -162,7 +162,7 @@ class EditView: UIView {
     
     let short = isLandscapeOrientation ? height : width
     let long = isLandscapeOrientation ? width : height
-    let viewOffset = isLandscapeOrientation ? K.Layout.Width.button : K.Layout.Height.button
+    let viewOffset = isLandscapeOrientation ? Constant.Layout.Width.button : Constant.Layout.Height.button
     
     let size = short * 0.9 / 4
     let allSquareSize = size * 4 + 3
@@ -200,7 +200,7 @@ class EditView: UIView {
     quitButton.translatesAutoresizingMaskIntoConstraints = false
     quitButton.setTitle("X", for: .normal)
     quitButton.setTitleColor(GridyColor.olsoGray, for: .normal)
-    quitButton.titleLabel?.font = UIFont(name: K.Font.Name.timeBurner, size: K.Font.size.quitButtonLabel)
+    quitButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.size.quitButtonLabel)
   }
   
   private func instantiateStartButton() {
@@ -209,7 +209,7 @@ class EditView: UIView {
     startButton.setTitle("Start", for: .normal)
     startButton.setTitleColor(UIColor.white, for: .normal)
     startButton.backgroundColor = GridyColor.vistaBlue
-    startButton.titleLabel?.font = UIFont(name: K.Font.Name.timeBurner, size: K.Font.size.choiceLabel)
+    startButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.size.choiceLabel)
     startButton.layer.cornerRadius = 10
     startButton.clipsToBounds = true
   }
@@ -217,11 +217,11 @@ class EditView: UIView {
   private func instantiateInstructionLabel() {
     instructionLabel = UILabel()
     instructionLabel.translatesAutoresizingMaskIntoConstraints = false
-    instructionLabel.text = "Adjust the puzzle image:\nzoom, rotate, reposition\nDouble tap to resest"
+    instructionLabel.text = "Adjust the puzzle image:\nzoom, rotate, reposition\nDouble tap to reset"
     instructionLabel.textColor = GridyColor.olsoGray
     instructionLabel.textAlignment = .center
     instructionLabel.baselineAdjustment = .alignCenters
-    instructionLabel.font = UIFont(name: K.Font.Name.helveticaNeue, size: K.Font.size.choiceLabel)
+    instructionLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: Constant.Font.size.choiceLabel)
     instructionLabel.adjustsFontSizeToFitWidth = true
     instructionLabel.numberOfLines = 0
   }
@@ -261,14 +261,14 @@ class EditView: UIView {
   
   private func layOutStartButton() {
     addSubview(startButton)
-    startButton.widthAnchor.constraint(equalToConstant: K.Layout.Width.button).isActive = true
-    startButton.heightAnchor.constraint(equalToConstant: K.Layout.Height.button).isActive = true
+    startButton.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.button).isActive = true
+    startButton.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.button).isActive = true
   }
   
   private func layOutInstructionLabel() {
     addSubview(instructionLabel)
-    instructionLabel.widthAnchor.constraint(equalToConstant: K.Layout.Width.button).isActive = true
-    instructionLabel.heightAnchor.constraint(equalToConstant: K.Layout.Height.button).isActive = true
+    instructionLabel.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.button).isActive = true
+    instructionLabel.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.button).isActive = true
   }
   
   private func detectUserActions() {
