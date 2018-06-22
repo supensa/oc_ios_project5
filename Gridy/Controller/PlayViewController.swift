@@ -23,6 +23,7 @@ class PlayViewController: UIViewController {
   
   private var bigGridModel: BigGrid!
   private var smallGridModel: SmallGrid!
+  private var score = 0
   
   private var landscapeConstraints: [NSLayoutConstraint]!
   private var portraitConstraints: [NSLayoutConstraint]!
@@ -64,7 +65,7 @@ class PlayViewController: UIViewController {
   }
   
   override func viewDidLayoutSubviews() {
-     layoutImageViews()
+     refreshLayout()
   }
   
   private func instantiateSubviews() {
@@ -121,7 +122,6 @@ class PlayViewController: UIViewController {
     instructionsLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
     instructionsLabel.textAlignment = .center
     instructionsLabel.adjustsFontSizeToFitWidth = true
-    instructionsLabel.backgroundColor = UIColor.green
     
     self.header = HeaderView()
     header.delegate = self
@@ -144,13 +144,13 @@ class PlayViewController: UIViewController {
         let imageView = ImageView.init(image: image.image)
         imageView.tag = image.id
         imageView.translatesAutoresizingMaskIntoConstraints = true
-        self.imageViews[randomIndex] = imageView
+        self.imageViews[image.id] = imageView
         smallGridModel.updatePosition(id: image.id, position: randomIndex)
       }
     }
   }
   
-  private func layoutImageViews() {
+  private func refreshLayout() {
     smallGridView.layoutIfNeeded()
     bigGridView.layoutIfNeeded()
     for imageView in imageViews {
@@ -165,6 +165,7 @@ class PlayViewController: UIViewController {
         imageView.frame = frame
       }
     }
+    self.header.scoreLabel.text = "\(score)"
   }
   
   private func setBigGridViewConstraints() {
@@ -303,7 +304,7 @@ class PlayViewController: UIViewController {
   }
   
   @objc private func moveImageView(_ sender: UIPanGestureRecognizer) {
-    if let view = sender.view as! ImageView? {
+    if let view = sender.view {
       let tag = view.tag
       self.view.bringSubview(toFront: view)
       let translation = sender.translation(in: self.view)
@@ -320,22 +321,37 @@ class PlayViewController: UIViewController {
             let tile = bigGridView.subviews[index]
             let center = convertCoordinates(of: view.center, into: bigGridView)
             if tile.frame.contains(center) {
-              //              let frame = convertFrame(of: tile, in: bigGridView)
-              //              view.frame = frame
-              if bigGridModel.isTileFree(at: index) {
-                bigGridModel.updatePosition(id: tag, position: index)
+              if bigGridModel.isTileFree(at: index) && index != bigGridModel.getPosition(id: tag) {
                 smallGridModel.updatePosition(id: tag, position: nil)
+                bigGridModel.updatePosition(id: tag, position: index)
+                self.score += 1
                 break
               }
               break
             }
           }
         } else {
+          smallGridModel.updatePosition(id: tag, position: nil)
+          if let _ = bigGridModel.getPosition(id: tag) { self.score += 1 }
           bigGridModel.updatePosition(id: tag, position: nil)
           let position = smallGridModel.getFreeTilePosition()
           smallGridModel.updatePosition(id: tag, position: position)
         }
-        layoutImageViews()
+        
+        refreshLayout()
+        
+        if bigGridModel.isFull() {
+          print("It is full")
+          if bigGridModel.match() {
+            print("End of Game")
+            self.instructionsLabel.text = "GAME OVER"
+            self.instructionsLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 35)
+            self.instructionsLabel.textColor = UIColor.red
+            for imageView in imageViews {
+              imageView.isUserInteractionEnabled = false
+            }
+          }
+        }
       }
     }
   }

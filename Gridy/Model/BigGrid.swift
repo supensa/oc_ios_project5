@@ -14,13 +14,26 @@ class BigGrid {
   
   private var dictionary: [Id:Position]
   private var freeTile: [Position:Bool]
+  private var numberOftile: Int
   
   init(numberOftile: Int) {
     self.dictionary = [Id:Position]()
     self.freeTile = [Position:Bool]()
+    self.numberOftile = numberOftile
     for tile in 0..<numberOftile {
       freeTile[tile] = true
     }
+  }
+  
+  func match() -> Bool{
+    for (id, position) in dictionary {
+      if id != position { return false }
+    }
+    return true
+  }
+  
+  func isFull() -> Bool {
+    return dictionary.count == numberOftile
   }
   
   func getPosition(id: Id) -> Int? {

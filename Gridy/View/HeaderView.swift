@@ -17,7 +17,7 @@ class HeaderView: UIStackView {
   private var newGameButton: UIButton!
   private var gridyLabel: UILabel!
   private var movesLabel: UILabel!
-  private var scoreLabel: UILabel!
+  var scoreLabel: UILabel!
   
   var delegate: HeaderViewDelegate!
   
@@ -58,14 +58,14 @@ class HeaderView: UIStackView {
     movesLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
     movesLabel.textAlignment = .center
     movesLabel.adjustsFontSizeToFitWidth = true
-    movesLabel.backgroundColor = UIColor.blue
+//    movesLabel.backgroundColor = UIColor.blue
     
     self.scoreLabel = UILabel()
-    scoreLabel.text = "100"
+    scoreLabel.text = "0"
     scoreLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
     scoreLabel.textAlignment = .center
     scoreLabel.adjustsFontSizeToFitWidth = true
-    scoreLabel.backgroundColor = UIColor.green
+//    scoreLabel.backgroundColor = UIColor.green
   }
   
   func addSubviews() {
