@@ -27,28 +27,24 @@ class Position {
     return isLandscape ? marginX : marginY
   }
   
-  init(parentView: UIView, isEditingView: Bool, forSmallSquares: Bool = false, margin: CGFloat = 0) {
+  init(parentView: UIView) {
     safeArea = (parentView.superview?.safeAreaInsets)!
     height = UIScreen.main.bounds.height - safeArea.top - safeArea.bottom
     width = UIScreen.main.bounds.width - safeArea.right - safeArea.left
     isLandscape = width > height
-    countInRow = forSmallSquares ? 6 : 4
-    gapLength = forSmallSquares ? 5 : 1
+    countInRow = 4
+    gapLength = 1
     allGaps = gapLength * (countInRow - 1)
     length = isLandscape ? (height * 0.9 - allGaps) / countInRow : (width * 0.9 - allGaps) / countInRow
-    length = isLandscape && forSmallSquares ? (margin * 0.9 - allGaps) / countInRow : length
     allSquares = length * countInRow + allGaps
     offset = isLandscape ? height * 0.05 : width * 0.05
     length = ceil(length)
-    calculateMargins(forSmallSquares: forSmallSquares, isEditView: isEditingView)
+    marginX = (width - allSquares) / 2
+    marginY = (height - allSquares) / 2
   }
   
   func getSquares() -> [CGRect] {
     return getSquares(borderWidth: 0)
-  }
-  
-  func getContainerSquares() -> [CGRect] {
-    return getSquares(borderWidth: 1)
   }
   
   private func getSquares(borderWidth: CGFloat) -> [CGRect] {
@@ -73,15 +69,5 @@ class Position {
       }
     }
     return rectangles
-  }
-  
-  private func calculateMargins(forSmallSquares: Bool, isEditView: Bool) {
-    if forSmallSquares && !isEditView {
-      marginX = isLandscape ? 16 : ((width - allSquares) / 2)
-      marginY = 70
-    } else {
-      marginX = !isLandscape || isEditView ? ((width - allSquares) / 2) : width - allSquares - offset
-      marginY = isLandscape || isEditView ? ((height - allSquares) / 2) : height - allSquares - offset
-    }
   }
 }

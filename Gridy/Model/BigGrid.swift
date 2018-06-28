@@ -25,7 +25,7 @@ class BigGrid {
     }
   }
   
-  func match() -> Bool{
+  func isMatching() -> Bool{
     for (id, position) in dictionary {
       if id != position { return false }
     }
@@ -36,7 +36,7 @@ class BigGrid {
     return dictionary.count == numberOftile
   }
   
-  func getPosition(id: Id) -> Int? {
+  func position(id: Id) -> Int? {
     return dictionary[id]
   }
   
@@ -45,6 +45,15 @@ class BigGrid {
       if isFree { return true }
     }
     return false
+  }
+  
+  func getFreeTilePosition() -> Int? {
+    for position in 0..<freeTile.count {
+      if let isFree = freeTile[position] {
+        if isFree { return position }
+      }
+    }
+    return nil
   }
   
   func updatePosition(id: Id, position: Position?) {

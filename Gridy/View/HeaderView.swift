@@ -19,7 +19,7 @@ class HeaderView: UIStackView {
   private var movesLabel: UILabel!
   var scoreLabel: UILabel!
   
-  var delegate: HeaderViewDelegate!
+  weak var delegate: HeaderViewDelegate?
   
   required init(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
   
@@ -76,6 +76,6 @@ class HeaderView: UIStackView {
   }
   
   @objc func newGameButtonTapped() {
-    delegate.newGameButtonTapped()
+    delegate?.newGameButtonTapped()
   }
 }

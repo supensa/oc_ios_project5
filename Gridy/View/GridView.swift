@@ -77,7 +77,7 @@ class GridView: UIView {
       tile.frame = frame
       tilesFrame.append(frame)
     }
-    updateEyeImageView(origin: origins.last!)
+    updateEyeImageView()
   }
   
   @objc func eyeImageViewTapped() {
@@ -131,7 +131,7 @@ class GridView: UIView {
     return Int(numberOfRows)
   }
   
-  func updateEyeImageView(origin: CGPoint) {
+  func updateEyeImageView() {
     guard let view = eyeImageView else { return }
     if !view.isDescendant(of: self) {
       self.addSubview(view)

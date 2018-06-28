@@ -21,7 +21,8 @@
 		5951B2BB206C41C70067BBE2 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5951B2BA206C41C70067BBE2 /* Button.swift */; };
 		596C5BC420D935DE00FB73E2 /* BigGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596C5BC320D935DE00FB73E2 /* BigGrid.swift */; };
 		596C5BC620D93D4900FB73E2 /* SmallGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596C5BC520D93D4900FB73E2 /* SmallGrid.swift */; };
-		598077BA2076B9B400C3E41A /* PlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598077B92076B9B400C3E41A /* PlayViewController.swift */; };
+		597FC59320E5778100269861 /* PlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597FC59220E5778100269861 /* PlayViewController.swift */; };
+		598077BA2076B9B400C3E41A /* PlayViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598077B92076B9B400C3E41A /* PlayViewController2.swift */; };
 		5983444B20A43C56005054F9 /* GridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5983444A20A43C56005054F9 /* GridView.swift */; };
 		598A0B8220CA807400F9A375 /* HintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598A0B8120CA807400F9A375 /* HintView.swift */; };
 		59940FA0207BB20D00D80676 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59940F9F207BB20D00D80676 /* Position.swift */; };
@@ -48,7 +49,8 @@
 		5951B2BA206C41C70067BBE2 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		596C5BC320D935DE00FB73E2 /* BigGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigGrid.swift; sourceTree = "<group>"; };
 		596C5BC520D93D4900FB73E2 /* SmallGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallGrid.swift; sourceTree = "<group>"; };
-		598077B92076B9B400C3E41A /* PlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayViewController.swift; sourceTree = "<group>"; };
+		597FC59220E5778100269861 /* PlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayViewController.swift; sourceTree = "<group>"; };
+		598077B92076B9B400C3E41A /* PlayViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayViewController2.swift; sourceTree = "<group>"; };
 		5983444A20A43C56005054F9 /* GridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridView.swift; sourceTree = "<group>"; };
 		598A0B8120CA807400F9A375 /* HintView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintView.swift; sourceTree = "<group>"; };
 		59940F9F207BB20D00D80676 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
@@ -151,7 +153,8 @@
 			children = (
 				59BD7013205DB1E00061E82C /* IntroViewController.swift */,
 				591ADFC0207D12BF00F5986F /* EditViewController.swift */,
-				598077B92076B9B400C3E41A /* PlayViewController.swift */,
+				598077B92076B9B400C3E41A /* PlayViewController2.swift */,
+				597FC59220E5778100269861 /* PlayViewController.swift */,
 				59BD7011205DB1E00061E82C /* AppDelegate.swift */,
 			);
 			path = Controller;
@@ -253,7 +256,7 @@
 				59BD7028205DE51A0061E82C /* IntroVIew.swift in Sources */,
 				594AC07B20600D0A00091A72 /* GridyColor.swift in Sources */,
 				598A0B8220CA807400F9A375 /* HintView.swift in Sources */,
-				598077BA2076B9B400C3E41A /* PlayViewController.swift in Sources */,
+				598077BA2076B9B400C3E41A /* PlayViewController2.swift in Sources */,
 				59C2811E207D7D71001F0422 /* Image.swift in Sources */,
 				59BD7012205DB1E00061E82C /* AppDelegate.swift in Sources */,
 				5951B2B7206BE25D0067BBE2 /* Label.swift in Sources */,
@@ -261,6 +264,7 @@
 				5951B2BB206C41C70067BBE2 /* Button.swift in Sources */,
 				591DFBBC20D0516A0096372A /* Int.swift in Sources */,
 				5983444B20A43C56005054F9 /* GridView.swift in Sources */,
+				597FC59320E5778100269861 /* PlayViewController.swift in Sources */,
 				5951B2B9206BE73F0067BBE2 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

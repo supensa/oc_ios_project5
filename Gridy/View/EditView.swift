@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol EditViewDelegate {
+protocol EditViewDelegate: AnyObject {
   func startPuzzle()
   func goBackMainMenu()
 }
@@ -33,7 +33,7 @@ class EditView: UIView {
     return UIScreen.main.bounds.width > UIScreen.main.bounds.height
   }
   
-  var delegate: EditViewDelegate!
+  weak var delegate: EditViewDelegate?
   var imagesBound: [CGRect]!
   var snapshotBounds: CGRect {
     return self.clearView.bounds
@@ -90,7 +90,7 @@ class EditView: UIView {
     let path = CGMutablePath()
     path.addRect(CGRect(origin: .zero, size: UIScreen.main.bounds.size))
     
-    imagesBound = Position.init(parentView: self, isEditingView: true).getSquares()
+    imagesBound = Position.init(parentView: self).getSquares()
     for square in imagesBound {
       path.addRect(square)
     }
@@ -299,11 +299,11 @@ class EditView: UIView {
   }
   
   @objc func pressedStartButton() {
-    delegate.startPuzzle()
+    delegate?.startPuzzle()
   }
   
   @objc private func pressedQuitButton() {
-    delegate.goBackMainMenu()
+    delegate?.goBackMainMenu()
   }
   
   @objc private func resetImageFrame() {
@@ -344,6 +344,13 @@ class EditView: UIView {
     imageView.transform = imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
     sender.scale = 1
   }
+  
+  func updateLayout() {
+    initialUIImageViewCenter = nil
+    setupOverlay(view: clearView)
+    updateLayOutConstraints()
+    print(constraints.count)
+  }
 }
 
 extension EditView: UIGestureRecognizerDelegate {
@@ -374,12 +381,5 @@ extension EditView: UIGestureRecognizerDelegate {
       beReceived = view.isDescendant(of: self) ? true : false
     }
     return beReceived
-  }
-  
-  // Delegate method: UITraitEnvironment
-  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-    initialUIImageViewCenter = nil
-    setupOverlay(view:clearView)
-    updateLayOutConstraints()
   }
 }

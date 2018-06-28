@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol IntroViewDelegate {
+protocol IntroViewDelegate: AnyObject {
   func takeRandomImage()
   func takeCameraImage()
   func takePhotoLibraryImage()
@@ -35,7 +35,7 @@ class IntroView: UIView {
   private var buttonStackViewHeightConstraint: NSLayoutConstraint!
   private var horizontalStackViewSpacing: NSLayoutConstraint!
   
-  var delegate: IntroViewDelegate?
+  weak var delegate: IntroViewDelegate?
   
   init() {
     super.init(frame: CGRect())

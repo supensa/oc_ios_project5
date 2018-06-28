@@ -19,6 +19,10 @@ class EditViewController: UIViewController {
     editView.delegate = self
     editView.setupIn(parentView: self.view)
   }
+  
+  override func viewWillLayoutSubviews() {
+    editView.updateLayout()
+  }
 }
 
 extension EditViewController: EditViewDelegate {
@@ -43,7 +47,6 @@ extension EditViewController: EditViewDelegate {
     return image
   }
   
-  // TODO: Recalculate maybe CGRECT
   func calculateBoundHintImage() -> CGRect {
     var height: CGFloat = 0
     var width: CGFloat = 0
