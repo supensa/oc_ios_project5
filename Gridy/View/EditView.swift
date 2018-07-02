@@ -42,7 +42,7 @@ class EditView: UIView {
   required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
   
   init(image: UIImage) {
-    super.init(frame: UIScreen.main.bounds)
+    super.init(frame: .zero)
     self.clipsToBounds = true
     self.backgroundColor = UIColor.lightGray
     self.translatesAutoresizingMaskIntoConstraints = false
@@ -349,7 +349,6 @@ class EditView: UIView {
     initialUIImageViewCenter = nil
     setupOverlay(view: clearView)
     updateLayOutConstraints()
-    print(constraints.count)
   }
 }
 

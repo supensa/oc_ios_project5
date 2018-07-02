@@ -12,7 +12,7 @@ class Label: UILabel {
   required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
   
   init(text: String?, fontSize: CGFloat, useCustomFont: Bool = false) {
-    super.init(frame: CGRect())
+    super.init(frame: .zero)
     self.translatesAutoresizingMaskIntoConstraints = false
     self.text = text
     self.baselineAdjustment = .alignCenters

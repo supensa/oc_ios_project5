@@ -16,10 +16,23 @@ struct Constant {
     
     struct Big {
       static let countByRow = 4
+      static let gapLength: CGFloat = 1
     }
     
     struct Small {
-      static let countByRow = 4
+      static let countByRow = 6
+      static let gapLength: CGFloat = 3.4
+    }
+  }
+  
+  struct Grids {
+    struct big {
+      static let topMargin: CGFloat = 46
+      static let bottomMargin: CGFloat = 46
+    }
+    
+    struct small {
+      
     }
   }
   
@@ -46,6 +59,7 @@ struct Constant {
     static let random = "Random"
     static let photos = "Photos"
     static let camera = "Camera"
+    static let image = "Image"
   }
   
   struct String {

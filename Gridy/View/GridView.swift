@@ -34,7 +34,7 @@ class GridView: UIView {
   required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
   
   init(tag: Int, eyeOption: Bool = false) {
-    super.init(frame: CGRect())
+    super.init(frame: .zero)
     self.tag = tag
     self.eyeOption = eyeOption
     tilesFrame = [CGRect]()
@@ -135,8 +135,10 @@ class GridView: UIView {
     guard let view = eyeImageView else { return }
     if !view.isDescendant(of: self) {
       self.addSubview(view)
-      view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5).isActive = true
-      view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -5).isActive = true
+      if let gapLength = delegate?.gapLength(gridView: tag) {
+        view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -gapLength).isActive = true
+        view.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -gapLength).isActive = true
+      }
     }
     
     if eyeImageViewWidthAnchor != nil && eyeImageViewHeightAnchor != nil {

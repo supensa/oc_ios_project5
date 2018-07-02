@@ -16,7 +16,7 @@ class Button: UIButton {
   required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
   
   init(imageName: String, forIpad: Bool = false) {
-    super.init(frame: CGRect())
+    super.init(frame: .zero)
     
     let image = UIImage.init(named: imageName)
     self.setImage(image, for: .normal)

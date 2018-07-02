@@ -47,7 +47,7 @@ extension IntroViewController: UIImagePickerControllerDelegate, UINavigationCont
   // Delegate method: IntroViewDelegate
   func takeRandomImage() {
     let random = Int.random(min: 0, max: 4)
-    if let image = UIImage(named: "image\(random)") {
+    if let image = UIImage(named: Constant.ImageName.image + "\(random)") {
       let editingViewController = EditViewController()
       editingViewController.image = image
       self.present(editingViewController, animated: true, completion: nil)

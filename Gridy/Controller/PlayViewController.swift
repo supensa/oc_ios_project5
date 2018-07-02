@@ -20,11 +20,12 @@ class PlayViewController: UIViewController {
   
   private var instructionsLabel: UILabel!
   
-  private var bigGridModel: BigGrid!
-  private var smallGridModel: BigGrid!
+  private var bigGridModel: GridModel!
+  private var smallGridModel: GridModel!
   private var score = 0
   
   private var constraints: [NSLayoutConstraint]!
+  private var commonConstraints: [NSLayoutConstraint]!
   
   private var smallGridViewRightAnchor: NSLayoutConstraint!
   private var smallGridViewHeightAnchor: NSLayoutConstraint!
@@ -32,10 +33,11 @@ class PlayViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    self.bigGridModel = BigGrid(numberOftile: images.count)
-    self.smallGridModel = BigGrid(numberOftile: images.count)
+    self.bigGridModel = GridModel(numberOftile: images.count)
+    self.smallGridModel = GridModel(numberOftile: images.count)
     
     self.constraints = [NSLayoutConstraint]()
+    self.commonConstraints = [NSLayoutConstraint]()
     
     self.view.isUserInteractionEnabled = true
     self.view.backgroundColor = UIColor.white
@@ -43,23 +45,31 @@ class PlayViewController: UIViewController {
     instantiateSubviews()
     addSubviews()
     detectUserActions()
+    setupHintViewConstraints()
+    setupCommonConstraintsPriority()
+    NSLayoutConstraint.activate(self.commonConstraints)
   }
   
+  // Be careful: Infinite Layout loop might occur
   override func viewWillLayoutSubviews() {
     super.viewWillLayoutSubviews()
     if traitCollection.horizontalSizeClass == .regular && traitCollection.horizontalSizeClass == .regular {
       let isLandscape = self.view.bounds.width >= self.view.bounds.height
+      self.clearAllConstraints()
       if isLandscape {
-        // Landscape cosntraints for IPad
+        // Landscape constraints for IPad
+        setupConstraintsInLandscapeEnvironment(padding: 90)
       } else {
-        // Portrait cosntraints for IPad
+        // Portrait constraints for IPad
+        setupConstraintsInPortraitEnvironment(padding: 60)
       }
+      setupConstraintsPriority()
+      NSLayoutConstraint.activate(self.constraints)
     }
   }
   
   override func viewDidLayoutSubviews() {
     refreshLayout()
-    print(view.constraints.count)
   }
   
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -70,14 +80,16 @@ class PlayViewController: UIViewController {
     
     if verticalSizeClassChanged || horizontaSizeClassChanged {
       self.clearAllConstraints()
+      
       let sizeClass = (traitCollection.horizontalSizeClass, traitCollection.verticalSizeClass)
+      
       switch sizeClass {
       case (.regular, .regular):
-        setupConstraintsForIpadEnvironment()
+        fallthrough
       case (.compact, .regular):
-        setupConstraintsForIphoneInPortraitEnvironment()
+        setupConstraintsInPortraitEnvironment(padding: 0)
       case (.compact, .compact), (.regular,.compact):
-        setupConstraintsForIphoneInLandscapeEnvironment()
+        setupConstraintsInLandscapeEnvironment(padding: 46)
       default: break
       }
       setupConstraintsPriority()
@@ -103,31 +115,27 @@ class PlayViewController: UIViewController {
     self.view.addSubview(hintView)
   }
   
-  private func setupConstraintsForIpadEnvironment() {
-    
+  private func setupConstraintsInPortraitEnvironment(padding: CGFloat) {
+    setupBigGridViewConstraintsInPortraitEnvironmen(padding: padding)
+    setupOtherViewsConstraintsInPortraitEnvironment()
+    setupSmallGridViewConstraintsInPortraitEnvironment(padding: padding)
   }
   
-  private func setupConstraintsForIphoneInPortraitEnvironment() {
-    setupOtherViewsConstraintsForIphoneEnvironment()
-    setupSmallGridViewConstraintsForIphoneEnvironment()
-    
-    setupBigGridViewConstraintsForIphoneInPortraitEnvironment()
-    setupSmallGridViewConstraintsForIphoneInPortraitEnvironment()
-    setupOtherViewsConstraintsForIphoneInPortraitEnvironment()
-  }
-  
-  private func setupConstraintsForIphoneInLandscapeEnvironment() {
-    setupOtherViewsConstraintsForIphoneEnvironment()
-    setupSmallGridViewConstraintsForIphoneEnvironment()
-    
-    setupBigGridViewConstraintsForIphoneInLandscapeEnvironment()
-    setupSmallGridViewConstraintsForIphoneInLandscapeEnvironment()
-    setupOtherViewsConstraintsForIphoneInLandscapeEnvironment()
+  private func setupConstraintsInLandscapeEnvironment(padding: CGFloat) {
+    setupBigGridViewConstraintInLandscapeEnvironment(padding: padding)
+    setupSmallGridViewConstraintsInLandscapeEnvironment(padding: padding)
+    setupOtherViewsConstraintsInLandscapeEnvironment()
   }
   
   private func setupConstraintsPriority() {
     for constraint in constraints {
       constraint.priority = .init(750)
+    }
+  }
+  
+  func setupCommonConstraintsPriority() {
+    for constraint in commonConstraints {
+      constraint.priority = .init(751)
     }
   }
   
@@ -196,84 +204,100 @@ class PlayViewController: UIViewController {
       }
     }
     self.header.scoreLabel.text = "\(score)"
+    let smallSize = smallGridView.subviews[0].frame.size
+    let bigSize = bigGridView.subviews[0].frame.size
+    print("Small Tile size: \(smallSize)")
+    print("Big Tile size: \(bigSize)")
   }
   
-  private func setupBigGridViewConstraintsForIphoneInPortraitEnvironment() {
+  
+  private func setupHintViewConstraints() {
     let margin = view.layoutMarginsGuide
+    self.commonConstraints.append(hintView.topAnchor.constraint(equalTo: margin.topAnchor))
+    self.commonConstraints.append(hintView.bottomAnchor.constraint(equalTo: margin.bottomAnchor))
+    self.commonConstraints.append(hintView.leftAnchor.constraint(equalTo: margin.leftAnchor))
+    self.commonConstraints.append(hintView.rightAnchor.constraint(equalTo: margin.rightAnchor))
+  }
+  
+  private func setupOtherViewsConstraintsInPortraitEnvironment() {
+    let margin = view.layoutMarginsGuide
+    self.constraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 0))
+    self.constraints.append(header.bottomAnchor.constraint(equalTo: smallGridView.topAnchor, constant: 0))
+    self.constraints.append(header.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
+    self.constraints.append(header.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
+    self.constraints.append(header.heightAnchor.constraint(equalToConstant: 44))
+    
+    self.constraints.append(instructionsLabel.topAnchor.constraint(equalTo: smallGridView.bottomAnchor, constant: 0))
+    self.constraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: bigGridView.topAnchor, constant: 0))
+    self.constraints.append(instructionsLabel.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
+    self.constraints.append(instructionsLabel.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
+  }
+  
+  private func setupOtherViewsConstraintsInLandscapeEnvironment() {
+    let margin = view.layoutMarginsGuide
+    self.constraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 0))
+    self.constraints.append(header.bottomAnchor.constraint(equalTo: smallGridView.topAnchor, constant: 0))
+    self.constraints.append(header.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: 0))
+    self.constraints.append(header.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
+    
+    self.constraints.append(instructionsLabel.leftAnchor.constraint(equalTo: smallGridView.leftAnchor, constant: 0))
+    self.constraints.append(instructionsLabel.topAnchor.constraint(equalTo: smallGridView.bottomAnchor, constant: 0))
+    self.constraints.append(instructionsLabel.rightAnchor.constraint(equalTo: smallGridView.rightAnchor, constant: 0))
+    self.constraints.append(instructionsLabel.heightAnchor.constraint(equalToConstant: 50))
+  }
+  
+  private func setupBigGridViewConstraintsInPortraitEnvironmen(padding: CGFloat) {
+    let margin = view.layoutMarginsGuide
+    self.constraints.append(bigGridView.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: padding))
+    self.constraints.append(bigGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: -padding))
     self.constraints.append(bigGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: 0))
-    self.constraints.append(bigGridView.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: 0))
-    self.constraints.append(bigGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: 0))
     self.constraints.append(bigGridView.heightAnchor.constraint(equalTo: bigGridView.widthAnchor))
   }
   
-  private func setupBigGridViewConstraintsForIphoneInLandscapeEnvironment() {
+  private func setupBigGridViewConstraintInLandscapeEnvironment(padding: CGFloat) {
     let margin = view.layoutMarginsGuide
-    self.constraints.append(bigGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: 0))
-    self.constraints.append(bigGridView.topAnchor.constraint(equalTo: margin.topAnchor, constant: 0))
+    self.constraints.append(bigGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: -padding))
+    self.constraints.append(bigGridView.topAnchor.constraint(equalTo: margin.topAnchor, constant: padding))
     self.constraints.append(bigGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: 0))
     self.constraints.append(bigGridView.widthAnchor.constraint(equalTo: bigGridView.heightAnchor))
-  }
-  
-  private func setupSmallGridViewConstraintsForIphoneEnvironment() {
-    self.constraints.append(smallGridView.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 0))
     self.constraints.append(smallGridView.leftAnchor.constraint(equalTo: header.leftAnchor, constant: 0))
   }
   
-  private func setupSmallGridViewConstraintsForIphoneInPortraitEnvironment() {
-    let smallGridWidth = view.bounds.width - view.layoutMargins.left - view.layoutMargins.right
-    let smallGridHeight = smallGridViewHeight(tileWidth: tileWidth(width: smallGridWidth))
+  private func setupSmallGridViewConstraintsInPortraitEnvironment(padding: CGFloat) {
+    let smallGridWidth = view.bounds.width - view.layoutMargins.left - view.layoutMargins.right - padding * 2
+    let smallGridHeight = smallGridViewHeight(tileWidth: smallTileWidth(width: smallGridWidth))
     
-    let margin = view.layoutMarginsGuide
-    self.constraints.append(smallGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: 0))
     self.constraints.append(smallGridView.heightAnchor.constraint(equalToConstant: smallGridHeight))
+    self.constraints.append(smallGridView.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
+    self.constraints.append(smallGridView.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
   }
   
-  private func setupSmallGridViewConstraintsForIphoneInLandscapeEnvironment() {
-    let smallGridWidth = view.bounds.width - view.layoutMargins.left - view.layoutMargins.right - view.bounds.height + view.layoutMargins.bottom + view.layoutMargins.top
-    let smallGridHeight = smallGridViewHeight(tileWidth: tileWidth(width: smallGridWidth))
+  private func setupSmallGridViewConstraintsInLandscapeEnvironment(padding: CGFloat) {
+    let smallGridWidth = view.bounds.width - view.layoutMargins.left - view.layoutMargins.right - view.bounds.height
+      + view.layoutMargins.bottom + view.layoutMargins.top + padding * 2
+    let smallGridHeight = smallGridViewHeight(tileWidth: smallTileWidth(width: smallGridWidth))
     
     self.constraints.append(smallGridView.rightAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
     self.constraints.append(smallGridView.heightAnchor.constraint(equalToConstant: smallGridHeight))
+    self.constraints.append(smallGridView.topAnchor.constraint(equalTo: bigGridView.topAnchor, constant: 0))
   }
   
-  func tileWidth(width: CGFloat) -> CGFloat {
-    let tileWidth = (width - 5 * 7) / 6
+  func smallTileWidth(width: CGFloat) -> CGFloat {
+    let countByRow =  CGFloat.init(Constant.Tiles.Small.countByRow )
+    let tileWidth = (width - Constant.Tiles.Small.gapLength * (countByRow + 1)) / countByRow
     return tileWidth
   }
   
   private func smallGridViewHeight(tileWidth: CGFloat) -> CGFloat {
-    let numberOfRow = (CGFloat(images.count) / CGFloat(6)).rounded(.up)
-    return tileWidth * numberOfRow + (numberOfRow + 1) * 5
+    let numberOfRow = (CGFloat(images.count) / CGFloat(Constant.Tiles.Small.countByRow)).rounded(.up)
+    return tileWidth * numberOfRow + (numberOfRow + 1) * Constant.Tiles.Small.gapLength
   }
-  
-  private func setupOtherViewsConstraintsForIphoneEnvironment() {
-    self.constraints.append(instructionsLabel.leftAnchor.constraint(equalTo: smallGridView.leftAnchor, constant: 0))
-    self.constraints.append(instructionsLabel.topAnchor.constraint(equalTo: smallGridView.bottomAnchor, constant: 0))
-    self.constraints.append(instructionsLabel.rightAnchor.constraint(equalTo: smallGridView.rightAnchor, constant: 0))
-    
-    let margin = view.layoutMarginsGuide
-    self.constraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 0))
-    self.constraints.append(header.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: 0))
-    self.constraints.append(header.rightAnchor.constraint(equalTo: smallGridView.rightAnchor, constant: 0))
-    self.constraints.append(header.heightAnchor.constraint(equalToConstant: 40))
-    
-    self.constraints.append(hintView.topAnchor.constraint(equalTo: view.topAnchor))
-    self.constraints.append(hintView.bottomAnchor.constraint(equalTo: view.bottomAnchor))
-    self.constraints.append(hintView.leftAnchor.constraint(equalTo: view.leftAnchor))
-    self.constraints.append(hintView.rightAnchor.constraint(equalTo: view.rightAnchor))
-  }
-  
-  private func setupOtherViewsConstraintsForIphoneInPortraitEnvironment() {
-    self.constraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: bigGridView.topAnchor, constant: 0))
-  }
-  
-  private func setupOtherViewsConstraintsForIphoneInLandscapeEnvironment() {
-    self.constraints.append(instructionsLabel.heightAnchor.constraint(equalToConstant: 35))
-  }
-  
+
   private func clearAllConstraints() {
     NSLayoutConstraint.deactivate(self.constraints)
+//    NSLayoutConstraint.deactivate(self.commonConstraints)
     self.constraints.removeAll()
+//    self.commonConstraints.removeAll()
   }
   
   ///------------------------------------------------------------------------------------------------------------------------------------------
@@ -382,8 +406,8 @@ extension PlayViewController: GridViewDelegate {
   }
   
   func gapLength(gridView tag: Int) -> CGFloat {
-    if tag == 0 { return 5 }
-    return 1
+    if tag == 0 { return Constant.Tiles.Small.gapLength }
+    return Constant.Tiles.Big.gapLength
   }
 }
 
@@ -400,8 +424,8 @@ extension PlayViewController: GridViewDataSource {
   }
   
   func numberOfTilesPerRow(gridView tag: Int) -> Int {
-    if tag == 0 { return 6 }
-    return 4
+    if tag == 0 { return Constant.Tiles.Small.countByRow }
+    return Constant.Tiles.Big.countByRow
   }
 }
 

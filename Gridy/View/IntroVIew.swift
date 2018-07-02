@@ -38,7 +38,7 @@ class IntroView: UIView {
   weak var delegate: IntroViewDelegate?
   
   init() {
-    super.init(frame: CGRect())
+    super.init(frame: .zero)
     
     self.translatesAutoresizingMaskIntoConstraints = false
     self.backgroundColor = UIColor.white

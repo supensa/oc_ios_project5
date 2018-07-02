@@ -15,7 +15,7 @@ class HintView: UIView {
   required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
   
   init(image: UIImage) {
-    super.init(frame: CGRect())
+    super.init(frame: .zero)
     self.imageView = UIImageView(image: image)
     imageView.translatesAutoresizingMaskIntoConstraints = false
     self.addSubview(imageView)

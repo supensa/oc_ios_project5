@@ -24,7 +24,7 @@ class HeaderView: UIStackView {
   required init(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
   
   init() {
-    super.init(frame: CGRect())
+    super.init(frame: .zero)
     self.backgroundColor = UIColor.cyan
     self.axis = .horizontal
     self.distribution = .fillProportionally
