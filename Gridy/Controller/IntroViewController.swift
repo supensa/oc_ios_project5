@@ -15,7 +15,7 @@ class IntroViewController: UIViewController {
   override func viewDidLoad() {
     let introView =  IntroView.init()
     introView.delegate = self
-    introView.setupIn(parentView: self.view)
+    introView.setup(parentView: self.view)
   }
 }
 

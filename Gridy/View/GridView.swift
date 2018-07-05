@@ -147,13 +147,16 @@ class GridView: UIView {
     }
     
     let tileLength: CGFloat = getTileSize().width
-    let height = tileLength * 1
-    let width = tileLength * 2
     
-    eyeImageViewWidthAnchor = eyeImageView?.widthAnchor.constraint(equalToConstant: width)
-    eyeImageViewHeightAnchor = eyeImageView?.heightAnchor.constraint(equalToConstant: height)
-
-    eyeImageViewWidthAnchor?.isActive = true
-    eyeImageViewHeightAnchor?.isActive = true
+    if tileLength > 0 {
+      let height = tileLength * 1
+      let width = tileLength * 2
+      
+      eyeImageViewWidthAnchor = eyeImageView?.widthAnchor.constraint(equalToConstant: width)
+      eyeImageViewHeightAnchor = eyeImageView?.heightAnchor.constraint(equalToConstant: height)
+      
+      eyeImageViewWidthAnchor?.isActive = true
+      eyeImageViewHeightAnchor?.isActive = true
+    }
   }
 }

@@ -17,8 +17,10 @@ class EditViewController: UIViewController {
   override func viewDidLoad() {
     editView = EditView.init(image: image!)
     editView.delegate = self
-    editView.setupIn(parentView: self.view)
+    editView.setup(parentView: self.view)
   }
+  
+  
   
   override func viewWillLayoutSubviews() {
     editView.updateLayout()

@@ -48,11 +48,11 @@ class EditView: UIView {
     self.translatesAutoresizingMaskIntoConstraints = false
     
     instantiateSubViews(image: image)
-    layOutSubviews()
+    setupConstraints()
     detectUserActions()
   }
   
-  func setupIn(parentView view: UIView) {
+  func setup(parentView view: UIView) {
     view.backgroundColor = UIColor.white
     view.addSubview(self)
     let safeArea = view.safeAreaLayoutGuide
@@ -117,6 +117,9 @@ class EditView: UIView {
     let startButtonConstraints = createDynamicConstraints(forStartButton: true)
     startButtonTopConstraint = startButtonConstraints.0
     startButtonLeftConstraint = startButtonConstraints.1
+    
+    startButtonTopConstraint.isActive = true
+    startButtonLeftConstraint.isActive = true
   }
   
   private func updateInstructionsLabelConstraints() {
@@ -129,6 +132,9 @@ class EditView: UIView {
     let instructionLabelConstraints = createDynamicConstraints(forStartButton: false)
     instructionLabelTopConstraint = instructionLabelConstraints.0
     instructionLabelLeftConstraint = instructionLabelConstraints.1
+    
+    instructionLabelTopConstraint.isActive = true
+    instructionLabelLeftConstraint.isActive = true
   }
   
   private func createDynamicConstraints(forStartButton: Bool) -> (NSLayoutConstraint, NSLayoutConstraint) {
@@ -142,14 +148,14 @@ class EditView: UIView {
     
     if isLandscapeOrientation {
       topConstraint = view.centerYAnchor.constraint(equalTo: clearView.centerYAnchor)
-      topConstraint.isActive = true
+//      topConstraint.isActive = true
       leftConstraint = view.leftAnchor.constraint(equalTo: clearView.leftAnchor, constant: offset)
-      leftConstraint.isActive = true
+//      leftConstraint.isActive = true
     } else {
       topConstraint = view.topAnchor.constraint(equalTo: clearView.topAnchor, constant: offset)
-      topConstraint.isActive = true
+//      topConstraint.isActive = true
       leftConstraint = view.centerXAnchor.constraint(equalTo: clearView.centerXAnchor)
-      leftConstraint.isActive = true
+//      leftConstraint.isActive = true
     }
     
     return (topConstraint, leftConstraint)
@@ -226,18 +232,18 @@ class EditView: UIView {
     instructionLabel.numberOfLines = 0
   }
   
-  private func layOutSubviews() {
+  private func setupConstraints() {
     let safeArea = self.safeAreaLayoutGuide
     // Order important
-    layOutImageView(safeArea: safeArea)
-    layOutClearView(safeArea: safeArea)
+    setupConstraintsForImageView(safeArea: safeArea)
+    setupConstraintsForClearView(safeArea: safeArea)
     // Order not important
-    layOutStartButton()
-    layOutQuitButton()
-    layOutInstructionLabel()
+    setupConstraintsForStartButton()
+    setupConstraintsForQuitButton()
+    setupConstraintsForInstructionLabel()
   }
   
-  private func layOutImageView(safeArea: UILayoutGuide) {
+  private func setupConstraintsForImageView(safeArea: UILayoutGuide) {
     addSubview(imageView)
     imageView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     imageView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
@@ -245,7 +251,7 @@ class EditView: UIView {
     imageView.rightAnchor.constraint(equalTo: safeArea.rightAnchor).isActive = true
   }
   
-  private func layOutClearView(safeArea: UILayoutGuide) {
+  private func setupConstraintsForClearView(safeArea: UILayoutGuide) {
     addSubview(clearView)
     clearView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
     clearView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
@@ -253,19 +259,22 @@ class EditView: UIView {
     clearView.rightAnchor.constraint(equalTo: safeArea.rightAnchor).isActive = true
   }
   
-  private func layOutQuitButton() {
+  private func setupConstraintsForQuitButton() {
     addSubview(quitButton)
     quitButton.topAnchor.constraint(equalTo: clearView.topAnchor, constant: 0).isActive = true
     quitButton.rightAnchor.constraint(equalTo: clearView.rightAnchor, constant: -16).isActive = true
+    quitButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    quitButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
+
   }
   
-  private func layOutStartButton() {
+  private func setupConstraintsForStartButton() {
     addSubview(startButton)
     startButton.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.button).isActive = true
     startButton.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.button).isActive = true
   }
   
-  private func layOutInstructionLabel() {
+  private func setupConstraintsForInstructionLabel() {
     addSubview(instructionLabel)
     instructionLabel.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.button).isActive = true
     instructionLabel.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.button).isActive = true

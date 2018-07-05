@@ -48,7 +48,7 @@ class IntroView: UIView {
     detectUserActions()
   }
   
-  func setupIn(parentView view: UIView) {
+  func setup(parentView view: UIView) {
     view.addSubview(self)
     self.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
     self.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true

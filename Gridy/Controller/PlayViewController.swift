@@ -9,16 +9,9 @@
 import UIKit
 
 class PlayViewController: UIViewController {
+  var playView: PlayView!
   var images: [Image]!
   var hintImage: UIImage!
-  private var imageViews: [ImageView]!
-  private var smallGridView: GridView!
-  private var bigGridView: GridView!
-  
-  private var header: HeaderView!
-  private var hintView: HintView!
-  
-  private var instructionsLabel: UILabel!
   
   private var bigGridModel: GridModel!
   private var smallGridModel: GridModel!
@@ -33,46 +26,41 @@ class PlayViewController: UIViewController {
     self.bigGridModel = GridModel(numberOftile: images.count)
     self.smallGridModel = GridModel(numberOftile: images.count)
     
-    self.constraints = [NSLayoutConstraint]()
-    self.commonConstraints = [NSLayoutConstraint]()
+    randomizeImageViewsPosition()
     
-    self.view.isUserInteractionEnabled = true
-    self.view.backgroundColor = UIColor.white
+    playView = PlayView(hintImage: hintImage, images: images)
     
-    instantiateSubviews()
-    addSubviews()
-    detectUserActions()
-    setupHintViewConstraints()
-    setupCommonConstraintsPriority()
-    NSLayoutConstraint.activate(self.commonConstraints)
+    playView.delegate = self
+    
+    playView.bigGridView.delegate = self
+    playView.smallGridView.delegate = self
+    
+    playView.bigGridView.datasource = self
+    playView.smallGridView.datasource = self
+    
+    playView.header.delegate = self
+    
+    playView.setup(parentView: self.view)
   }
   
   override func viewWillLayoutSubviews() {
     super.viewWillLayoutSubviews()
     if traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .regular {
-      print("Will Layout on IPAD")
-      let isLandscape = view.bounds.width >= view.bounds.height
-      self.clearAllConstraints()
+      let isLandscape = playView.bounds.width >= playView.bounds.height
+      playView.deactivateConstraints()
       if isLandscape {
         // Landscape constraints for IPad
-        setupConstraintsInLandscapeEnvironment(offset: 90)
+        playView.setupConstraintsInLandscapeEnvironment(offset: 90)
       } else {
         // Portrait constraints for IPad
-        setupConstraintsInPortraitEnvironment(offset: 90)
+        playView.setupConstraintsInPortraitEnvironment(offset: 90)
       }
-      setupConstraintsPriority()
-      NSLayoutConstraint.activate(self.constraints)
+      playView.activateConstraints()
     }
   }
   
   override func viewDidLayoutSubviews() {
     refreshLayout()
-  }
-  
-  override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-    if traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .regular {
-      print("Will Transition on IPAD")
-    }
   }
   
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -82,255 +70,60 @@ class PlayViewController: UIViewController {
     let verticalSizeClassChanged = previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass
     
     if verticalSizeClassChanged || horizontaSizeClassChanged {
-      self.clearAllConstraints()
-      
+      playView.layoutIfNeeded()
+      playView.deactivateConstraints()
       let sizeClass = (traitCollection.horizontalSizeClass, traitCollection.verticalSizeClass)
-      
       switch sizeClass {
       case (.regular, .regular):
-        updateLabels(fontSize: 30)
+        playView.updateLabels(fontSize: 30)
       case (.compact, .regular):
-        updateLabels(fontSize: 15)
-        setupConstraintsInPortraitEnvironment(offset: 0)
+        playView.updateLabels(fontSize: 15)
+        playView.setupConstraintsInPortraitEnvironment(offset: 0)
       case (.compact, .compact), (.regular,.compact):
-        updateLabels(fontSize: 15)
-        setupConstraintsInLandscapeEnvironment(offset: 44)
+        playView.updateLabels(fontSize: 15)
+        playView.setupConstraintsInLandscapeEnvironment(offset: 44)
       default: break
       }
-      setupConstraintsPriority()
-      NSLayoutConstraint.activate(self.constraints)
-    }
-  }
-  
-  private func updateLabels(fontSize: CGFloat) {
-    instructionsLabel.font = instructionsLabel.font.withSize(fontSize)
-    
-    header.scoreLabel.font = header.scoreLabel.font.withSize(fontSize)
-    header.newGameButton.titleLabel?.font = header.newGameButton.titleLabel?.font.withSize(fontSize)
-    header.gridyLabel.font = header.gridyLabel.font.withSize(fontSize * 2)
-    header.movesLabel.font = header.movesLabel.font.withSize(fontSize)
-  }
-  
-  private func instantiateSubviews() {
-    instantiateViews()
-    instantiateImageViews()
-    instantiateGridViews()
-  }
-  
-  private func addSubviews() {
-    self.view.addSubview(header)
-    self.view.addSubview(bigGridView)
-    self.view.addSubview(smallGridView)
-    self.view.addSubview(instructionsLabel)
-    
-    for imageView in imageViews {
-      self.view.addSubview(imageView)
-    }
-    self.view.addSubview(hintView)
-  }
-  
-  private func setupConstraintsInPortraitEnvironment(offset: CGFloat) {
-    setupBigGridViewConstraintsInPortraitEnvironmen(offset: offset)
-    setupSmallGridViewConstraintsInPortraitEnvironment(offset: offset)
-    setupOtherViewsConstraintsInPortraitEnvironment()
-  }
-  
-  private func setupConstraintsInLandscapeEnvironment(offset: CGFloat) {
-    setupBigGridViewConstraintInLandscapeEnvironment(offset: offset)
-    setupSmallGridViewConstraintsInLandscapeEnvironment(offset: offset)
-    setupOtherViewsConstraintsInLandscapeEnvironment()
-  }
-  
-  private func setupConstraintsPriority() {
-    for constraint in constraints {
-      constraint.priority = .defaultHigh
-    }
-  }
-  
-  private func setupCommonConstraintsPriority() {
-    for constraint in commonConstraints {
-      constraint.priority = .init(751)
-    }
-  }
-  
-  private func instantiateGridViews() {
-    smallGridView = GridView(tag: 0, eyeOption: true)
-    smallGridView.datasource = self
-    smallGridView.delegate = self
-    smallGridView.backgroundColor = UIColor.red
-    bigGridView = GridView(tag: 1)
-    bigGridView.datasource = self
-    bigGridView.delegate = self
-    bigGridView.backgroundColor = GridyColor.pixieGreen
-    
-    smallGridView.translatesAutoresizingMaskIntoConstraints = false
-    bigGridView.translatesAutoresizingMaskIntoConstraints = false
-  }
-  
-  private func instantiateViews() {
-    self.instructionsLabel = UILabel()
-    instructionsLabel.text = "Drag pieces to the grid.\nSwipe out of the grid to undo"
-    instructionsLabel.numberOfLines = 0
-    
-    instructionsLabel.textAlignment = .center
-    instructionsLabel.adjustsFontSizeToFitWidth = true
-    
-    self.header = HeaderView()
-    header.delegate = self
-    
-    self.hintView = HintView(image: self.hintImage)
-    hintView.isUserInteractionEnabled = false
-    hintView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0)
-    hintView.imageView.alpha = 0
-    
-    header.translatesAutoresizingMaskIntoConstraints = false
-    instructionsLabel.translatesAutoresizingMaskIntoConstraints = false
-    hintView.translatesAutoresizingMaskIntoConstraints = false
-  }
-  
-  private func instantiateImageViews() {
-    self.imageViews = Array(repeating: ImageView(), count: images.count)
-    var index = Array(0...imageViews.count-1)
-    for image in images {
-      if let randomIndex = index.randomPop() {
-        let imageView = ImageView.init(image: image.image)
-        imageView.tag = image.id
-        imageView.translatesAutoresizingMaskIntoConstraints = true
-        self.imageViews[image.id] = imageView
-        smallGridModel.updatePosition(id: image.id, position: randomIndex)
-      }
+      playView.activateConstraints()
     }
   }
   
   private func refreshLayout() {
-    smallGridView.layoutIfNeeded()
-    bigGridView.layoutIfNeeded()
-    for imageView in imageViews {
+    playView.layoutIfNeeded()
+    for imageView in  playView.imageViews {
       let idImage = imageView.tag
       if let position = bigGridModel.position(id: idImage) {
-        let tile = bigGridView.subviews[position]
-        let frame = convertFrame(of: tile, in: bigGridView)
+        let tile =  playView.bigGridView.subviews[position]
+        let frame =  playView.convertFrame(of: tile, in:  playView.bigGridView)
         imageView.frame = frame
       } else if let position = smallGridModel.position(id: idImage) {
-        let tile = smallGridView.subviews[position]
-        let frame = convertFrame(of: tile, in: smallGridView)
+        let tile =  playView.smallGridView.subviews[position]
+        let frame =  playView.convertFrame(of: tile, in:  playView.smallGridView)
         imageView.frame = frame
       }
     }
-    self.header.scoreLabel?.text = "\(score)"
-    let smallSize = smallGridView.subviews[0].frame.size
-    let bigSize = bigGridView.subviews[0].frame.size
+    playView.header.scoreLabel?.text = "\(score)"
+    let smallSize =  playView.smallGridView.subviews[0].frame.size
+    let bigSize =  playView.bigGridView.subviews[0].frame.size
     print("Small Tile size: \(smallSize)")
     print("Big Tile size: \(bigSize)")
   }
   
-  
-  private func setupHintViewConstraints() {
-    let margin = view.layoutMarginsGuide
-    self.commonConstraints.append(hintView.topAnchor.constraint(equalTo: margin.topAnchor))
-    self.commonConstraints.append(hintView.bottomAnchor.constraint(equalTo: margin.bottomAnchor))
-    self.commonConstraints.append(hintView.leftAnchor.constraint(equalTo: margin.leftAnchor))
-    self.commonConstraints.append(hintView.rightAnchor.constraint(equalTo: margin.rightAnchor))
-  }
-  
-  private func setupOtherViewsConstraintsInPortraitEnvironment() {
-    let margin = view.layoutMarginsGuide
-    self.constraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 0))
-    self.constraints.append(header.bottomAnchor.constraint(equalTo: smallGridView.topAnchor, constant: -10))
-    self.constraints.append(header.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
-    self.constraints.append(header.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
-    
-    self.constraints.append(instructionsLabel.topAnchor.constraint(equalTo: smallGridView.bottomAnchor, constant: 0))
-    self.constraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: bigGridView.topAnchor, constant: 0))
-    self.constraints.append(instructionsLabel.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
-    self.constraints.append(instructionsLabel.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
-  }
-  
-  private func setupOtherViewsConstraintsInLandscapeEnvironment() {
-    let margin = view.layoutMarginsGuide
-    self.constraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 5))
-    self.constraints.append(header.bottomAnchor.constraint(equalTo: smallGridView.topAnchor, constant: -10))
-    self.constraints.append(header.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: 0))
-    self.constraints.append(header.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
-    
-    self.constraints.append(instructionsLabel.topAnchor.constraint(equalTo: smallGridView.bottomAnchor, constant: 0))
-    self.constraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: bigGridView.bottomAnchor, constant: 0))
-    self.constraints.append(instructionsLabel.leftAnchor.constraint(equalTo: smallGridView.leftAnchor, constant: 0))
-    self.constraints.append(instructionsLabel.rightAnchor.constraint(equalTo: smallGridView.rightAnchor, constant: 0))
-  }
-  
-  private func setupBigGridViewConstraintsInPortraitEnvironmen(offset: CGFloat) {
-    let margin = view.layoutMarginsGuide
-    self.constraints.append(bigGridView.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: offset))
-    self.constraints.append(bigGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: -offset))
-    self.constraints.append(bigGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: 0))
-    self.constraints.append(bigGridView.heightAnchor.constraint(equalTo: bigGridView.widthAnchor))
-  }
-  
-  private func setupBigGridViewConstraintInLandscapeEnvironment(offset: CGFloat) {
-    let margin = view.layoutMarginsGuide
-    self.constraints.append(bigGridView.topAnchor.constraint(equalTo: margin.topAnchor, constant: offset))
-    self.constraints.append(bigGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: -offset))
-    self.constraints.append(bigGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: 0))
-    self.constraints.append(bigGridView.widthAnchor.constraint(equalTo: bigGridView.heightAnchor))
-  }
-  
-  private func setupSmallGridViewConstraintsInPortraitEnvironment(offset: CGFloat) {
-    let smallGridWidth = view.bounds.width - view.layoutMargins.left - view.layoutMargins.right - offset * 2
-    let smallGridHeight = smallGridViewHeight(tileWidth: smallTileWidth(width: smallGridWidth))
-    
-    self.constraints.append(smallGridView.heightAnchor.constraint(equalToConstant: smallGridHeight))
-    self.constraints.append(smallGridView.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
-    self.constraints.append(smallGridView.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
-  }
-  
-  private func setupSmallGridViewConstraintsInLandscapeEnvironment(offset: CGFloat) {
-    let smallGridWidth = view.bounds.width - view.layoutMargins.left - view.layoutMargins.right - view.bounds.height
-      + view.layoutMargins.bottom + view.layoutMargins.top + offset * 2
-    let smallGridHeight = smallGridViewHeight(tileWidth: smallTileWidth(width: smallGridWidth))
-    
-    self.constraints.append(smallGridView.heightAnchor.constraint(equalToConstant: smallGridHeight))
-    self.constraints.append(smallGridView.topAnchor.constraint(equalTo: bigGridView.topAnchor, constant: 0))
-    self.constraints.append(smallGridView.rightAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
-    self.constraints.append(smallGridView.leftAnchor.constraint(equalTo: header.leftAnchor, constant: 0))
-  }
-  
-  private func smallTileWidth(width: CGFloat) -> CGFloat {
-    let countByRow =  CGFloat.init(Constant.Tiles.Small.countByRow )
-    let tileWidth = (width - Constant.Tiles.Small.gapLength * (countByRow + 1)) / countByRow
-    return tileWidth
-  }
-  
-  private func smallGridViewHeight(tileWidth: CGFloat) -> CGFloat {
-    let numberOfRow = (CGFloat(images.count) / CGFloat(Constant.Tiles.Small.countByRow)).rounded(.up)
-    return tileWidth * numberOfRow + (numberOfRow + 1) * Constant.Tiles.Small.gapLength
-  }
-
-  private func clearAllConstraints() {
-    NSLayoutConstraint.deactivate(self.constraints)
-    self.constraints.removeAll()
-  }
-  
-  ///------------------------------------------------------------------------------------------------------------------------------------------
-  
-  private func detectUserActions() {
-    setupGestureRecognizers()
-  }
-  
-  private func setupGestureRecognizers() {
-    var tag = 0
-    for imageView in imageViews {
-      imageView.tag = tag
-      tag += 1
-      let panGestureRecognizer = UIPanGestureRecognizer.init(target: self, action: #selector(moveImageView))
-      imageView.addGestureRecognizer(panGestureRecognizer)
+  private func randomizeImageViewsPosition() {
+    var index = Array(0...images.count-1)
+    for image in images {
+      if let randomIndex = index.randomPop() {
+        smallGridModel.updatePosition(id: image.id, position: randomIndex)
+      }
     }
   }
-  
-  @objc private func moveImageView(_ sender: UIPanGestureRecognizer) {
+}
+
+extension PlayViewController: PlayViewDelegate {
+  func moveImageView(_ sender: UIPanGestureRecognizer) {
     if let view = sender.view {
       let tag = view.tag
-      self.view.bringSubview(toFront: view)
+      self.playView.bringSubview(toFront: view)
       let translation = sender.translation(in: self.view)
       let newPoint = CGPoint(x: view.center.x + translation.x,
                              y: view.center.y + translation.y)
@@ -338,11 +131,11 @@ class PlayViewController: UIViewController {
       sender.setTranslation(CGPoint.zero, in: self.view)
       
       if sender.state == UIGestureRecognizerState.ended {
-        if bigGridView.frame.contains(view.center) {
-          let max = bigGridView.subviews.count - 1
+        if playView.bigGridView.frame.contains(view.center) {
+          let max = playView.bigGridView.subviews.count - 1
           for index in 0...max {
-            let tile = bigGridView.subviews[index]
-            let center = convertCoordinates(of: view.center, into: bigGridView)
+            let tile = playView.bigGridView.subviews[index]
+            let center = playView.convertCoordinates(of: view.center, into: playView.bigGridView)
             if tile.frame.contains(center) {
               if bigGridModel.isTileFree(at: index) && index != bigGridModel.position(id: tag) {
                 smallGridModel.updatePosition(id: tag, position: nil)
@@ -365,55 +158,34 @@ class PlayViewController: UIViewController {
         
         if bigGridModel.isFull() {
           if bigGridModel.isMatching() {
-            self.instructionsLabel.text = "GAME OVER"
-            self.instructionsLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 35)
-            self.instructionsLabel.textColor = UIColor.red
-            for imageView in imageViews {
+            playView.instructionsLabel.text = "GAME OVER"
+            playView.instructionsLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 35)
+            playView.instructionsLabel.textColor = UIColor.red
+            for imageView in playView.imageViews {
               imageView.isUserInteractionEnabled = false
             }
             let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(displaySharingOptions))
-            self.instructionsLabel.addGestureRecognizer(tapGestureRecognizer)
-            self.instructionsLabel.isUserInteractionEnabled = true
+            playView.instructionsLabel.addGestureRecognizer(tapGestureRecognizer)
+            playView.instructionsLabel.isUserInteractionEnabled = true
           }
         }
       }
     }
   }
   
-  @objc private func displaySharingOptions() {
+  @objc func displaySharingOptions() {
     let text = "My score is \(score)"
     let items = [hintImage as Any, text as Any]
     let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: nil)
     activityViewController.popoverPresentationController?.sourceView = view
     present(activityViewController, animated: true, completion: nil)
   }
-  
-  ///------------------------------------------------------------------------------------------------------------------------------------------
-  private func convertFrame(of tile: UIView, in view: UIView) -> CGRect {
-    let width = tile.frame.width
-    let height = tile.frame.height
-    let origin = convertCoordinates(of: tile.frame.origin, from: view)
-    let size = CGSize(width: width, height: height)
-    return CGRect(origin: origin, size: size)
-  }
-  
-  private func convertCoordinates(of point: CGPoint, from view: UIView) -> CGPoint {
-    let x = point.x + view.frame.origin.x
-    let y = point.y + view.frame.origin.y
-    return CGPoint(x: x, y: y)
-  }
-  
-  private func convertCoordinates(of point: CGPoint, into view: UIView) -> CGPoint {
-    let x = point.x - view.frame.origin.x
-    let y = point.y - view.frame.origin.y
-    return CGPoint(x: x, y: y)
-  }
 }
 
 extension PlayViewController: GridViewDelegate {
   func eyeImageViewTapped() {
-    view.bringSubview(toFront: hintView)
-    hintView.appearsTemporarily()
+    playView.bringSubview(toFront: playView.hintView)
+    playView.hintView.appearsTemporarily()
   }
   
   func gapLength(gridView tag: Int) -> CGFloat {
@@ -424,7 +196,6 @@ extension PlayViewController: GridViewDelegate {
 
 extension PlayViewController: GridViewDataSource {
   func getTile(at index: Int) -> UIView {
-    // To Implement
     let tile = UIView()
     tile.backgroundColor = UIColor.lightGray
     return tile
