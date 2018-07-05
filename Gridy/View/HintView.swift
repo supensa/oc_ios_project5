@@ -23,7 +23,7 @@ class HintView: UIView {
     imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
   }
   
-  func appearsTemporarily() {
+  func appearsTemporarily(for delay: TimeInterval) {
     self.isUserInteractionEnabled = true
     let fadingInAnimation = {
       self.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
@@ -38,7 +38,7 @@ class HintView: UIView {
           self.imageView.alpha = 0.0
         }
         
-        UIView.animate(withDuration: 0.7, delay: 2, options: [], animations: fadingOutAnimation) {
+        UIView.animate(withDuration: 0.7, delay: delay, options: [], animations: fadingOutAnimation) {
           (completed) in
           if completed {
             self.isUserInteractionEnabled = false

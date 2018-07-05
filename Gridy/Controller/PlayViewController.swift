@@ -46,14 +46,15 @@ class PlayViewController: UIViewController {
   override func viewWillLayoutSubviews() {
     super.viewWillLayoutSubviews()
     if traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .regular {
-      let isLandscape = playView.bounds.width >= playView.bounds.height
+      let isLandscape = view.bounds.width >= view.bounds.height
+      playView.layoutIfNeeded()
       playView.deactivateConstraints()
       if isLandscape {
         // Landscape constraints for IPad
         playView.setupConstraintsInLandscapeEnvironment(offset: 90)
       } else {
         // Portrait constraints for IPad
-        playView.setupConstraintsInPortraitEnvironment(offset: 90)
+        playView.setupConstraintsInPortraitEnvironment(offset: 130)
       }
       playView.activateConstraints()
     }
@@ -70,16 +71,17 @@ class PlayViewController: UIViewController {
     let verticalSizeClassChanged = previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass
     
     if verticalSizeClassChanged || horizontaSizeClassChanged {
-      playView.layoutIfNeeded()
       playView.deactivateConstraints()
       let sizeClass = (traitCollection.horizontalSizeClass, traitCollection.verticalSizeClass)
       switch sizeClass {
       case (.regular, .regular):
         playView.updateLabels(fontSize: 30)
       case (.compact, .regular):
+        playView.layoutIfNeeded()
         playView.updateLabels(fontSize: 15)
         playView.setupConstraintsInPortraitEnvironment(offset: 0)
       case (.compact, .compact), (.regular,.compact):
+        playView.layoutIfNeeded()
         playView.updateLabels(fontSize: 15)
         playView.setupConstraintsInLandscapeEnvironment(offset: 44)
       default: break
@@ -185,7 +187,7 @@ extension PlayViewController: PlayViewDelegate {
 extension PlayViewController: GridViewDelegate {
   func eyeImageViewTapped() {
     playView.bringSubview(toFront: playView.hintView)
-    playView.hintView.appearsTemporarily()
+    playView.hintView.appearsTemporarily(for: 2)
   }
   
   func gapLength(gridView tag: Int) -> CGFloat {
