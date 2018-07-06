@@ -13,7 +13,7 @@ protocol IntroViewDelegate: AnyObject {
   func takeCameraImage()
   func takePhotoLibraryImage()
 }
-
+  
 class IntroView: UIView {
   
   required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
@@ -35,6 +35,8 @@ class IntroView: UIView {
   private var buttonStackViewHeightConstraint: NSLayoutConstraint!
   private var horizontalStackViewSpacing: NSLayoutConstraint!
   
+  private var verticalStackViewSpacing: NSLayoutConstraint!
+  
   weak var delegate: IntroViewDelegate?
   
   init() {
@@ -44,7 +46,7 @@ class IntroView: UIView {
     self.backgroundColor = UIColor.white
     
     instantiateSubviews()
-    layOutSubviews()
+    setupConstraint()
     detectUserActions()
   }
   
@@ -56,18 +58,17 @@ class IntroView: UIView {
     self.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
   }
   
-  private func updateHorizontalStackViewConstraint(forIpad: Bool) {
-    if horizontalStackViewSpacing == nil {
-      let spacing = forIpad ? Constant.Layout.Spacing.buttonStackViewiPad * 1.5 : Constant.Layout.Spacing.buttonStackViewiPhone
-      self.horizontalStackView.spacing = spacing
-    }
-  }
-  
-  private func updateButtonStackViewConstraint(forIpad: Bool) {
+  private func updateStackViewConstraint(forIpad: Bool) {
     if buttonStackViewHeightConstraint == nil {
-      let size = forIpad ? Constant.Layout.Height.buttonStackView * 1.5 : Constant.Layout.Height.buttonStackView
+      let size = forIpad ? Constant.Layout.Height.buttonStackView * 1.5 + 30 : Constant.Layout.Height.buttonStackView
       buttonStackViewHeightConstraint = buttonStackView.heightAnchor.constraint(equalToConstant: size)
       buttonStackViewHeightConstraint.isActive = true
+      
+      let horizontalSpacing = forIpad ? Constant.Layout.Spacing.buttonStackViewiPad * 1.5 : Constant.Layout.Spacing.buttonStackViewiPhone
+      self.horizontalStackView.spacing = horizontalSpacing
+      let verticalSpacing: CGFloat = forIpad ? 30 : 0
+      self.verticalStackView.spacing = verticalSpacing
+      if forIpad { choiceLabel.font = choiceLabel.font.withSize(30) }
     }
   }
   
@@ -78,11 +79,13 @@ class IntroView: UIView {
   }
   
   private func updateTitleLabelConstraint() {
+    guard let superview = self.superview else { return }
+    
     if let titleLabelHeightConstraint = self.titleLabelHeightConstraint {
       titleLabelHeightConstraint.isActive = false
     }
     
-    let height = UIScreen.main.bounds.height * Constant.Layout.HeightRatio.titleLabel
+    let height = superview.bounds.height * Constant.Layout.HeightRatio.titleLabel
     self.titleLabelHeightConstraint = self.titleLabel.heightAnchor.constraint(equalToConstant: height)
     self.titleLabelHeightConstraint.isActive = true
     self.titleLabel.font = self.titleLabel.font.withSize(height * Constant.Font.sizeRatio.titleLabel)
@@ -117,28 +120,28 @@ class IntroView: UIView {
     delegate?.takePhotoLibraryImage()
   }
   
-  private func layOutSubviews() {
+  private func setupConstraint() {
     let safeArea = self.safeAreaLayoutGuide
-    layOutTitleLabel(safeArea: safeArea)
-    layOutCommentLabel(safeArea: safeArea)
-    layOutButtonStackView(safeArea: safeArea)
+    setupTitleLabelConstraints(safeArea: safeArea)
+    setupCommentLabelConstraints(safeArea: safeArea)
+    setupButtonStackViewConstraints(safeArea: safeArea)
   }
   
-  private func layOutTitleLabel(safeArea: UILayoutGuide) {
+  private func setupTitleLabelConstraints(safeArea: UILayoutGuide) {
     self.addSubview(titleLabel)
     titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
     titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constant.Layout.Padding.titleLabel).isActive = true
     titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constant.Layout.Padding.titleLabel).isActive = true
   }
   
-  private func layOutCommentLabel(safeArea: UILayoutGuide) {
+  private func setupCommentLabelConstraints(safeArea: UILayoutGuide) {
     self.addSubview(commentLabel)
     commentLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0).isActive = true
     commentLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 0).isActive = true
     commentLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor, constant: 0).isActive = true
   }
   
-  private func layOutButtonStackView(safeArea: UILayoutGuide) {
+  private func setupButtonStackViewConstraints(safeArea: UILayoutGuide) {
     let containerView = createContainerView()
     containerView.addSubview(buttonStackView)
     buttonStackView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
@@ -200,14 +203,18 @@ extension IntroView {
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     super.traitCollectionDidChange(previousTraitCollection)
     
-    let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
-    let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
-    let forIpad = sizeClass == iPad
+    let horizontaSizeClassChanged = previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
+    let verticalSizeClassChanged = previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass
     
-    updateHorizontalStackViewConstraint(forIpad: forIpad)
-    updateButtonStackViewConstraint(forIpad: forIpad)
-    updateButtonConstraints(forIpad: forIpad)
-    updateTitleLabelConstraint()
-    updateCommentLabelConstraint()
+    if verticalSizeClassChanged || horizontaSizeClassChanged {
+      let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
+      let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
+      let forIpad = sizeClass == iPad
+      
+      updateStackViewConstraint(forIpad: forIpad)
+      updateButtonConstraints(forIpad: forIpad)
+      updateTitleLabelConstraint()
+      updateCommentLabelConstraint()
+    }
   }
 }

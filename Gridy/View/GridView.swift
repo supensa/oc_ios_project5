@@ -11,7 +11,7 @@ import UIKit
 protocol GridViewDataSource: AnyObject {
   func numberOfTiles(gridView tag: Int) -> Int
   func numberOfTilesPerRow(gridView tag: Int) -> Int
-  func getTile(at index: Int) -> UIView
+  func getTile(at index: Int, for tag: Int) -> UIView
 }
 
 protocol GridViewDelegate: AnyObject {
@@ -56,7 +56,7 @@ class GridView: UIView {
     }
     
     for index in 0..<tileCount {
-      guard let tile = datasource?.getTile(at: index) else { continue }
+      guard let tile = datasource?.getTile(at: index, for: tag) else { continue }
       tile.translatesAutoresizingMaskIntoConstraints = true
       if self.subviews.count < tileCount {
         self.addSubview(tile)

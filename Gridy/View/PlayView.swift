@@ -16,8 +16,8 @@ class PlayView: UIView {
   
   weak var delegate: PlayViewDelegate?
   
-  var smallGridView: GridView!
-  var bigGridView: GridView!
+  var containerGridView: GridView!
+  var puzzleGridView: GridView!
   var header: HeaderView!
   
   var imageViews: [ImageView]!
@@ -125,8 +125,8 @@ class PlayView: UIView {
   
   private func addSubviews() {
     self.addSubview(header)
-    self.addSubview(bigGridView)
-    self.addSubview(smallGridView)
+    self.addSubview(puzzleGridView)
+    self.addSubview(containerGridView)
     self.addSubview(instructionsLabel)
     
     for imageView in imageViews {
@@ -142,13 +142,13 @@ class PlayView: UIView {
   }
   
   private func instantiateGridViews() {
-    smallGridView = GridView(tag: 0, eyeOption: true)
-    smallGridView.backgroundColor = UIColor.red
-    bigGridView = GridView(tag: 1)
-    bigGridView.backgroundColor = GridyColor.pixieGreen
+    containerGridView = GridView(tag: 0, eyeOption: true)
+    containerGridView.backgroundColor = UIColor.white
+    puzzleGridView = GridView(tag: 1)
+    puzzleGridView.backgroundColor = GridyColor.janna
     
-    smallGridView.translatesAutoresizingMaskIntoConstraints = false
-    bigGridView.translatesAutoresizingMaskIntoConstraints = false
+    containerGridView.translatesAutoresizingMaskIntoConstraints = false
+    puzzleGridView.translatesAutoresizingMaskIntoConstraints = false
   }
   
   private func instantiateViews(hintImage: UIImage) {
@@ -191,84 +191,84 @@ class PlayView: UIView {
   private func setupOtherViewsConstraintsInPortraitEnvironment() {
     if let margin = self.superview?.layoutMarginsGuide {
       self.unsharedConstraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 0))
-      self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: smallGridView.topAnchor, constant: -10))
-      self.unsharedConstraints.append(header.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: containerGridView.topAnchor, constant: -10))
+      self.unsharedConstraints.append(header.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
+      self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
       
-      self.unsharedConstraints.append(instructionsLabel.topAnchor.constraint(equalTo: smallGridView.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: bigGridView.topAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: puzzleGridView.topAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
     }
   }
   
   private func setupOtherViewsConstraintsInLandscapeEnvironment() {
     if let margin = self.superview?.layoutMarginsGuide {
       self.unsharedConstraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 5))
-      self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: smallGridView.topAnchor, constant: -10))
+      self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: containerGridView.topAnchor, constant: -10))
       self.unsharedConstraints.append(header.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
       
-      self.unsharedConstraints.append(instructionsLabel.topAnchor.constraint(equalTo: smallGridView.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: bigGridView.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.leftAnchor.constraint(equalTo: smallGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.rightAnchor.constraint(equalTo: smallGridView.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: puzzleGridView.bottomAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.leftAnchor.constraint(equalTo: containerGridView.leftAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.rightAnchor.constraint(equalTo: containerGridView.rightAnchor, constant: 0))
     }
   }
   
   private func setupBigGridViewConstraintsInPortraitEnvironmen(offset: CGFloat) {
     if let margin = self.superview?.layoutMarginsGuide {
-      self.unsharedConstraints.append(bigGridView.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: offset))
-      self.unsharedConstraints.append(bigGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: -offset))
-      self.unsharedConstraints.append(bigGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(bigGridView.heightAnchor.constraint(equalTo: bigGridView.widthAnchor))
+      self.unsharedConstraints.append(puzzleGridView.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: offset))
+      self.unsharedConstraints.append(puzzleGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: -offset))
+      self.unsharedConstraints.append(puzzleGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: 0))
+      self.unsharedConstraints.append(puzzleGridView.heightAnchor.constraint(equalTo: puzzleGridView.widthAnchor))
     }
   }
   
   private func setupBigGridViewConstraintInLandscapeEnvironment(offset: CGFloat) {
     if let margin = self.superview?.layoutMarginsGuide {
-      self.unsharedConstraints.append(bigGridView.topAnchor.constraint(equalTo: margin.topAnchor, constant: offset))
-      self.unsharedConstraints.append(bigGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: -offset))
-      self.unsharedConstraints.append(bigGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: 0))
-      self.unsharedConstraints.append(bigGridView.widthAnchor.constraint(equalTo: bigGridView.heightAnchor))
+      self.unsharedConstraints.append(puzzleGridView.topAnchor.constraint(equalTo: margin.topAnchor, constant: offset))
+      self.unsharedConstraints.append(puzzleGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: -offset))
+      self.unsharedConstraints.append(puzzleGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(puzzleGridView.widthAnchor.constraint(equalTo: puzzleGridView.heightAnchor))
     }
   }
   
   private func setupSmallGridViewConstraintsInPortraitEnvironment(offset: CGFloat) {
     if let superview = self.superview {
-      let smallGridWidth = superview.bounds.width - superview.layoutMargins.left - superview.layoutMargins.right - offset * 2
-      let smallGridHeight = smallGridViewHeight(tileWidth: smallTileWidth(width: smallGridWidth))
+      let containerGridWidth = superview.bounds.width - superview.layoutMargins.left - superview.layoutMargins.right - offset * 2
+      let containerGridHeight = containerGridViewHeight(tileWidth: containerTileWidth(width: containerGridWidth))
       
-      self.unsharedConstraints.append(smallGridView.heightAnchor.constraint(equalToConstant: smallGridHeight))
-      self.unsharedConstraints.append(smallGridView.leftAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(smallGridView.rightAnchor.constraint(equalTo: bigGridView.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(containerGridView.heightAnchor.constraint(equalToConstant: containerGridHeight))
+      self.unsharedConstraints.append(containerGridView.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
+      self.unsharedConstraints.append(containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
     }
   }
   
   private func setupSmallGridViewConstraintsInLandscapeEnvironment(offset: CGFloat) {
     if let superview = self.superview {
-      let smallGridWidth = superview.bounds.width - superview.layoutMargins.left - superview.layoutMargins.right - superview.bounds.height
+      let containerGridWidth = superview.bounds.width - superview.layoutMargins.left - superview.layoutMargins.right - superview.bounds.height
         + superview.layoutMargins.bottom + superview.layoutMargins.top + offset * 2
-      let smallGridHeight = smallGridViewHeight(tileWidth: smallTileWidth(width: smallGridWidth))
+      let containerGridHeight = containerGridViewHeight(tileWidth: containerTileWidth(width: containerGridWidth))
       
-      self.unsharedConstraints.append(smallGridView.heightAnchor.constraint(equalToConstant: smallGridHeight))
-      self.unsharedConstraints.append(smallGridView.topAnchor.constraint(equalTo: bigGridView.topAnchor, constant: 0))
-      self.unsharedConstraints.append(smallGridView.rightAnchor.constraint(equalTo: bigGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(smallGridView.leftAnchor.constraint(equalTo: header.leftAnchor, constant: 0))
+      self.unsharedConstraints.append(containerGridView.heightAnchor.constraint(equalToConstant: containerGridHeight))
+      self.unsharedConstraints.append(containerGridView.topAnchor.constraint(equalTo: puzzleGridView.topAnchor, constant: 0))
+      self.unsharedConstraints.append(containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
+      self.unsharedConstraints.append(containerGridView.leftAnchor.constraint(equalTo: header.leftAnchor, constant: 0))
     }
   }
   
-  private func smallTileWidth(width: CGFloat) -> CGFloat {
-    let countByRow =  CGFloat.init(Constant.Tiles.Small.countByRow )
-    let tileWidth = (width - Constant.Tiles.Small.gapLength * (countByRow + 1)) / countByRow
+  private func containerTileWidth(width: CGFloat) -> CGFloat {
+    let countByRow =  CGFloat.init(Constant.Tiles.Container.countByRow )
+    let tileWidth = (width - Constant.Tiles.Container.gapLength * (countByRow + 1)) / countByRow
     return tileWidth
   }
   
-  private func smallGridViewHeight(tileWidth: CGFloat) -> CGFloat {
-    let numberOfRow = (CGFloat(imageViews.count) / CGFloat(Constant.Tiles.Small.countByRow)).rounded(.up)
-    return tileWidth * numberOfRow + (numberOfRow + 1) * Constant.Tiles.Small.gapLength
+  private func containerGridViewHeight(tileWidth: CGFloat) -> CGFloat {
+    let numberOfRow = (CGFloat(imageViews.count) / CGFloat(Constant.Tiles.Container.countByRow)).rounded(.up)
+    return tileWidth * numberOfRow + (numberOfRow + 1) * Constant.Tiles.Container.gapLength
   }
-
+  
   private func detectUserActions() {
     setupGestureRecognizers()
   }

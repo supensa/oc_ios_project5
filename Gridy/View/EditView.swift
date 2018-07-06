@@ -381,13 +381,4 @@ extension EditView: UIGestureRecognizerDelegate {
     }
     return true
   }
-  
-  // Delegate method: UIGestureRecognizerDelegate
-  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-    var beReceived = true
-    if let view = touch.view {
-      beReceived = view.isDescendant(of: self) ? true : false
-    }
-    return beReceived
-  }
 }

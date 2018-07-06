@@ -14,25 +14,14 @@ struct Constant {
     
     static let totalCount = 16
     
-    struct Big {
+    struct Puzzle {
       static let countByRow = 4
       static let gapLength: CGFloat = 1
     }
     
-    struct Small {
+    struct Container {
       static let countByRow = 6
       static let gapLength: CGFloat = 3.4
-    }
-  }
-  
-  struct Grids {
-    struct big {
-      static let topMargin: CGFloat = 46
-      static let bottomMargin: CGFloat = 46
-    }
-    
-    struct small {
-      
     }
   }
   

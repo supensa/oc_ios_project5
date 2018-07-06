@@ -20,8 +20,6 @@ class EditViewController: UIViewController {
     editView.setup(parentView: self.view)
   }
   
-  
-  
   override func viewWillLayoutSubviews() {
     editView.updateLayout()
   }

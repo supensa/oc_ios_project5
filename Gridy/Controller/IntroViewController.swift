@@ -55,14 +55,12 @@ extension IntroViewController: UIImagePickerControllerDelegate, UINavigationCont
   
   // Delegate method: IntroViewDelegate
   func takeCameraImage() {
-    print("Camera Picture")
     let sourceType = UIImagePickerControllerSourceType.camera
     displayMediaPicker(sourceType: sourceType)
   }
   
   // Delegate method: IntroViewDelegate
   func takePhotoLibraryImage() {
-    print("Library Picture")
     let sourceType = UIImagePickerControllerSourceType.photoLibrary
     displayMediaPicker(sourceType: sourceType)
   }

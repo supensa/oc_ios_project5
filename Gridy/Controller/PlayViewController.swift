@@ -13,8 +13,8 @@ class PlayViewController: UIViewController {
   var images: [Image]!
   var hintImage: UIImage!
   
-  private var bigGridModel: GridModel!
-  private var smallGridModel: GridModel!
+  private var puzzleGridModel: GridModel!
+  private var containerGridModel: GridModel!
   private var score = 0
   
   private var constraints: [NSLayoutConstraint]!
@@ -23,8 +23,8 @@ class PlayViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    self.bigGridModel = GridModel(numberOftile: images.count)
-    self.smallGridModel = GridModel(numberOftile: images.count)
+    self.puzzleGridModel = GridModel(numberOftile: images.count)
+    self.containerGridModel = GridModel(numberOftile: images.count)
     
     randomizeImageViewsPosition()
     
@@ -32,11 +32,11 @@ class PlayViewController: UIViewController {
     
     playView.delegate = self
     
-    playView.bigGridView.delegate = self
-    playView.smallGridView.delegate = self
+    playView.puzzleGridView.delegate = self
+    playView.containerGridView.delegate = self
     
-    playView.bigGridView.datasource = self
-    playView.smallGridView.datasource = self
+    playView.puzzleGridView.datasource = self
+    playView.containerGridView.datasource = self
     
     playView.header.delegate = self
     
@@ -94,33 +94,33 @@ class PlayViewController: UIViewController {
     playView.layoutIfNeeded()
     for imageView in  playView.imageViews {
       let idImage = imageView.tag
-      if let position = bigGridModel.position(id: idImage) {
-        let tile =  playView.bigGridView.subviews[position]
-        let frame =  playView.convertFrame(of: tile, in:  playView.bigGridView)
+      if let position = puzzleGridModel.position(id: idImage) {
+        let tile =  playView.puzzleGridView.subviews[position]
+        let frame =  playView.convertFrame(of: tile, in:  playView.puzzleGridView)
         imageView.frame = frame
-      } else if let position = smallGridModel.position(id: idImage) {
-        let tile =  playView.smallGridView.subviews[position]
-        let frame =  playView.convertFrame(of: tile, in:  playView.smallGridView)
+      } else if let position = containerGridModel.position(id: idImage) {
+        let tile =  playView.containerGridView.subviews[position]
+        let frame =  playView.convertFrame(of: tile, in:  playView.containerGridView)
         imageView.frame = frame
       }
     }
     playView.header.scoreLabel?.text = "\(score)"
-    let smallSize =  playView.smallGridView.subviews[0].frame.size
-    let bigSize =  playView.bigGridView.subviews[0].frame.size
-    print("Small Tile size: \(smallSize)")
-    print("Big Tile size: \(bigSize)")
+    let smallSize =  playView.containerGridView.subviews[0].frame.size
+    let bigSize =  playView.puzzleGridView.subviews[0].frame.size
+    print("Container Tile size: \(smallSize)")
+    print("Puzzle Tile size: \(bigSize)")
   }
   
   private func randomizeImageViewsPosition() {
     var index = Array(0...images.count-1)
     for image in images {
       if let randomIndex = index.randomPop() {
-        smallGridModel.updatePosition(id: image.id, position: randomIndex)
+        containerGridModel.updatePosition(id: image.id, position: randomIndex)
       }
     }
   }
 }
-  
+
 extension PlayViewController: PlayViewDelegate {
   func moveImageView(_ sender: UIPanGestureRecognizer) {
     if let view = sender.view {
@@ -133,15 +133,15 @@ extension PlayViewController: PlayViewDelegate {
       sender.setTranslation(CGPoint.zero, in: self.view)
       
       if sender.state == UIGestureRecognizerState.ended {
-        if playView.bigGridView.frame.contains(view.center) {
-          let max = playView.bigGridView.subviews.count - 1
+        if playView.puzzleGridView.frame.contains(view.center) {
+          let max = playView.puzzleGridView.subviews.count - 1
           for index in 0...max {
-            let tile = playView.bigGridView.subviews[index]
-            let center = playView.convertCoordinates(of: view.center, into: playView.bigGridView)
+            let tile = playView.puzzleGridView.subviews[index]
+            let center = playView.convertCoordinates(of: view.center, into: playView.puzzleGridView)
             if tile.frame.contains(center) {
-              if bigGridModel.isTileFree(at: index) && index != bigGridModel.position(id: tag) {
-                smallGridModel.updatePosition(id: tag, position: nil)
-                bigGridModel.updatePosition(id: tag, position: index)
+              if puzzleGridModel.isTileFree(at: index) && index != puzzleGridModel.position(id: tag) {
+                containerGridModel.updatePosition(id: tag, position: nil)
+                puzzleGridModel.updatePosition(id: tag, position: index)
                 self.score += 1
                 break
               }
@@ -149,17 +149,17 @@ extension PlayViewController: PlayViewDelegate {
             }
           }
         } else {
-          smallGridModel.updatePosition(id: tag, position: nil)
-          if let _ = bigGridModel.position(id: tag) { self.score += 1 }
-          bigGridModel.updatePosition(id: tag, position: nil)
-          let position = smallGridModel.getFreeTilePosition()
-          smallGridModel.updatePosition(id: tag, position: position)
+          containerGridModel.updatePosition(id: tag, position: nil)
+          if let _ = puzzleGridModel.position(id: tag) { self.score += 1 }
+          puzzleGridModel.updatePosition(id: tag, position: nil)
+          let position = containerGridModel.getFreeTilePosition()
+          containerGridModel.updatePosition(id: tag, position: position)
         }
         
         refreshLayout()
         
-        if bigGridModel.isFull() {
-          if bigGridModel.isMatching() {
+        if puzzleGridModel.isFull() {
+          if puzzleGridModel.isMatching() {
             playView.instructionsLabel.text = "GAME OVER"
             playView.instructionsLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 35)
             playView.instructionsLabel.textColor = UIColor.red
@@ -191,15 +191,19 @@ extension PlayViewController: GridViewDelegate {
   }
   
   func gapLength(gridView tag: Int) -> CGFloat {
-    if tag == 0 { return Constant.Tiles.Small.gapLength }
-    return Constant.Tiles.Big.gapLength
+    if tag == 0 { return Constant.Tiles.Container.gapLength }
+    return Constant.Tiles.Puzzle.gapLength
   }
 }
 
 extension PlayViewController: GridViewDataSource {
-  func getTile(at index: Int) -> UIView {
+  func getTile(at index: Int, for tag: Int) -> UIView {
     let tile = UIView()
-    tile.backgroundColor = UIColor.lightGray
+    if tag == 0 {
+      tile.layer.borderWidth = 1
+      tile.layer.borderColor = GridyColor.janna.cgColor
+    }
+    tile.backgroundColor = UIColor.white
     return tile
   }
   
@@ -208,8 +212,8 @@ extension PlayViewController: GridViewDataSource {
   }
   
   func numberOfTilesPerRow(gridView tag: Int) -> Int {
-    if tag == 0 { return Constant.Tiles.Small.countByRow }
-    return Constant.Tiles.Big.countByRow
+    if tag == 0 { return Constant.Tiles.Container.countByRow }
+    return Constant.Tiles.Puzzle.countByRow
   }
 }
 
