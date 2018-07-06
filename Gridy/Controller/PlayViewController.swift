@@ -120,7 +120,7 @@ class PlayViewController: UIViewController {
     }
   }
 }
-
+  
 extension PlayViewController: PlayViewDelegate {
   func moveImageView(_ sender: UIPanGestureRecognizer) {
     if let view = sender.view {
@@ -215,6 +215,6 @@ extension PlayViewController: GridViewDataSource {
 
 extension PlayViewController: HeaderViewDelegate {
   func newGameButtonTapped() {
-    dismiss(animated: true, completion: nil)
+    self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
   }
 }

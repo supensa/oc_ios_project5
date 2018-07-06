@@ -11,7 +11,6 @@ import AVFoundation
 import Photos
 
 class IntroViewController: UIViewController {
-  
   override func viewDidLoad() {
     let introView =  IntroView.init()
     introView.delegate = self

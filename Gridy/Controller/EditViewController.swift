@@ -36,10 +36,9 @@ extension EditViewController: EditViewDelegate {
   // Delegate method: EditViewDelegate
   func startPuzzle() {
     self.imagesBound = editView.imagesBound
-    
     let playViewController = PlayViewController()
-    playViewController.images = getSnapshots()
-    playViewController.hintImage = getHintImage()
+    playViewController.images = self.getSnapshots()
+    playViewController.hintImage = self.getHintImage()
     self.present(playViewController, animated: true)
   }
   

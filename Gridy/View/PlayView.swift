@@ -59,7 +59,6 @@ class PlayView: UIView {
     self.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
   }
   
-  
   func setupConstraintsInPortraitEnvironment(offset: CGFloat) {
     setupBigGridViewConstraintsInPortraitEnvironmen(offset: offset)
     setupSmallGridViewConstraintsInPortraitEnvironment(offset: offset)
@@ -183,12 +182,10 @@ class PlayView: UIView {
   }
   
   private func setupHintViewConstraints() {
-    if let margin = self.superview?.layoutMarginsGuide {
-      self.commonConstraints.append(hintView.topAnchor.constraint(equalTo: margin.topAnchor))
-      self.commonConstraints.append(hintView.bottomAnchor.constraint(equalTo: margin.bottomAnchor))
-      self.commonConstraints.append(hintView.leftAnchor.constraint(equalTo: margin.leftAnchor))
-      self.commonConstraints.append(hintView.rightAnchor.constraint(equalTo: margin.rightAnchor))
-    }
+    self.commonConstraints.append(hintView.topAnchor.constraint(equalTo: self.topAnchor))
+    self.commonConstraints.append(hintView.bottomAnchor.constraint(equalTo: self.bottomAnchor))
+    self.commonConstraints.append(hintView.leftAnchor.constraint(equalTo: self.leftAnchor))
+    self.commonConstraints.append(hintView.rightAnchor.constraint(equalTo: self.rightAnchor))
   }
   
   private func setupOtherViewsConstraintsInPortraitEnvironment() {
