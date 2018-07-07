@@ -12,7 +12,7 @@ class EditViewController: UIViewController {
   var image: UIImage!
   var imagesBound: [CGRect]!
   var wholeImage: UIImage?
-  weak var editView: EditView!
+  var editView: EditView!
   
   override func viewDidLoad() {
     editView = EditView.init(image: image!)
@@ -21,7 +21,25 @@ class EditViewController: UIViewController {
   }
   
   override func viewWillLayoutSubviews() {
-    editView.updateLayout()
+    let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
+    let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
+    let forIpad = sizeClass == iPad
+    editView.updateLayout(forIpad: forIpad)
+  }
+  
+  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    super.traitCollectionDidChange(previousTraitCollection)
+    
+    let horizontaSizeClassChanged = previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
+    let verticalSizeClassChanged = previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass
+    
+    if verticalSizeClassChanged || horizontaSizeClassChanged {
+      let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
+      let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
+      if iPad == sizeClass {
+        editView.upadateForIpad()
+      }
+    }
   }
 }
 

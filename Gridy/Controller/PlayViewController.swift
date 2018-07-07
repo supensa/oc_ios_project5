@@ -16,10 +16,7 @@ class PlayViewController: UIViewController {
   private var puzzleGridModel: GridModel!
   private var containerGridModel: GridModel!
   private var score = 0
-  
-  private var constraints: [NSLayoutConstraint]!
-  private var commonConstraints: [NSLayoutConstraint]!
-  
+    
   override func viewDidLoad() {
     super.viewDidLoad()
     

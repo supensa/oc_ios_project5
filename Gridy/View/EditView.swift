@@ -26,11 +26,18 @@ class EditView: UIView {
   
   private var instructionLabelTopConstraint: NSLayoutConstraint!
   private var instructionLabelLeftConstraint: NSLayoutConstraint!
+  private var instructionLabelWidthConstraint: NSLayoutConstraint!
+  private var instructionLabelHeightConstraint: NSLayoutConstraint!
+  
+  private var quitButtonTopConstraint: NSLayoutConstraint!
+  private var quitButtonHeightConstraint: NSLayoutConstraint!
+  private var quitButtonWidthConstraint: NSLayoutConstraint!
   
   private var initialUIImageViewCenter: CGPoint?
   
   private var isLandscapeOrientation: Bool {
-    return UIScreen.main.bounds.width > UIScreen.main.bounds.height
+    guard let superview = self.superview else { return false }
+    return superview.bounds.width > superview.bounds.height
   }
   
   weak var delegate: EditViewDelegate?
@@ -62,7 +69,36 @@ class EditView: UIView {
     self.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
   }
   
-  private func setupOverlay(view: UIView) {
+  func updateLayout(forIpad: Bool) {
+    initialUIImageViewCenter = nil
+    setupLayer(view: clearView)
+    updateStartButtonConstraints()
+    updateInstructionsLabelConstraints(forIpad: forIpad)
+  }
+  
+  func upadateForIpad() {
+    var doubleFontSize = Constant.Font.size.choiceLabel * 2
+    instructionLabel.font = instructionLabel.font.withSize(doubleFontSize)
+    startButton.titleLabel?.font = startButton.titleLabel?.font.withSize(doubleFontSize)
+    doubleFontSize = Constant.Font.size.quitButtonLabel * 2
+    quitButton.titleLabel?.font = quitButton.titleLabel?.font.withSize(doubleFontSize)
+    
+    if quitButtonWidthConstraint != nil && quitButtonHeightConstraint != nil && quitButtonTopConstraint != nil {
+      quitButtonWidthConstraint.isActive = false
+      quitButtonHeightConstraint.isActive = false
+      quitButtonTopConstraint.isActive = false
+    }
+    
+    quitButtonTopConstraint = quitButton.topAnchor.constraint(equalTo: clearView.topAnchor, constant: 16)
+    quitButtonHeightConstraint = quitButton.heightAnchor.constraint(equalToConstant: 120)
+    quitButtonWidthConstraint = quitButton.widthAnchor.constraint(equalToConstant: 120)
+    
+    quitButtonWidthConstraint.isActive = true
+    quitButtonHeightConstraint.isActive = true
+    quitButtonTopConstraint.isActive = true
+  }
+  
+  private func setupLayer(view: UIView) {
     let fadingOutAnimation = {
       view.alpha = 0.0
       self.startButton.alpha = 0.0
@@ -87,8 +123,9 @@ class EditView: UIView {
   }
   
   private func createMaskLayer() -> CAShapeLayer {
+    guard let superView = self.superview else { return CAShapeLayer()}
     let path = CGMutablePath()
-    path.addRect(CGRect(origin: .zero, size: UIScreen.main.bounds.size))
+    path.addRect(CGRect(origin: .zero, size: superView.bounds.size))
     
     imagesBound = Position.init(parentView: self).getSquares()
     for square in imagesBound {
@@ -100,11 +137,6 @@ class EditView: UIView {
     maskLayer.fillRule = kCAFillRuleEvenOdd
     
     return maskLayer
-  }
-  
-  private func updateLayOutConstraints() {
-    updateStartButtonConstraints()
-    updateInstructionsLabelConstraints()
   }
   
   private func updateStartButtonConstraints() {
@@ -122,7 +154,7 @@ class EditView: UIView {
     startButtonLeftConstraint.isActive = true
   }
   
-  private func updateInstructionsLabelConstraints() {
+  private func updateInstructionsLabelConstraints(forIpad: Bool) {
     if instructionLabelTopConstraint != nil
       && instructionLabelLeftConstraint != nil {
       instructionLabelTopConstraint.isActive = false
@@ -135,6 +167,22 @@ class EditView: UIView {
     
     instructionLabelTopConstraint.isActive = true
     instructionLabelLeftConstraint.isActive = true
+    
+    if forIpad {
+      if instructionLabelWidthConstraint != nil && instructionLabelHeightConstraint != nil {
+        instructionLabelWidthConstraint.isActive = false
+        instructionLabelHeightConstraint.isActive = false
+      }
+      
+      let width = isLandscapeOrientation ? Constant.Layout.Width.button : Constant.Layout.Width.button * 2
+      let height = isLandscapeOrientation ? Constant.Layout.Height.button * 2 : Constant.Layout.Height.button
+      
+      instructionLabelWidthConstraint = instructionLabel.widthAnchor.constraint(equalToConstant: width)
+      instructionLabelHeightConstraint = instructionLabel.heightAnchor.constraint(equalToConstant: height)
+      
+      instructionLabelWidthConstraint.isActive = true
+      instructionLabelHeightConstraint.isActive = true
+    }
   }
   
   private func createDynamicConstraints(forStartButton: Bool) -> (NSLayoutConstraint, NSLayoutConstraint) {
@@ -148,30 +196,30 @@ class EditView: UIView {
     
     if isLandscapeOrientation {
       topConstraint = view.centerYAnchor.constraint(equalTo: clearView.centerYAnchor)
-//      topConstraint.isActive = true
       leftConstraint = view.leftAnchor.constraint(equalTo: clearView.leftAnchor, constant: offset)
-//      leftConstraint.isActive = true
     } else {
       topConstraint = view.topAnchor.constraint(equalTo: clearView.topAnchor, constant: offset)
-//      topConstraint.isActive = true
       leftConstraint = view.centerXAnchor.constraint(equalTo: clearView.centerXAnchor)
-//      leftConstraint.isActive = true
     }
-    
     return (topConstraint, leftConstraint)
   }
   
   private func calculateOffset(forStartButton: Bool) -> CGFloat {
+    guard let superview = self.superview else { return 0 }
     let safeArea = (self.superview?.safeAreaInsets)!
-    let height = UIScreen.main.bounds.height - safeArea.top - safeArea.bottom
-    let width = UIScreen.main.bounds.width - safeArea.right - safeArea.left
+    let height = superview.bounds.height - safeArea.top - safeArea.bottom
+    let width = superview.bounds.width - safeArea.right - safeArea.left
     
     let short = isLandscapeOrientation ? height : width
     let long = isLandscapeOrientation ? width : height
-    let viewOffset = isLandscapeOrientation ? Constant.Layout.Width.button : Constant.Layout.Height.button
     
-    let size = short * 0.9 / 4
-    let allSquareSize = size * 4 + 3
+    let viewWidth = Constant.Layout.Width.button
+    let viewHeight = Constant.Layout.Height.button
+    
+    let viewOffset = isLandscapeOrientation ? viewWidth : viewHeight
+    
+    let sizeTile = short * 0.9 / 4
+    let allSquareSize = sizeTile * 4 + 3
     let maxSquare = forStartButton ? ((long - allSquareSize) / 2) + allSquareSize : ((long - allSquareSize) / 2)
     let margin = forStartButton ? (long - maxSquare) / 2 - viewOffset / 2 : (maxSquare) / 2 + viewOffset / 2
     
@@ -204,7 +252,7 @@ class EditView: UIView {
   private func instantiateQuitButton() {
     quitButton = UIButton(type: .custom)
     quitButton.translatesAutoresizingMaskIntoConstraints = false
-    quitButton.setTitle("X", for: .normal)
+    quitButton.setTitle("x", for: .normal)
     quitButton.setTitleColor(GridyColor.olsoGray, for: .normal)
     quitButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.size.quitButtonLabel)
   }
@@ -261,11 +309,15 @@ class EditView: UIView {
   
   private func setupConstraintsForQuitButton() {
     addSubview(quitButton)
-    quitButton.topAnchor.constraint(equalTo: clearView.topAnchor, constant: 0).isActive = true
     quitButton.rightAnchor.constraint(equalTo: clearView.rightAnchor, constant: -16).isActive = true
-    quitButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
-    quitButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
-
+    
+    quitButtonTopConstraint = quitButton.topAnchor.constraint(equalTo: clearView.topAnchor, constant: 0)
+    quitButtonHeightConstraint = quitButton.heightAnchor.constraint(equalToConstant: 44)
+    quitButtonWidthConstraint = quitButton.widthAnchor.constraint(equalToConstant: 44)
+    
+    quitButtonTopConstraint.isActive = true
+    quitButtonHeightConstraint.isActive = true
+    quitButtonWidthConstraint.isActive = true
   }
   
   private func setupConstraintsForStartButton() {
@@ -276,8 +328,11 @@ class EditView: UIView {
   
   private func setupConstraintsForInstructionLabel() {
     addSubview(instructionLabel)
-    instructionLabel.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.button).isActive = true
-    instructionLabel.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.button).isActive = true
+    instructionLabelWidthConstraint = instructionLabel.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.button)
+    instructionLabelHeightConstraint = instructionLabel.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.button)
+    
+    instructionLabelWidthConstraint.isActive = true
+    instructionLabelHeightConstraint.isActive = true
   }
   
   private func detectUserActions() {
@@ -307,7 +362,7 @@ class EditView: UIView {
     imageView.addGestureRecognizer(pinchGestureRecognizer)
   }
   
-  @objc func pressedStartButton() {
+  @objc private func pressedStartButton() {
     delegate?.startPuzzle()
   }
   
@@ -353,12 +408,7 @@ class EditView: UIView {
     imageView.transform = imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
     sender.scale = 1
   }
-  
-  func updateLayout() {
-    initialUIImageViewCenter = nil
-    setupOverlay(view: clearView)
-    updateLayOutConstraints()
-  }
+
 }
 
 extension EditView: UIGestureRecognizerDelegate {
