@@ -100,6 +100,7 @@
 		59BD7005205DB1E00061E82C = {
 			isa = PBXGroup;
 			children = (
+				590D991720F11BCC00399256 /* README.md */,
 				59BD7010205DB1E00061E82C /* Gridy */,
 				59BD700F205DB1E00061E82C /* Products */,
 			);
@@ -121,7 +122,6 @@
 				59BD7025205DB22A0061E82C /* Controller */,
 				59940F9E207BAA3300D80676 /* Utilities */,
 				59BD7026205DB2350061E82C /* Other Files */,
-				590D991720F11BCC00399256 /* README.md */,
 			);
 			path = Gridy;
 			sourceTree = "<group>";
