@@ -40,7 +40,7 @@ class GridView: UIView {
     tilesFrame = [CGRect]()
     isLandscape = true
     if eyeOption {
-      let image = UIImage(named: "eye")
+      let image = UIImage(named: "Eye")
       self.eyeImageView = UIImageView(image: image)
       eyeImageView?.translatesAutoresizingMaskIntoConstraints = false
       eyeImageView?.isUserInteractionEnabled = true

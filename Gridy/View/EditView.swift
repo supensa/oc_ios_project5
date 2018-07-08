@@ -77,7 +77,7 @@ class EditView: UIView {
   }
   
   func updateLayoutForIpad() {
-    updateInstructionsLabelConstraints()
+    updateInstructionsLabelConstraintsForIpad()
   }
   
   func setupLayoutForIpad() {
