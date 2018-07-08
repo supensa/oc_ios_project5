@@ -15,11 +15,11 @@ There is a "hint" feature to help the user to solve it if needed.
 ## Screenshots:
 ## Portrait
 
-<img src="Images/Portrait1.png" width="200">
+<img src="Images/Portrait1.png" width="500">
 
-<img src="Images/Portrait2.png" width="200">
+<img src="Images/Portrait2.png" width="500">
 
-<img src="Images/Portrait3.png" width="200">
+<img src="Images/Portrait3.png" width="500">
 
 ## Landscape
 
