@@ -178,8 +178,6 @@ class PlayViewController: UIViewController {
     shareButton.rightAnchor.constraint(equalTo: playView.instructionsLabel.rightAnchor, constant: -3).isActive = true
     shareButton.centerXAnchor.constraint(equalTo: playView.instructionsLabel.centerXAnchor).isActive = true
     shareButton.centerYAnchor.constraint(equalTo: playView.instructionsLabel.centerYAnchor).isActive = true
-    
-    shareButton.layoutIfNeeded()
   }
 }
 
