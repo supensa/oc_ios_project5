@@ -28,6 +28,10 @@ There is a "hint" feature to help the user to solve it if needed.
 <img src="Images/Portrait3.png" width="300">
 </p>
 
+<p align="center">
+<img src="Images/Portrait4.png" width="300">
+</p>
+
 ## Landscape
 
 ![First image landscape](Images/Landscape1.png)
@@ -37,3 +41,6 @@ There is a "hint" feature to help the user to solve it if needed.
 
 
 ![Third image landscape](Images/Landscape3.png)
+
+
+![Fourth image landscape](Images/Landscape4.png)

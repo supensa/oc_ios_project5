@@ -54,6 +54,8 @@
 		5951B2B8206BE73F0067BBE2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		5951B2BA206C41C70067BBE2 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		596C5BC320D935DE00FB73E2 /* GridModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridModel.swift; sourceTree = "<group>"; };
+		5974947120F2C93A0078EBE3 /* Portrait4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Portrait4.png; sourceTree = "<group>"; };
+		5974947220F2C93A0078EBE3 /* Landscape4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Landscape4.png; sourceTree = "<group>"; };
 		597FC59220E5778100269861 /* PlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayViewController.swift; sourceTree = "<group>"; };
 		5983444A20A43C56005054F9 /* GridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridView.swift; sourceTree = "<group>"; };
 		598A0B8120CA807400F9A375 /* HintView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintView.swift; sourceTree = "<group>"; };
@@ -86,9 +88,11 @@
 				5948388A20F24538007A3644 /* Portrait1.png */,
 				5948388920F24538007A3644 /* Portrait2.png */,
 				5948388820F24538007A3644 /* Portrait3.png */,
+				5974947120F2C93A0078EBE3 /* Portrait4.png */,
 				5948388C20F2458C007A3644 /* Landscape1.png */,
 				5948388B20F2458C007A3644 /* Landscape2.png */,
 				5948388D20F2458C007A3644 /* Landscape3.png */,
+				5974947220F2C93A0078EBE3 /* Landscape4.png */,
 			);
 			path = Images;
 			sourceTree = "<group>";
