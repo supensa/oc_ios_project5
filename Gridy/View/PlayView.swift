@@ -110,7 +110,6 @@ class PlayView: UIView {
     return CGPoint(x: x, y: y)
   }
   
-  
   private func setupConstraintsPriority() {
     for constraint in unsharedConstraints {
       constraint.priority = .defaultHigh
@@ -189,6 +188,7 @@ class PlayView: UIView {
   }
   
   private func setupOtherViewsConstraintsInPortraitEnvironment() {
+    
     if let margin = self.superview?.layoutMarginsGuide {
       self.unsharedConstraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 0))
       self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: containerGridView.topAnchor, constant: -10))
@@ -210,7 +210,7 @@ class PlayView: UIView {
       self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
       
       self.unsharedConstraints.append(instructionsLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: puzzleGridView.bottomAnchor, constant: 0))
+      self.unsharedConstraints.append(instructionsLabel.heightAnchor.constraint(equalToConstant: 100))
       self.unsharedConstraints.append(instructionsLabel.leftAnchor.constraint(equalTo: containerGridView.leftAnchor, constant: 0))
       self.unsharedConstraints.append(instructionsLabel.rightAnchor.constraint(equalTo: containerGridView.rightAnchor, constant: 0))
     }

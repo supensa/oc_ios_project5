@@ -55,6 +55,7 @@ class PlayViewController: UIViewController {
       }
       playView.activateConstraints()
     }
+//    endGame()
   }
   
   override func viewDidLayoutSubviews() {
@@ -116,12 +117,75 @@ class PlayViewController: UIViewController {
       }
     }
   }
+
+  private func updateModelAndView(view: UIView) {
+    let tag = view.tag
+    if playView.puzzleGridView.frame.contains(view.center) {
+      let max = playView.puzzleGridView.subviews.count - 1
+      for index in 0...max {
+        let tile = playView.puzzleGridView.subviews[index]
+        let center = playView.convertCoordinates(of: view.center, into: playView.puzzleGridView)
+        if tile.frame.contains(center) {
+          if puzzleGridModel.isTileFree(at: index) && index != puzzleGridModel.position(id: tag) {
+            containerGridModel.updatePosition(id: tag, position: nil)
+            puzzleGridModel.updatePosition(id: tag, position: index)
+            self.score += 1
+            break
+          }
+          break
+        }
+      }
+    } else {
+      containerGridModel.updatePosition(id: tag, position: nil)
+      if let _ = puzzleGridModel.position(id: tag) { self.score += 1 }
+      puzzleGridModel.updatePosition(id: tag, position: nil)
+      let position = containerGridModel.getFreeTilePosition()
+      containerGridModel.updatePosition(id: tag, position: position)
+    }
+    refreshLayout()
+  }
+  
+  private func endGame() {
+    playView.instructionsLabel.text = ""
+    
+    for imageView in playView.imageViews {
+      imageView.isUserInteractionEnabled = false
+    }
+    
+    var font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
+    var height: CGFloat = 30
+    
+    if traitCollection.verticalSizeClass == .regular && traitCollection.horizontalSizeClass == .regular {
+      font = font?.withSize(30)
+      height = 60
+    }
+    
+    let shareButton = UIButton(type: .custom)
+    shareButton.layer.cornerRadius = 5
+    shareButton.clipsToBounds = true
+    shareButton.setTitle("SHARE PUZZLE", for: .normal)
+    shareButton.titleLabel?.font = font
+    shareButton.titleLabel?.adjustsFontSizeToFitWidth = true
+    shareButton.setTitleColor(UIColor.white, for: .normal)
+    shareButton.backgroundColor = GridyColor.vistaBlue
+    
+    shareButton.addTarget(self, action: #selector(displaySharingOptions), for: .touchUpInside)
+    
+    playView.addSubview(shareButton)
+    shareButton.translatesAutoresizingMaskIntoConstraints = false
+    shareButton.heightAnchor.constraint(equalToConstant: height).isActive = true
+    shareButton.leftAnchor.constraint(equalTo: playView.instructionsLabel.leftAnchor, constant: 3).isActive = true
+    shareButton.rightAnchor.constraint(equalTo: playView.instructionsLabel.rightAnchor, constant: -3).isActive = true
+    shareButton.centerXAnchor.constraint(equalTo: playView.instructionsLabel.centerXAnchor).isActive = true
+    shareButton.centerYAnchor.constraint(equalTo: playView.instructionsLabel.centerYAnchor).isActive = true
+    
+    shareButton.layoutIfNeeded()
+  }
 }
 
 extension PlayViewController: PlayViewDelegate {
   func moveImageView(_ sender: UIPanGestureRecognizer) {
     if let view = sender.view {
-      let tag = view.tag
       self.playView.bringSubview(toFront: view)
       let translation = sender.translation(in: self.view)
       let newPoint = CGPoint(x: view.center.x + translation.x,
@@ -130,42 +194,10 @@ extension PlayViewController: PlayViewDelegate {
       sender.setTranslation(CGPoint.zero, in: self.view)
       
       if sender.state == UIGestureRecognizerState.ended {
-        if playView.puzzleGridView.frame.contains(view.center) {
-          let max = playView.puzzleGridView.subviews.count - 1
-          for index in 0...max {
-            let tile = playView.puzzleGridView.subviews[index]
-            let center = playView.convertCoordinates(of: view.center, into: playView.puzzleGridView)
-            if tile.frame.contains(center) {
-              if puzzleGridModel.isTileFree(at: index) && index != puzzleGridModel.position(id: tag) {
-                containerGridModel.updatePosition(id: tag, position: nil)
-                puzzleGridModel.updatePosition(id: tag, position: index)
-                self.score += 1
-                break
-              }
-              break
-            }
-          }
-        } else {
-          containerGridModel.updatePosition(id: tag, position: nil)
-          if let _ = puzzleGridModel.position(id: tag) { self.score += 1 }
-          puzzleGridModel.updatePosition(id: tag, position: nil)
-          let position = containerGridModel.getFreeTilePosition()
-          containerGridModel.updatePosition(id: tag, position: position)
-        }
-        
-        refreshLayout()
-        
+        updateModelAndView(view: view)
         if puzzleGridModel.isFull() {
           if puzzleGridModel.isMatching() {
-            playView.instructionsLabel.text = "GAME OVER"
-            playView.instructionsLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 35)
-            playView.instructionsLabel.textColor = UIColor.red
-            for imageView in playView.imageViews {
-              imageView.isUserInteractionEnabled = false
-            }
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(displaySharingOptions))
-            playView.instructionsLabel.addGestureRecognizer(tapGestureRecognizer)
-            playView.instructionsLabel.isUserInteractionEnabled = true
+            endGame()
           }
         }
       }
