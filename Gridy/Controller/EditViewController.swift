@@ -21,10 +21,12 @@ class EditViewController: UIViewController {
   }
   
   override func viewWillLayoutSubviews() {
+    editView.updateLayout()
     let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
     let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
-    let forIpad = sizeClass == iPad
-    editView.updateLayout(forIpad: forIpad)
+    if sizeClass == iPad {
+      editView.updateLayoutForIpad()
+    }
   }
   
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -37,7 +39,7 @@ class EditViewController: UIViewController {
       let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
       let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
       if iPad == sizeClass {
-        editView.upadateForIpad()
+        editView.setupLayoutForIpad()
       }
     }
   }

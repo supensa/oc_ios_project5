@@ -69,14 +69,18 @@ class EditView: UIView {
     self.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
   }
   
-  func updateLayout(forIpad: Bool) {
+  func updateLayout() {
     initialUIImageViewCenter = nil
     setupLayer(view: clearView)
     updateStartButtonConstraints()
-    updateInstructionsLabelConstraints(forIpad: forIpad)
+    updateInstructionsLabelConstraints()
   }
   
-  func upadateForIpad() {
+  func updateLayoutForIpad() {
+    updateInstructionsLabelConstraints()
+  }
+  
+  func setupLayoutForIpad() {
     var doubleFontSize = Constant.Font.size.choiceLabel * 2
     instructionLabel.font = instructionLabel.font.withSize(doubleFontSize)
     startButton.titleLabel?.font = startButton.titleLabel?.font.withSize(doubleFontSize)
@@ -154,7 +158,7 @@ class EditView: UIView {
     startButtonLeftConstraint.isActive = true
   }
   
-  private func updateInstructionsLabelConstraints(forIpad: Bool) {
+  private func updateInstructionsLabelConstraints() {
     if instructionLabelTopConstraint != nil
       && instructionLabelLeftConstraint != nil {
       instructionLabelTopConstraint.isActive = false
@@ -167,22 +171,22 @@ class EditView: UIView {
     
     instructionLabelTopConstraint.isActive = true
     instructionLabelLeftConstraint.isActive = true
-    
-    if forIpad {
-      if instructionLabelWidthConstraint != nil && instructionLabelHeightConstraint != nil {
-        instructionLabelWidthConstraint.isActive = false
-        instructionLabelHeightConstraint.isActive = false
-      }
-      
-      let width = isLandscapeOrientation ? Constant.Layout.Width.button : Constant.Layout.Width.button * 2
-      let height = isLandscapeOrientation ? Constant.Layout.Height.button * 2 : Constant.Layout.Height.button
-      
-      instructionLabelWidthConstraint = instructionLabel.widthAnchor.constraint(equalToConstant: width)
-      instructionLabelHeightConstraint = instructionLabel.heightAnchor.constraint(equalToConstant: height)
-      
-      instructionLabelWidthConstraint.isActive = true
-      instructionLabelHeightConstraint.isActive = true
+  }
+  
+  private func updateInstructionsLabelConstraintsForIpad() {
+    if instructionLabelWidthConstraint != nil && instructionLabelHeightConstraint != nil {
+      instructionLabelWidthConstraint.isActive = false
+      instructionLabelHeightConstraint.isActive = false
     }
+    
+    let width = isLandscapeOrientation ? Constant.Layout.Width.button : Constant.Layout.Width.button * 2
+    let height = isLandscapeOrientation ? Constant.Layout.Height.button * 2 : Constant.Layout.Height.button
+    
+    instructionLabelWidthConstraint = instructionLabel.widthAnchor.constraint(equalToConstant: width)
+    instructionLabelHeightConstraint = instructionLabel.heightAnchor.constraint(equalToConstant: height)
+    
+    instructionLabelWidthConstraint.isActive = true
+    instructionLabelHeightConstraint.isActive = true
   }
   
   private func createDynamicConstraints(forStartButton: Bool) -> (NSLayoutConstraint, NSLayoutConstraint) {
@@ -408,7 +412,6 @@ class EditView: UIView {
     imageView.transform = imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
     sender.scale = 1
   }
-
 }
 
 extension EditView: UIGestureRecognizerDelegate {

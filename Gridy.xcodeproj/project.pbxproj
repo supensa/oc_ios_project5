@@ -39,6 +39,12 @@
 		591C96F1207928680023FA29 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		591DFBB920D051310096372A /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		591DFBBB20D0516A0096372A /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
+		5948388820F24538007A3644 /* Portrait3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Portrait3.png; sourceTree = "<group>"; };
+		5948388920F24538007A3644 /* Portrait2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Portrait2.png; sourceTree = "<group>"; };
+		5948388A20F24538007A3644 /* Portrait1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Portrait1.png; sourceTree = "<group>"; };
+		5948388B20F2458C007A3644 /* Landscape2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Landscape2.png; sourceTree = "<group>"; };
+		5948388C20F2458C007A3644 /* Landscape1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Landscape1.png; sourceTree = "<group>"; };
+		5948388D20F2458C007A3644 /* Landscape3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Landscape3.png; sourceTree = "<group>"; };
 		594AC07A20600D0A00091A72 /* GridyColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridyColor.swift; sourceTree = "<group>"; };
 		594E56EB2060630200E4C63D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = timeburnernormal.ttf; sourceTree = "<group>"; };
@@ -74,6 +80,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5948388720F244CB007A3644 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				5948388A20F24538007A3644 /* Portrait1.png */,
+				5948388920F24538007A3644 /* Portrait2.png */,
+				5948388820F24538007A3644 /* Portrait3.png */,
+				5948388C20F2458C007A3644 /* Landscape1.png */,
+				5948388B20F2458C007A3644 /* Landscape2.png */,
+				5948388D20F2458C007A3644 /* Landscape3.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
 		5951B2B5206BDE890067BBE2 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
@@ -100,9 +119,10 @@
 		59BD7005205DB1E00061E82C = {
 			isa = PBXGroup;
 			children = (
-				590D991720F11BCC00399256 /* README.md */,
 				59BD7010205DB1E00061E82C /* Gridy */,
 				59BD700F205DB1E00061E82C /* Products */,
+				590D991720F11BCC00399256 /* README.md */,
+				5948388720F244CB007A3644 /* Images */,
 			);
 			sourceTree = "<group>";
 		};
