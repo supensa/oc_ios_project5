@@ -15,16 +15,16 @@ There is a "hint" feature to help the user to solve it if needed.
 ## Screenshots
 ### Portrait
 
-![First image portrait] (https://github.com/supensa/oc_ios_project5/images/Portrait1.png)
+![First image portrait](https://github.com/supensa/oc_ios_project5/Images/Portrait1.png)
 
-![Second image portrait] (https://github.com/supensa/oc_ios_project5/images/Portrait2.png)
+![Second image portrait](https://github.com/supensa/oc_ios_project5/Images/Portrait2.png)
 
-![Third image portrait] (https://github.com/supensa/oc_ios_project5/images/Portrait3.png)
+![Third image portrait](https://github.com/supensa/oc_ios_project5/Images/Portrait3.png)
 
 ### Landscape
 
-![First image landscape] (https://github.com/supensa/oc_ios_project5/images/Landscape1.png)
+![First image landscape](https://github.com/supensa/oc_ios_project5/Images/Landscape1.png)
 
-![Second image landscape] (https://github.com/supensa/oc_ios_project5/images/Landscape2.png)
+![Second image landscape](https://github.com/supensa/oc_ios_project5/Images/Landscape2.png)
 
-![Third image landscape] (https://github.com/supensa/oc_ios_project5/images/Landscape3.png)
+![Third image landscape](https://github.com/supensa/oc_ios_project5/Images/Landscape3.png)
