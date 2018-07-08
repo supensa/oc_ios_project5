@@ -15,14 +15,11 @@ There is a "hint" feature to help the user to solve it if needed.
 ## Screenshots:
 ## Portrait
 
-![First image portrait](Images/Portrait1.png)
+<img src="Images/Portrait1.png" width="200">
 
+<img src="Images/Portrait2.png" width="200">
 
-![Second image portrait](Images/Portrait2.png)
-
-
-![Third image portrait](Images/Portrait3.png)
-
+<img src="Images/Portrait3.png" width="200">
 
 ## Landscape
 
