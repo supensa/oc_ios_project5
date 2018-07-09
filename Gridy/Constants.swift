@@ -11,8 +11,10 @@ import UIKit
 struct Constant {
   
   struct Tiles {
-    
-    static let totalCount = 16
+    struct Default {
+      static let height: CGFloat = 44
+      static let width: CGFloat = 44
+    }
     
     struct Puzzle {
       static let countByRow = 4
@@ -31,14 +33,14 @@ struct Constant {
       static let timeBurner = "TimeBurner"
     }
     
-    struct size {
-      static let choiceLabel: CGFloat = 17
+    struct Size {
+      static let choiceLabel: CGFloat = 15
       static let titleLabel: CGFloat = 1
       static let commentLabel: CGFloat = 1
       static let quitButtonLabel: CGFloat = 50
     }
     
-    struct sizeRatio {
+    struct SizeRatio {
       static let commentLabel: CGFloat = 0.8
       static let titleLabel: CGFloat = 0.9
     }
@@ -49,6 +51,7 @@ struct Constant {
     static let photos = "Photos"
     static let camera = "Camera"
     static let image = "Image"
+    static let eye = "Eye"
   }
   
   struct String {
@@ -70,7 +73,7 @@ struct Constant {
     }
     
     struct Spacing {
-      static let buttonStackViewiPad: CGFloat = 200
+      static let buttonStackViewiPad: CGFloat = 300
       static let buttonStackViewiPhone: CGFloat = 50
     }
     

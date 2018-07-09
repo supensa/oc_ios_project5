@@ -60,15 +60,17 @@ class IntroView: UIView {
   
   private func updateStackViewConstraint(forIpad: Bool) {
     if buttonStackViewHeightConstraint == nil {
-      let size = forIpad ? Constant.Layout.Height.buttonStackView * 1.5 + 30 : Constant.Layout.Height.buttonStackView
+      
+      let size = forIpad ? Constant.Layout.Height.buttonStackView * 2 : Constant.Layout.Height.buttonStackView
       buttonStackViewHeightConstraint = buttonStackView.heightAnchor.constraint(equalToConstant: size)
       buttonStackViewHeightConstraint.isActive = true
       
-      let horizontalSpacing = forIpad ? Constant.Layout.Spacing.buttonStackViewiPad * 1.5 : Constant.Layout.Spacing.buttonStackViewiPhone
+      let verticalSpacing: CGFloat = forIpad ? Constant.Font.Size.choiceLabel * 2 : 0
+      let horizontalSpacing = forIpad ? Constant.Layout.Spacing.buttonStackViewiPad : Constant.Layout.Spacing.buttonStackViewiPhone
       self.horizontalStackView.spacing = horizontalSpacing
-      let verticalSpacing: CGFloat = forIpad ? 30 : 0
       self.verticalStackView.spacing = verticalSpacing
-      if forIpad { choiceLabel.font = choiceLabel.font.withSize(30) }
+      
+      if forIpad { choiceLabel.font = choiceLabel.font.withSize(Constant.Font.Size.choiceLabel * 2) }
     }
   }
   
@@ -88,7 +90,7 @@ class IntroView: UIView {
     let height = superview.bounds.height * Constant.Layout.HeightRatio.titleLabel
     self.titleLabelHeightConstraint = self.titleLabel.heightAnchor.constraint(equalToConstant: height)
     self.titleLabelHeightConstraint.isActive = true
-    self.titleLabel.font = self.titleLabel.font.withSize(height * Constant.Font.sizeRatio.titleLabel)
+    self.titleLabel.font = self.titleLabel.font.withSize(height * Constant.Font.SizeRatio.titleLabel)
   }
   
   private func updateCommentLabelConstraint() {
@@ -99,25 +101,7 @@ class IntroView: UIView {
     let height = self.titleLabel.font.pointSize * Constant.Layout.HeightRatio.commentLabel
     self.commentLabelHeightConstraint = self.commentLabel.heightAnchor.constraint(equalToConstant: height)
     self.commentLabelHeightConstraint.isActive = true
-    self.commentLabel.font = self.commentLabel.font.withSize(height * Constant.Font.sizeRatio.commentLabel)
-  }
-  
-  private func detectUserActions() {
-    randomButton.addTarget(self, action: #selector(pushedRandomButton), for: UIControlEvents.touchUpInside)
-    cameraButton.addTarget(self, action: #selector(pushedCameraButton), for: UIControlEvents.touchUpInside)
-    photosButton.addTarget(self, action: #selector(pushedPotosButton), for: UIControlEvents.touchUpInside)
-  }
-  
-  @objc private func pushedRandomButton() {
-    delegate?.takeRandomImage()
-  }
-  
-  @objc private func pushedCameraButton() {
-    delegate?.takeCameraImage()
-  }
-  
-  @objc private func pushedPotosButton() {
-    delegate?.takePhotoLibraryImage()
+    self.commentLabel.font = self.commentLabel.font.withSize(height * Constant.Font.SizeRatio.commentLabel)
   }
   
   private func setupConstraint() {
@@ -174,9 +158,9 @@ class IntroView: UIView {
   }
   
   private func instantiateLabels() {
-    titleLabel = Label(text: Constant.String.title, fontSize: Constant.Font.size.titleLabel, useCustomFont: true)
-    commentLabel = Label(text: Constant.String.comment, fontSize: Constant.Font.size.commentLabel)
-    choiceLabel = Label(text: Constant.String.choice, fontSize: Constant.Font.size.choiceLabel)
+    titleLabel = Label(text: Constant.String.title, fontSize: Constant.Font.Size.titleLabel, useCustomFont: true)
+    commentLabel = Label(text: Constant.String.comment, fontSize: Constant.Font.Size.commentLabel)
+    choiceLabel = Label(text: Constant.String.choice, fontSize: Constant.Font.Size.choiceLabel)
   }
   
   private func instantiateStackViews() {
@@ -195,10 +179,28 @@ class IntroView: UIView {
     stackView.alignment = .center
     stackView.distribution = .fill
   }
+  
+  private func detectUserActions() {
+    randomButton.addTarget(self, action: #selector(pushedRandomButton), for: UIControlEvents.touchUpInside)
+    cameraButton.addTarget(self, action: #selector(pushedCameraButton), for: UIControlEvents.touchUpInside)
+    photosButton.addTarget(self, action: #selector(pushedPotosButton), for: UIControlEvents.touchUpInside)
+  }
+
+  @objc private func pushedRandomButton() {
+    delegate?.takeRandomImage()
+  }
+  
+  @objc private func pushedCameraButton() {
+    delegate?.takeCameraImage()
+  }
+  
+  @objc private func pushedPotosButton() {
+    delegate?.takePhotoLibraryImage()
+  }
 }
 
 extension IntroView {
-  // Delegate method: UITraitEnvironment
+  // Delegation from protocol: UITraitEnvironment
   // UIView and UIViewController conform to it
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     super.traitCollectionDidChange(previousTraitCollection)
