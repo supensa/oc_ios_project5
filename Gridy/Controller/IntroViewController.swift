@@ -18,33 +18,9 @@ class IntroViewController: UIViewController {
   }
 }
 
-extension IntroViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate, IntroViewDelegate {
-  // Delegate Function: UIImagePickerControllerDelegate
-  func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-    picker.dismiss(animated: true, completion: nil)
-    
-    var image: UIImage?
-    
-    if picker.allowsEditing {
-      image = info[UIImagePickerControllerEditedImage] as? UIImage
-    } else {
-      image = info[UIImagePickerControllerOriginalImage] as? UIImage
-    }
-    
-    if let image = image {
-      let editingViewController = EditViewController()
-      editingViewController.image = image
-      self.present(editingViewController, animated: true, completion: nil)
-    }
-  }
-  
-  // Delegate Function: UIImagePickerControllerDelegate
-  func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-    picker.dismiss(animated: true, completion: nil)
-  }
-  
+extension IntroViewController: IntroViewDelegate {
   // Delegate method: IntroViewDelegate
-  func takeRandomImage() {
+  func useRandomImage() {
     let random = Int.random(min: 0, max: 4)
     if let image = UIImage(named: Constant.ImageName.image + "\(random)") {
       let editingViewController = EditViewController()
@@ -54,7 +30,7 @@ extension IntroViewController: UIImagePickerControllerDelegate, UINavigationCont
   }
   
   // Delegate method: IntroViewDelegate
-  func takeCameraImage() {
+  func useCameraImage() {
     let sourceType = UIImagePickerControllerSourceType.camera
     displayMediaPicker(sourceType: sourceType)
   }
@@ -66,10 +42,12 @@ extension IntroViewController: UIImagePickerControllerDelegate, UINavigationCont
   }
   
   func displayMediaPicker(sourceType: UIImagePickerControllerSourceType) {
+    
+    let usingCamera = sourceType == .camera
+    let media = usingCamera ? "camera" : "photos"
+    
     if UIImagePickerController.isSourceTypeAvailable(sourceType) {
-      let usingCamera = sourceType == .camera
-      let media = usingCamera ? "camera" : "photos"
-      let noPermissionMessage = "Looks like Gridy don't have access to your \(media):( Please use Setting app on your device to permit Gridy access to your \(media)"
+      let noPermissionMessage = "Looks like Gridy don't have access to your \(media) :(...\nPlease use \"Settings\" to allow access to your \(media)"
       
       if usingCamera {
         actionAccordingTo(status: AVCaptureDevice.authorizationStatus(for: AVMediaType.video), sourceType: sourceType, noPermissionMessage: noPermissionMessage)
@@ -77,7 +55,7 @@ extension IntroViewController: UIImagePickerControllerDelegate, UINavigationCont
         actionAccordingTo(status: PHPhotoLibrary.authorizationStatus(), sourceType: sourceType, noPermissionMessage: noPermissionMessage)
       }
     } else {
-      troubleAlert(message: "Sincere apologies, it looks like we can't access your photo library at this time")
+      troubleAlert(message: "Sincere apologies, it looks like we can't access your \(media) at this time")
     }
   }
   
@@ -142,15 +120,36 @@ extension IntroViewController: UIImagePickerControllerDelegate, UINavigationCont
   }
   
   func troubleAlert(message: String?) {
-    showAlert(title: "Oops...", message: message, alertActions: [UIAlertAction(title: "Got it", style: .cancel)])
+    let alertController = UIAlertController(title: title, message: message , preferredStyle: .alert)
+    let alertAction = UIAlertAction(title: "Got it", style: .cancel)
+    alertController.addAction(alertAction)
+    present(alertController, animated: true)
+  }
+}
+
+extension IntroViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+  // Delegate Function: UIImagePickerControllerDelegate
+  func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    picker.dismiss(animated: true, completion: nil)
+    
+    var image: UIImage?
+    
+    if picker.allowsEditing {
+      image = info[UIImagePickerControllerEditedImage] as? UIImage
+    } else {
+      image = info[UIImagePickerControllerOriginalImage] as? UIImage
+    }
+    
+    if let image = image {
+      let editingViewController = EditViewController()
+      editingViewController.image = image
+      self.present(editingViewController, animated: true, completion: nil)
+    }
   }
   
-  func showAlert(title: String?, message: String?, alertActions: [UIAlertAction]) {
-    let alertController = UIAlertController(title: title, message: message , preferredStyle: .alert)
-    for alertAction in alertActions {
-      alertController.addAction(alertAction)
-    }
-    present(alertController, animated: true)
+  // Delegate Function: UIImagePickerControllerDelegate
+  func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    picker.dismiss(animated: true, completion: nil)
   }
 }
 

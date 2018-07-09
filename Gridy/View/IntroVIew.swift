@@ -9,8 +9,8 @@
 import UIKit
 
 protocol IntroViewDelegate: AnyObject {
-  func takeRandomImage()
-  func takeCameraImage()
+  func useRandomImage()
+  func useCameraImage()
   func takePhotoLibraryImage()
 }
   
@@ -187,11 +187,11 @@ class IntroView: UIView {
   }
 
   @objc private func pushedRandomButton() {
-    delegate?.takeRandomImage()
+    delegate?.useRandomImage()
   }
   
   @objc private func pushedCameraButton() {
-    delegate?.takeCameraImage()
+    delegate?.useCameraImage()
   }
   
   @objc private func pushedPotosButton() {

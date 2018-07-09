@@ -81,10 +81,10 @@ class EditView: UIView {
   }
   
   func setupLayoutForIpad() {
-    var doubleFontSize = Constant.Font.size.choiceLabel * 2
+    var doubleFontSize = Constant.Font.Size.startButtonLabel * 2
     instructionLabel.font = instructionLabel.font.withSize(doubleFontSize)
     startButton.titleLabel?.font = startButton.titleLabel?.font.withSize(doubleFontSize)
-    doubleFontSize = Constant.Font.size.quitButtonLabel * 2
+    doubleFontSize = Constant.Font.Size.quitButtonLabel * 2
     quitButton.titleLabel?.font = quitButton.titleLabel?.font.withSize(doubleFontSize)
     
     if quitButtonWidthConstraint != nil && quitButtonHeightConstraint != nil && quitButtonTopConstraint != nil {
@@ -94,8 +94,8 @@ class EditView: UIView {
     }
     
     quitButtonTopConstraint = quitButton.topAnchor.constraint(equalTo: clearView.topAnchor, constant: 16)
-    quitButtonHeightConstraint = quitButton.heightAnchor.constraint(equalToConstant: 120)
-    quitButtonWidthConstraint = quitButton.widthAnchor.constraint(equalToConstant: 120)
+    quitButtonHeightConstraint = quitButton.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.quitButton)
+    quitButtonWidthConstraint = quitButton.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.quitButton)
     
     quitButtonWidthConstraint.isActive = true
     quitButtonHeightConstraint.isActive = true
@@ -121,7 +121,7 @@ class EditView: UIView {
           self.instructionLabel.alpha = 1.0
           self.quitButton.alpha = 1.0
         }
-        UIView.animate(withDuration: 1, animations: fadingInAnimation)
+        UIView.animate(withDuration: 0.75, animations: fadingInAnimation)
       }
     }
   }
@@ -179,8 +179,8 @@ class EditView: UIView {
       instructionLabelHeightConstraint.isActive = false
     }
     
-    let width = isLandscapeOrientation ? Constant.Layout.Width.button : Constant.Layout.Width.button * 2
-    let height = isLandscapeOrientation ? Constant.Layout.Height.button * 2 : Constant.Layout.Height.button
+    let width = isLandscapeOrientation ? Constant.Layout.Width.instructionLabel : Constant.Layout.Width.instructionLabel * 2
+    let height = isLandscapeOrientation ? Constant.Layout.Height.instructionLabel * 2 : Constant.Layout.Height.instructionLabel
     
     instructionLabelWidthConstraint = instructionLabel.widthAnchor.constraint(equalToConstant: width)
     instructionLabelHeightConstraint = instructionLabel.heightAnchor.constraint(equalToConstant: height)
@@ -222,8 +222,8 @@ class EditView: UIView {
     
     let viewOffset = isLandscapeOrientation ? viewWidth : viewHeight
     
-    let sizeTile = short * 0.9 / 4
-    let allSquareSize = sizeTile * 4 + 3
+    let sizeTile = short * Constant.Layout.SizeRatio.puzzleGrid / CGFloat(Constant.Tiles.Puzzle.countByRow)
+    let allSquareSize = sizeTile * CGFloat(Constant.Tiles.Puzzle.countByRow) + Constant.Tiles.Puzzle.gapLength * 3
     let maxSquare = forStartButton ? ((long - allSquareSize) / 2) + allSquareSize : ((long - allSquareSize) / 2)
     let margin = forStartButton ? (long - maxSquare) / 2 - viewOffset / 2 : (maxSquare) / 2 + viewOffset / 2
     
@@ -258,7 +258,7 @@ class EditView: UIView {
     quitButton.translatesAutoresizingMaskIntoConstraints = false
     quitButton.setTitle("x", for: .normal)
     quitButton.setTitleColor(GridyColor.olsoGray, for: .normal)
-    quitButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.size.quitButtonLabel)
+    quitButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.Size.quitButtonLabel)
   }
   
   private func instantiateStartButton() {
@@ -267,7 +267,7 @@ class EditView: UIView {
     startButton.setTitle("Start", for: .normal)
     startButton.setTitleColor(UIColor.white, for: .normal)
     startButton.backgroundColor = GridyColor.vistaBlue
-    startButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.size.choiceLabel)
+    startButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.Size.startButtonLabel)
     startButton.layer.cornerRadius = 10
     startButton.clipsToBounds = true
   }
@@ -279,7 +279,7 @@ class EditView: UIView {
     instructionLabel.textColor = GridyColor.olsoGray
     instructionLabel.textAlignment = .center
     instructionLabel.baselineAdjustment = .alignCenters
-    instructionLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: Constant.Font.size.choiceLabel)
+    instructionLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: Constant.Font.Size.instructionLabel)
     instructionLabel.adjustsFontSizeToFitWidth = true
     instructionLabel.numberOfLines = 0
   }
@@ -316,8 +316,8 @@ class EditView: UIView {
     quitButton.rightAnchor.constraint(equalTo: clearView.rightAnchor, constant: -16).isActive = true
     
     quitButtonTopConstraint = quitButton.topAnchor.constraint(equalTo: clearView.topAnchor, constant: 0)
-    quitButtonHeightConstraint = quitButton.heightAnchor.constraint(equalToConstant: 44)
-    quitButtonWidthConstraint = quitButton.widthAnchor.constraint(equalToConstant: 44)
+    quitButtonHeightConstraint = quitButton.heightAnchor.constraint(equalToConstant: Constant.View.Default.height)
+    quitButtonWidthConstraint = quitButton.widthAnchor.constraint(equalToConstant: Constant.View.Default.width)
     
     quitButtonTopConstraint.isActive = true
     quitButtonHeightConstraint.isActive = true
@@ -326,14 +326,14 @@ class EditView: UIView {
   
   private func setupConstraintsForStartButton() {
     addSubview(startButton)
-    startButton.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.button).isActive = true
-    startButton.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.button).isActive = true
+    startButton.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.startButton).isActive = true
+    startButton.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.startButton).isActive = true
   }
   
   private func setupConstraintsForInstructionLabel() {
     addSubview(instructionLabel)
-    instructionLabelWidthConstraint = instructionLabel.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.button)
-    instructionLabelHeightConstraint = instructionLabel.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.button)
+    instructionLabelWidthConstraint = instructionLabel.widthAnchor.constraint(equalToConstant: Constant.Layout.Width.instructionLabel)
+    instructionLabelHeightConstraint = instructionLabel.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.instructionLabel)
     
     instructionLabelWidthConstraint.isActive = true
     instructionLabelHeightConstraint.isActive = true

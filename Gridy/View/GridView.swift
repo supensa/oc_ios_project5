@@ -40,7 +40,7 @@ class GridView: UIView {
     tilesFrame = [CGRect]()
     isLandscape = true
     if eyeOption {
-      let image = UIImage(named: "Eye")
+      let image = UIImage(named: Constant.ImageName.eye)
       self.eyeImageView = UIImageView(image: image)
       eyeImageView?.translatesAutoresizingMaskIntoConstraints = false
       eyeImageView?.isUserInteractionEnabled = true
@@ -85,7 +85,7 @@ class GridView: UIView {
   }
   
   func getTileSize() -> CGSize {
-    var size = CGSize(width: 44, height: 44)
+    var size = CGSize(width: Constant.View.Default.width, height: Constant.View.Default.height)
     if let number =  self.datasource?.numberOfTilesPerRow(gridView: tag),
       let gap = delegate?.gapLength(gridView: tag) {
       let tilePerRow = CGFloat(number)
