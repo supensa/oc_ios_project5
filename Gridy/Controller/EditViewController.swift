@@ -47,12 +47,12 @@ class EditViewController: UIViewController {
 
 extension EditViewController: EditViewDelegate {
   // Delegate method: EditViewDelegate
-  func goBackMainMenu() {
+  func quitButtonTouched() {
     self.dismiss(animated: true, completion: nil)
   }
   
   // Delegate method: EditViewDelegate
-  func startPuzzle() {
+  func startButtonTouched() {
     self.imagesBound = editView.imagesBound
     let playViewController = PlayViewController()
     playViewController.images = self.getSnapshots()

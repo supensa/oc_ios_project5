@@ -9,9 +9,9 @@
 import UIKit
 
 protocol IntroViewDelegate: AnyObject {
-  func useRandomImage()
-  func useCameraImage()
-  func takePhotoLibraryImage()
+  func randomButtonTouched()
+  func cameraButtonTouched()
+  func photosButtonTouched()
 }
   
 class IntroView: UIView {
@@ -181,21 +181,21 @@ class IntroView: UIView {
   }
   
   private func detectUserActions() {
-    randomButton.addTarget(self, action: #selector(pushedRandomButton), for: UIControlEvents.touchUpInside)
-    cameraButton.addTarget(self, action: #selector(pushedCameraButton), for: UIControlEvents.touchUpInside)
-    photosButton.addTarget(self, action: #selector(pushedPotosButton), for: UIControlEvents.touchUpInside)
+    randomButton.addTarget(self, action: #selector(randomButtonTouched), for: UIControlEvents.touchUpInside)
+    cameraButton.addTarget(self, action: #selector(cameraButtonTouched), for: UIControlEvents.touchUpInside)
+    photosButton.addTarget(self, action: #selector(photosButtonTouched), for: UIControlEvents.touchUpInside)
   }
 
-  @objc private func pushedRandomButton() {
-    delegate?.useRandomImage()
+  @objc private func randomButtonTouched() {
+    delegate?.randomButtonTouched()
   }
   
-  @objc private func pushedCameraButton() {
-    delegate?.useCameraImage()
+  @objc private func cameraButtonTouched() {
+    delegate?.cameraButtonTouched()
   }
   
-  @objc private func pushedPotosButton() {
-    delegate?.takePhotoLibraryImage()
+  @objc private func photosButtonTouched() {
+    delegate?.photosButtonTouched()
   }
 }
 

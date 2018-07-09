@@ -20,7 +20,7 @@ class IntroViewController: UIViewController {
 
 extension IntroViewController: IntroViewDelegate {
   // Delegate method: IntroViewDelegate
-  func useRandomImage() {
+  func randomButtonTouched() {
     let random = Int.random(min: 0, max: 4)
     if let image = UIImage(named: Constant.ImageName.image + "\(random)") {
       let editingViewController = EditViewController()
@@ -30,13 +30,13 @@ extension IntroViewController: IntroViewDelegate {
   }
   
   // Delegate method: IntroViewDelegate
-  func useCameraImage() {
+  func cameraButtonTouched() {
     let sourceType = UIImagePickerControllerSourceType.camera
     displayMediaPicker(sourceType: sourceType)
   }
   
   // Delegate method: IntroViewDelegate
-  func takePhotoLibraryImage() {
+  func photosButtonTouched() {
     let sourceType = UIImagePickerControllerSourceType.photoLibrary
     displayMediaPicker(sourceType: sourceType)
   }

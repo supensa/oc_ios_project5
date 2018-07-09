@@ -9,8 +9,8 @@
 import UIKit
 
 protocol EditViewDelegate: AnyObject {
-  func startPuzzle()
-  func goBackMainMenu()
+  func startButtonTouched()
+  func quitButtonTouched()
 }
 
 class EditView: UIView {
@@ -340,8 +340,8 @@ class EditView: UIView {
   }
   
   private func detectUserActions() {
-    quitButton.addTarget(self, action: #selector(pressedQuitButton), for: .touchUpInside)
-    startButton.addTarget(self, action: #selector(pressedStartButton), for: .touchUpInside)
+    quitButton.addTarget(self, action: #selector(quitButtonTouched), for: .touchUpInside)
+    startButton.addTarget(self, action: #selector(startButtonTouched), for: .touchUpInside)
     setupGestureRecognizer()
   }
   
@@ -366,12 +366,12 @@ class EditView: UIView {
     imageView.addGestureRecognizer(pinchGestureRecognizer)
   }
   
-  @objc private func pressedStartButton() {
-    delegate?.startPuzzle()
+  @objc private func startButtonTouched() {
+    delegate?.startButtonTouched()
   }
   
-  @objc private func pressedQuitButton() {
-    delegate?.goBackMainMenu()
+  @objc private func quitButtonTouched() {
+    delegate?.quitButtonTouched()
   }
   
   @objc private func resetImageFrame() {
