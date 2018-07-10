@@ -55,7 +55,6 @@ class PlayViewController: UIViewController {
       }
       playView.activateConstraints()
     }
-//    endGame()
   }
   
   override func viewDidLayoutSubviews() {
@@ -73,14 +72,14 @@ class PlayViewController: UIViewController {
       let sizeClass = (traitCollection.horizontalSizeClass, traitCollection.verticalSizeClass)
       switch sizeClass {
       case (.regular, .regular):
-        playView.updateLabels(fontSize: 30)
+        playView.updateLabels(fontSize: Constant.Font.Size.playViewLabels * 2)
       case (.compact, .regular):
         playView.layoutIfNeeded()
-        playView.updateLabels(fontSize: 15)
+        playView.updateLabels(fontSize: Constant.Font.Size.playViewLabels)
         playView.setupConstraintsInPortraitEnvironment(offset: 0)
       case (.compact, .compact), (.regular,.compact):
         playView.layoutIfNeeded()
-        playView.updateLabels(fontSize: 15)
+        playView.updateLabels(fontSize: Constant.Font.Size.playViewLabels)
         playView.setupConstraintsInLandscapeEnvironment(offset: 44)
       default: break
       }
@@ -117,7 +116,7 @@ class PlayViewController: UIViewController {
       }
     }
   }
-
+  
   private func updateModelAndView(view: UIView) {
     let tag = view.tag
     if playView.puzzleGridView.frame.contains(view.center) {
@@ -146,26 +145,25 @@ class PlayViewController: UIViewController {
   }
   
   private func endGame() {
-    playView.instructionsLabel.text = ""
+    playView.informationLabel.text = ""
     
     for imageView in playView.imageViews {
       imageView.isUserInteractionEnabled = false
     }
     
-    var font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
-    var height: CGFloat = 30
+    var font = UIFont(name: Constant.Font.Name.helveticaNeue, size:  Constant.Font.Size.playViewLabels)
+    var height: CGFloat =  Constant.Layout.Height.shareButton
     
     if traitCollection.verticalSizeClass == .regular && traitCollection.horizontalSizeClass == .regular {
-      font = font?.withSize(30)
-      height = 60
+      font = font?.withSize(Constant.Font.Size.playViewLabels * 2)
+      height = Constant.Layout.Height.shareButton * 2
     }
     
     let shareButton = UIButton(type: .custom)
     shareButton.layer.cornerRadius = 5
     shareButton.clipsToBounds = true
-    shareButton.setTitle("SHARE PUZZLE", for: .normal)
+    shareButton.setTitle(Constant.String.shareButtonTitle, for: .normal)
     shareButton.titleLabel?.font = font
-    shareButton.titleLabel?.adjustsFontSizeToFitWidth = true
     shareButton.setTitleColor(UIColor.white, for: .normal)
     shareButton.backgroundColor = GridyColor.vistaBlue
     
@@ -174,10 +172,10 @@ class PlayViewController: UIViewController {
     playView.addSubview(shareButton)
     shareButton.translatesAutoresizingMaskIntoConstraints = false
     shareButton.heightAnchor.constraint(equalToConstant: height).isActive = true
-    shareButton.leftAnchor.constraint(equalTo: playView.instructionsLabel.leftAnchor, constant: 3).isActive = true
-    shareButton.rightAnchor.constraint(equalTo: playView.instructionsLabel.rightAnchor, constant: -3).isActive = true
-    shareButton.centerXAnchor.constraint(equalTo: playView.instructionsLabel.centerXAnchor).isActive = true
-    shareButton.centerYAnchor.constraint(equalTo: playView.instructionsLabel.centerYAnchor).isActive = true
+    shareButton.leftAnchor.constraint(equalTo: playView.informationLabel.leftAnchor, constant: 0).isActive = true
+    shareButton.rightAnchor.constraint(equalTo: playView.informationLabel.rightAnchor, constant: 0).isActive = true
+    shareButton.centerXAnchor.constraint(equalTo: playView.informationLabel.centerXAnchor).isActive = true
+    shareButton.centerYAnchor.constraint(equalTo: playView.informationLabel.centerYAnchor).isActive = true
   }
 }
 

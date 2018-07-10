@@ -43,6 +43,8 @@ struct Constant {
       static let quitButtonLabel: CGFloat = 50
       static let startButtonLabel: CGFloat = 15
       static let instructionLabel: CGFloat = 15
+      
+      static let playViewLabels: CGFloat = 15
     }
     
     struct SizeRatio {
@@ -63,11 +65,16 @@ struct Constant {
     static let title = "Gridy"
     static let comment = "Challenge yourself with a photo puzzle"
     static let choice = "- OR load your own -"
+    static let information = "Drag pieces to the grid.\nSwipe out of the grid to undo"
+    static let shareButtonTitle = "SHARE PUZZLE"
   }
   
   struct Layout {
     struct Height {
       static let buttonStackView: CGFloat = 200
+      static let informationLabel: CGFloat = 100
+      static let shareButton: CGFloat = 30
+      
       static let quitButton: CGFloat = 120
       static let startButton: CGFloat = 88
       static let button: CGFloat = 88

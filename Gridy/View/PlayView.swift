@@ -21,7 +21,7 @@ class PlayView: UIView {
   var header: HeaderView!
   
   var imageViews: [ImageView]!
-  var instructionsLabel: UILabel!
+  var informationLabel: UILabel!
   
   var hintView: HintView!
   
@@ -82,7 +82,7 @@ class PlayView: UIView {
   }
   
   func updateLabels(fontSize: CGFloat) {
-    instructionsLabel.font = instructionsLabel.font.withSize(fontSize)
+    informationLabel.font = informationLabel.font.withSize(fontSize)
     
     header.scoreLabel.font = header.scoreLabel.font.withSize(fontSize)
     header.newGameButton.titleLabel?.font = header.newGameButton.titleLabel?.font.withSize(fontSize)
@@ -126,7 +126,7 @@ class PlayView: UIView {
     self.addSubview(header)
     self.addSubview(puzzleGridView)
     self.addSubview(containerGridView)
-    self.addSubview(instructionsLabel)
+    self.addSubview(informationLabel)
     
     for imageView in imageViews {
       self.addSubview(imageView)
@@ -136,7 +136,7 @@ class PlayView: UIView {
   
   private func setupCommonConstraintsPriority() {
     for constraint in commonConstraints {
-      constraint.priority = .init(751)
+      constraint.priority = .defaultHigh
     }
   }
   
@@ -151,12 +151,11 @@ class PlayView: UIView {
   }
   
   private func instantiateViews(hintImage: UIImage) {
-    self.instructionsLabel = UILabel()
-    instructionsLabel.text = "Drag pieces to the grid.\nSwipe out of the grid to undo"
-    instructionsLabel.numberOfLines = 0
-    instructionsLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 1)
-    instructionsLabel.textAlignment = .center
-    instructionsLabel.adjustsFontSizeToFitWidth = true
+    self.informationLabel = UILabel()
+    informationLabel.text = Constant.String.information
+    informationLabel.numberOfLines = 0
+    informationLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 1)
+    informationLabel.textAlignment = .center
     
     self.header = HeaderView()
     
@@ -166,7 +165,7 @@ class PlayView: UIView {
     hintView.imageView.alpha = 0
     
     header.translatesAutoresizingMaskIntoConstraints = false
-    instructionsLabel.translatesAutoresizingMaskIntoConstraints = false
+    informationLabel.translatesAutoresizingMaskIntoConstraints = false
     hintView.translatesAutoresizingMaskIntoConstraints = false
   }
   
@@ -195,24 +194,24 @@ class PlayView: UIView {
       self.unsharedConstraints.append(header.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
       self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
       
-      self.unsharedConstraints.append(instructionsLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.bottomAnchor.constraint(equalTo: puzzleGridView.topAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(informationLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
+      self.unsharedConstraints.append(informationLabel.bottomAnchor.constraint(equalTo: puzzleGridView.topAnchor, constant: 0))
+      self.unsharedConstraints.append(informationLabel.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
+      self.unsharedConstraints.append(informationLabel.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
     }
   }
   
   private func setupOtherViewsConstraintsInLandscapeEnvironment() {
     if let margin = self.superview?.layoutMarginsGuide {
-      self.unsharedConstraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 5))
-      self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: containerGridView.topAnchor, constant: -10))
+      self.unsharedConstraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 10))
+      self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: containerGridView.topAnchor, constant: -5))
       self.unsharedConstraints.append(header.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: 0))
       self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
       
-      self.unsharedConstraints.append(instructionsLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.heightAnchor.constraint(equalToConstant: 100))
-      self.unsharedConstraints.append(instructionsLabel.leftAnchor.constraint(equalTo: containerGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(instructionsLabel.rightAnchor.constraint(equalTo: containerGridView.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(informationLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
+      self.unsharedConstraints.append(informationLabel.leftAnchor.constraint(equalTo: containerGridView.leftAnchor, constant: 0))
+      self.unsharedConstraints.append(informationLabel.rightAnchor.constraint(equalTo: containerGridView.rightAnchor, constant: 0))
+      self.unsharedConstraints.append(informationLabel.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.informationLabel))
     }
   }
   
