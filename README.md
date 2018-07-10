@@ -1,9 +1,9 @@
 #  OpenClassrooms - iOS developer path - iOS Project 5
 ## Gridy game - Adaptive app (iPhones and iPads) - No Storyboard
 
-This is a simple puzzle game of 16 pieces. User can share at the end his puzzle (email, social media, etc)
-The application counts the number of moves used to solve the puzzle.
-There is a "hint" feature to help the user solve it if needed.
+This is a simple puzzle game of 16 pieces. User can share at the end his puzzle (email, social media, etc).  
+The application counts the number of moves used to solve the puzzle.  
+There is a "hint" feature to help the user solve it if needed.  
 
 ## Steps:
 1. Select image (random, image library or camera)
