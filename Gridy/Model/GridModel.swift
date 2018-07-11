@@ -29,9 +29,9 @@ class GridModel {
     }
   }
   
-  /// Check if all images are on the right position
+  /// Check if all images are on the right tile
   ///
-  /// - Returns: true if matching all actual positions with all original positions
+  /// - Returns: true puzzle is solved
   func isMatching() -> Bool{
     for (id, position) in dictionary {
       if id != position { return false }
@@ -39,14 +39,26 @@ class GridModel {
     return true
   }
   
+  
+  /// Check if all the images are on the Grid
+  ///
+  /// - Returns: True if all images are on the grid
   func isFull() -> Bool {
     return dictionary.count == numberOftile
   }
   
+  /// Get position of image on the grid
+  ///
+  /// - Parameter id: Image's id
+  /// - Returns: Actual position on the grid
   func position(id: Id) -> Int? {
     return dictionary[id]
   }
   
+  /// Check if a tile is free at a certain postion
+  ///
+  /// - Parameter position: Position to check
+  /// - Returns: True if the position is free
   func isTileFree(at position: Position) -> Bool {
     if let isFree = freeTile[position] {
       if isFree { return true }
@@ -54,6 +66,9 @@ class GridModel {
     return false
   }
   
+  /// Gives the position of the first free tile if any
+  ///
+  /// - Returns: Return position or nil
   func getFreeTilePosition() -> Int? {
     for position in 0..<freeTile.count {
       if let isFree = freeTile[position] {
@@ -63,6 +78,11 @@ class GridModel {
     return nil
   }
   
+  /// Update position of an image on a tile
+  ///
+  /// - Parameters:
+  ///   - id: image's id
+  ///   - position: tile's position
   func updatePosition(id: Id, position: Position?) {
     if let oldPosition = dictionary[id] {
       freeTile[oldPosition] = true
