@@ -18,7 +18,7 @@ class ImageView: UIImageView {
     self.translatesAutoresizingMaskIntoConstraints = true
     self.isUserInteractionEnabled = true
     self.contentMode = .scaleAspectFit
-    self.backgroundColor = GridyColor.olsoGray
+    self.backgroundColor = UIColor.olsoGray
   }
   
   func animate(frame: CGRect) {

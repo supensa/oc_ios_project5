@@ -144,7 +144,7 @@ class PlayView: UIView {
     containerGridView = GridView(tag: 0, eyeOption: true)
     containerGridView.backgroundColor = UIColor.white
     puzzleGridView = GridView(tag: 1)
-    puzzleGridView.backgroundColor = GridyColor.janna
+    puzzleGridView.backgroundColor = UIColor.janna
     
     containerGridView.translatesAutoresizingMaskIntoConstraints = false
     puzzleGridView.translatesAutoresizingMaskIntoConstraints = false

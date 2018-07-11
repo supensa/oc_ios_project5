@@ -67,6 +67,9 @@ struct Constant {
     static let choice = "- OR load your own -"
     static let information = "Drag pieces to the grid.\nSwipe out of the grid to undo"
     static let shareButtonTitle = "SHARE PUZZLE"
+    static let newGameButtonTitle = "New Game"
+    static let movesLabelText = "Moves:"
+    static let scoresLabelText = "0"
   }
   
   struct Layout {
@@ -78,7 +81,6 @@ struct Constant {
       static let quitButton: CGFloat = 120
       static let startButton: CGFloat = 88
       static let button: CGFloat = 88
-      static let thinButton: CGFloat = 35
       static let instructionLabel: CGFloat = 88
     }
     
@@ -86,17 +88,12 @@ struct Constant {
       static let quitButton: CGFloat = 120
       static let startButton: CGFloat = 115
       static let button: CGFloat = 115
-      static let thinButton: CGFloat = 100
       static let instructionLabel: CGFloat = 115
     }
     
     struct Spacing {
       static let buttonStackViewiPad: CGFloat = 300
       static let buttonStackViewiPhone: CGFloat = 50
-    }
-    
-    struct Padding {
-      static let titleLabel: CGFloat = 16
     }
     
     struct HeightRatio {

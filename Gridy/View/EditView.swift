@@ -249,7 +249,7 @@ class EditView: UIView {
   private func instantiateClearView() {
     clearView = UIView(frame: CGRect())
     clearView.translatesAutoresizingMaskIntoConstraints = false
-    clearView.backgroundColor = GridyColor.transparent
+    clearView.backgroundColor = UIColor.transparent
     clearView.isUserInteractionEnabled = false
   }
   
@@ -257,7 +257,7 @@ class EditView: UIView {
     quitButton = UIButton(type: .custom)
     quitButton.translatesAutoresizingMaskIntoConstraints = false
     quitButton.setTitle("x", for: .normal)
-    quitButton.setTitleColor(GridyColor.olsoGray, for: .normal)
+    quitButton.setTitleColor(UIColor.olsoGray, for: .normal)
     quitButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.Size.quitButtonLabel)
   }
   
@@ -266,7 +266,7 @@ class EditView: UIView {
     startButton.translatesAutoresizingMaskIntoConstraints = false
     startButton.setTitle("Start", for: .normal)
     startButton.setTitleColor(UIColor.white, for: .normal)
-    startButton.backgroundColor = GridyColor.vistaBlue
+    startButton.backgroundColor = UIColor.vistaBlue
     startButton.titleLabel?.font = UIFont(name: Constant.Font.Name.timeBurner, size: Constant.Font.Size.startButtonLabel)
     startButton.layer.cornerRadius = 10
     startButton.clipsToBounds = true
@@ -276,7 +276,7 @@ class EditView: UIView {
     instructionLabel = UILabel()
     instructionLabel.translatesAutoresizingMaskIntoConstraints = false
     instructionLabel.text = "Adjust the puzzle image:\nzoom, rotate, reposition\nDouble tap to reset"
-    instructionLabel.textColor = GridyColor.olsoGray
+    instructionLabel.textColor = UIColor.olsoGray
     instructionLabel.textAlignment = .center
     instructionLabel.baselineAdjustment = .alignCenters
     instructionLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: Constant.Font.Size.instructionLabel)

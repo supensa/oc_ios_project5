@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		591138BB20F67D8200D55161 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 591138BA20F67D8200D55161 /* Assets.xcassets */; };
 		591ADFC1207D12BF00F5986F /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591ADFC0207D12BF00F5986F /* EditViewController.swift */; };
 		591C96F2207928680023FA29 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591C96F1207928680023FA29 /* ImageView.swift */; };
 		591DFBBA20D051310096372A /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591DFBB920D051310096372A /* Array.swift */; };
 		591DFBBC20D0516A0096372A /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591DFBBB20D0516A0096372A /* Int.swift */; };
-		594AC07B20600D0A00091A72 /* GridyColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594AC07A20600D0A00091A72 /* GridyColor.swift */; };
-		594E56EC2060630300E4C63D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 594E56EB2060630200E4C63D /* Assets.xcassets */; };
+		594AC07B20600D0A00091A72 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594AC07A20600D0A00091A72 /* UIColor.swift */; };
 		594E56EF20606C0C00E4C63D /* timeburnernormal.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */; };
 		594E56F020606C0C00E4C63D /* timeburnerbold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 594E56EE20606C0C00E4C63D /* timeburnerbold.ttf */; };
 		5951B2B4206BDDEA0067BBE2 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5951B2B3206BDDEA0067BBE2 /* EditView.swift */; };
@@ -35,6 +35,7 @@
 
 /* Begin PBXFileReference section */
 		590D991720F11BCC00399256 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		591138BA20F67D8200D55161 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		591ADFC0207D12BF00F5986F /* EditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		591C96F1207928680023FA29 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		591DFBB920D051310096372A /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
@@ -45,8 +46,7 @@
 		5948388B20F2458C007A3644 /* Landscape2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Landscape2.png; sourceTree = "<group>"; };
 		5948388C20F2458C007A3644 /* Landscape1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Landscape1.png; sourceTree = "<group>"; };
 		5948388D20F2458C007A3644 /* Landscape3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Landscape3.png; sourceTree = "<group>"; };
-		594AC07A20600D0A00091A72 /* GridyColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridyColor.swift; sourceTree = "<group>"; };
-		594E56EB2060630200E4C63D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		594AC07A20600D0A00091A72 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = timeburnernormal.ttf; sourceTree = "<group>"; };
 		594E56EE20606C0C00E4C63D /* timeburnerbold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = timeburnerbold.ttf; sourceTree = "<group>"; };
 		5951B2B3206BDDEA0067BBE2 /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
@@ -115,6 +115,7 @@
 			children = (
 				59940F9F207BB20D00D80676 /* Position.swift */,
 				591DFBB920D051310096372A /* Array.swift */,
+				594AC07A20600D0A00091A72 /* UIColor.swift */,
 				591DFBBB20D0516A0096372A /* Int.swift */,
 			);
 			path = Utilities;
@@ -153,7 +154,6 @@
 		59BD7023205DB2090061E82C /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				594AC07A20600D0A00091A72 /* GridyColor.swift */,
 				59C2811D207D7D71001F0422 /* Image.swift */,
 				596C5BC320D935DE00FB73E2 /* GridModel.swift */,
 			);
@@ -175,10 +175,10 @@
 		59BD7025205DB22A0061E82C /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				59BD7011205DB1E00061E82C /* AppDelegate.swift */,
 				59BD7013205DB1E00061E82C /* IntroViewController.swift */,
 				591ADFC0207D12BF00F5986F /* EditViewController.swift */,
 				597FC59220E5778100269861 /* PlayViewController.swift */,
-				59BD7011205DB1E00061E82C /* AppDelegate.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -187,7 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				5951B2B8206BE73F0067BBE2 /* Constants.swift */,
-				594E56EB2060630200E4C63D /* Assets.xcassets */,
+				591138BA20F67D8200D55161 /* Assets.xcassets */,
 				594E56EE20606C0C00E4C63D /* timeburnerbold.ttf */,
 				594E56ED20606C0C00E4C63D /* timeburnernormal.ttf */,
 				59BD701D205DB1E00061E82C /* Info.plist */,
@@ -256,7 +256,7 @@
 			files = (
 				594E56F020606C0C00E4C63D /* timeburnerbold.ttf in Resources */,
 				594E56EF20606C0C00E4C63D /* timeburnernormal.ttf in Resources */,
-				594E56EC2060630300E4C63D /* Assets.xcassets in Resources */,
+				591138BB20F67D8200D55161 /* Assets.xcassets in Resources */,
 				59BD701C205DB1E00061E82C /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -276,7 +276,7 @@
 				591ADFC1207D12BF00F5986F /* EditViewController.swift in Sources */,
 				59940FA0207BB20D00D80676 /* Position.swift in Sources */,
 				59BD7028205DE51A0061E82C /* IntroVIew.swift in Sources */,
-				594AC07B20600D0A00091A72 /* GridyColor.swift in Sources */,
+				594AC07B20600D0A00091A72 /* UIColor.swift in Sources */,
 				598A0B8220CA807400F9A375 /* HintView.swift in Sources */,
 				59C2811E207D7D71001F0422 /* Image.swift in Sources */,
 				59BD7012205DB1E00061E82C /* AppDelegate.swift in Sources */,

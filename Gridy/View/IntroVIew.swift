@@ -114,8 +114,8 @@ class IntroView: UIView {
   private func setupTitleLabelConstraints(safeArea: UILayoutGuide) {
     self.addSubview(titleLabel)
     titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
-    titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constant.Layout.Padding.titleLabel).isActive = true
-    titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constant.Layout.Padding.titleLabel).isActive = true
+    titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16).isActive = true
+    titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16).isActive = true
   }
   
   private func setupCommentLabelConstraints(safeArea: UILayoutGuide) {

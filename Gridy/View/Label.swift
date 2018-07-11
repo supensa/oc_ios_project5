@@ -17,7 +17,7 @@ class Label: UILabel {
     self.text = text
     self.baselineAdjustment = .alignCenters
     self.textAlignment = .center
-    self.textColor = useCustomFont ? GridyColor.vistaBlue : UIColor.black
+    self.textColor = useCustomFont ? UIColor.vistaBlue : UIColor.black
     
     let fontName = useCustomFont ? Constant.Font.Name.timeBurner : Constant.Font.Name.helveticaNeue
     

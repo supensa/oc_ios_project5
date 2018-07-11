@@ -165,7 +165,7 @@ class PlayViewController: UIViewController {
     shareButton.setTitle(Constant.String.shareButtonTitle, for: .normal)
     shareButton.titleLabel?.font = font
     shareButton.setTitleColor(UIColor.white, for: .normal)
-    shareButton.backgroundColor = GridyColor.vistaBlue
+    shareButton.backgroundColor = UIColor.vistaBlue
     
     shareButton.addTarget(self, action: #selector(displaySharingOptions), for: .touchUpInside)
     
@@ -226,7 +226,7 @@ extension PlayViewController: GridViewDataSource {
     let tile = UIView()
     if tag == 0 {
       tile.layer.borderWidth = 1
-      tile.layer.borderColor = GridyColor.janna.cgColor
+      tile.layer.borderColor = UIColor.janna.cgColor
     }
     tile.backgroundColor = UIColor.white
     return tile

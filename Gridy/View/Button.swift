@@ -25,7 +25,7 @@ class Button: UIButton {
     self.layer.cornerRadius = Constant.Layout.cornerRadius.introButton
     self.layer.masksToBounds = true
     self.isUserInteractionEnabled = true
-    self.backgroundColor = GridyColor.janna
+    self.backgroundColor = UIColor.janna
   }
   
   func setupSizeConstraint(forIpad: Bool) {

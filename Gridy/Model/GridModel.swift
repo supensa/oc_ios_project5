@@ -8,6 +8,10 @@
 
 import Foundation
 
+/// Logic of a Grid:
+/// -> Total number of tiles
+/// -> Which image is on which tile
+/// -> What tiles are free
 class GridModel {
   typealias Id = Int
   typealias Position = Int
@@ -25,6 +29,9 @@ class GridModel {
     }
   }
   
+  /// Check if all images are on the right position
+  ///
+  /// - Returns: true if matching all actual positions with all original positions
   func isMatching() -> Bool{
     for (id, position) in dictionary {
       if id != position { return false }

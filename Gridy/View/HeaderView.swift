@@ -39,25 +39,25 @@ class HeaderView: UIStackView {
     self.newGameButton = UIButton(type: .custom)
     newGameButton.layer.cornerRadius = 5
     newGameButton.clipsToBounds = true
-    newGameButton.setTitle("New Game", for: .normal)
+    newGameButton.setTitle(Constant.String.newGameButtonTitle, for: .normal)
     newGameButton.titleLabel?.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 1)
     newGameButton.setTitleColor(UIColor.white, for: .normal)
-    newGameButton.backgroundColor = GridyColor.vistaBlue
+    newGameButton.backgroundColor = UIColor.vistaBlue
     
     self.gridyLabel = UILabel()
-    gridyLabel.text = "Gridy"
-    gridyLabel.textColor = GridyColor.vistaBlue
+    gridyLabel.text = Constant.String.title
+    gridyLabel.textColor = UIColor.vistaBlue
     gridyLabel.font = UIFont(name: Constant.Font.Name.timeBurner, size: 1)
     gridyLabel.textAlignment = .center
     gridyLabel.backgroundColor = UIColor.white
     
     self.movesLabel = UILabel()
-    movesLabel.text = "Moves:"
+    movesLabel.text = Constant.String.movesLabelText
     movesLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 1)
     movesLabel.textAlignment = .center
     
     self.scoreLabel = UILabel()
-    scoreLabel.text = "0"
+    scoreLabel.text = Constant.String.scoresLabelText
     scoreLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 1)
     scoreLabel.textAlignment = .center
   }
