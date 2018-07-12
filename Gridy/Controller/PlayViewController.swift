@@ -40,6 +40,7 @@ class PlayViewController: UIViewController {
     playView.setup(parentView: self.view)
   }
   
+  // Setup and update iPad 
   override func viewWillLayoutSubviews() {
     super.viewWillLayoutSubviews()
     if traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .regular {
@@ -61,6 +62,7 @@ class PlayViewController: UIViewController {
     refreshLayout()
   }
   
+  // Setup and update constraints according to sizeClass
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     super.traitCollectionDidChange(previousTraitCollection)
     
@@ -87,6 +89,7 @@ class PlayViewController: UIViewController {
     }
   }
   
+  /// Layout of imageViews according to the grid models
   private func refreshLayout() {
     playView.layoutIfNeeded()
     for imageView in  playView.imageViews {
@@ -108,6 +111,8 @@ class PlayViewController: UIViewController {
     print("Puzzle Tile size: \(bigSize)")
   }
   
+  
+  /// Randomize the position of image in the containerGridModel
   private func randomizeImageViewsPosition() {
     var index = Array(0...images.count-1)
     for image in images {
@@ -116,7 +121,31 @@ class PlayViewController: UIViewController {
       }
     }
   }
+}
+
+extension PlayViewController: PlayViewDelegate {
+  // Called when an imageView is moved by user
+  func moveImageView(_ sender: UIPanGestureRecognizer) {
+    if let view = sender.view {
+      self.playView.bringSubview(toFront: view)
+      let translation = sender.translation(in: self.view)
+      let newPoint = CGPoint(x: view.center.x + translation.x,
+                             y: view.center.y + translation.y)
+      view.center = newPoint
+      sender.setTranslation(CGPoint.zero, in: self.view)
+      
+      if sender.state == UIGestureRecognizerState.ended {
+        updateModelAndView(view: view)
+        if puzzleGridModel.isFull() {
+          if puzzleGridModel.isMatching() {
+            endGame()
+          }
+        }
+      }
+    }
+  }
   
+  /// Update GridModels according to imageView position on the gridViews
   private func updateModelAndView(view: UIView) {
     let tag = view.tag
     if playView.puzzleGridView.frame.contains(view.center) {
@@ -144,6 +173,8 @@ class PlayViewController: UIViewController {
     refreshLayout()
   }
   
+  
+  /// Create a shareButton
   private func endGame() {
     playView.informationLabel.text = ""
     
@@ -177,29 +208,9 @@ class PlayViewController: UIViewController {
     shareButton.centerXAnchor.constraint(equalTo: playView.informationLabel.centerXAnchor).isActive = true
     shareButton.centerYAnchor.constraint(equalTo: playView.informationLabel.centerYAnchor).isActive = true
   }
-}
-
-extension PlayViewController: PlayViewDelegate {
-  func moveImageView(_ sender: UIPanGestureRecognizer) {
-    if let view = sender.view {
-      self.playView.bringSubview(toFront: view)
-      let translation = sender.translation(in: self.view)
-      let newPoint = CGPoint(x: view.center.x + translation.x,
-                             y: view.center.y + translation.y)
-      view.center = newPoint
-      sender.setTranslation(CGPoint.zero, in: self.view)
-      
-      if sender.state == UIGestureRecognizerState.ended {
-        updateModelAndView(view: view)
-        if puzzleGridModel.isFull() {
-          if puzzleGridModel.isMatching() {
-            endGame()
-          }
-        }
-      }
-    }
-  }
   
+  // Called when the shareButton is touched up inside
+  // Share solved puzzle + final score
   @objc func displaySharingOptions() {
     let text = "My score is \(score)"
     let items = [hintImage as Any, text as Any]
@@ -210,11 +221,14 @@ extension PlayViewController: PlayViewDelegate {
 }
 
 extension PlayViewController: GridViewDelegate {
+  // Called when eyeImageView is touched up inside
+  // Show hint image
   func eyeImageViewTapped() {
     playView.bringSubview(toFront: playView.hintView)
     playView.hintView.appearsTemporarily(for: 2)
   }
   
+  // Lenght of gaps between tiles
   func gapLength(gridView tag: Int) -> CGFloat {
     if tag == 0 { return Constant.Tiles.Container.gapLength }
     return Constant.Tiles.Puzzle.gapLength
@@ -222,6 +236,7 @@ extension PlayViewController: GridViewDelegate {
 }
 
 extension PlayViewController: GridViewDataSource {
+  // Return tile to GridView
   func getTile(at index: Int, for tag: Int) -> UIView {
     let tile = UIView()
     if tag == 0 {
@@ -243,6 +258,8 @@ extension PlayViewController: GridViewDataSource {
 }
 
 extension PlayViewController: HeaderViewDelegate {
+  // Called when newGameButton is touched up inside
+  // Dismiss EditViewController + PlayViewController
   func newGameButtonTapped() {
     self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
   }

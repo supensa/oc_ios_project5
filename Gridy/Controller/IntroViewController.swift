@@ -19,7 +19,9 @@ class IntroViewController: UIViewController {
 }
 
 extension IntroViewController: IntroViewDelegate {
+  
   // Delegate method: IntroViewDelegate
+  /// Select a random picture
   func randomButtonTouched() {
     let random = Int.random(min: 0, max: 4)
     if let image = UIImage(named: Constant.ImageName.image + "\(random)") {
@@ -30,17 +32,22 @@ extension IntroViewController: IntroViewDelegate {
   }
   
   // Delegate method: IntroViewDelegate
+  /// Take a picture and use it
   func cameraButtonTouched() {
     let sourceType = UIImagePickerControllerSourceType.camera
     displayMediaPicker(sourceType: sourceType)
   }
   
   // Delegate method: IntroViewDelegate
+  /// Select a picture from photo library
   func photosButtonTouched() {
     let sourceType = UIImagePickerControllerSourceType.photoLibrary
     displayMediaPicker(sourceType: sourceType)
   }
   
+  /// Use the Image Picker for: camera or photo library
+  ///
+  /// - Parameter sourceType: camera or photo library
   func displayMediaPicker(sourceType: UIImagePickerControllerSourceType) {
     
     let usingCamera = sourceType == .camera
@@ -50,16 +57,24 @@ extension IntroViewController: IntroViewDelegate {
       let noPermissionMessage = "Looks like Gridy don't have access to your \(media) :(...\nPlease use \"Settings\" to allow access to your \(media)"
       
       if usingCamera {
-        actionAccordingTo(status: AVCaptureDevice.authorizationStatus(for: AVMediaType.video), sourceType: sourceType, noPermissionMessage: noPermissionMessage)
+        actionAccordingTo(status: AVCaptureDevice.authorizationStatus(for: AVMediaType.video), noPermissionMessage: noPermissionMessage)
       } else {
-        actionAccordingTo(status: PHPhotoLibrary.authorizationStatus(), sourceType: sourceType, noPermissionMessage: noPermissionMessage)
+        actionAccordingTo(status: PHPhotoLibrary.authorizationStatus(), noPermissionMessage: noPermissionMessage)
       }
     } else {
       troubleAlert(message: "Sincere apologies, it looks like we can't access your \(media) at this time")
     }
   }
   
-  func actionAccordingTo(status: AVAuthorizationStatus , sourceType: UIImagePickerControllerSourceType, noPermissionMessage: String?) {
+  /// Ask the user the authorization to use the camera.
+  /// User can redirect to Settings if authorization not granted.
+  /// Call Image Picker if authorization has already been granted
+  ///
+  /// - Parameters:
+  ///   - status: Authorization status to use Camera
+  ///   - noPermissionMessage: Message to display if authorization not granted
+  func actionAccordingTo(status: AVAuthorizationStatus , noPermissionMessage: String?) {
+     let sourceType = UIImagePickerControllerSourceType.camera
     switch status {
     case .notDetermined:
       AVCaptureDevice.requestAccess(for: AVMediaType.video) {
@@ -72,7 +87,15 @@ extension IntroViewController: IntroViewDelegate {
     }
   }
   
-  func actionAccordingTo(status: PHAuthorizationStatus , sourceType: UIImagePickerControllerSourceType, noPermissionMessage: String?) {
+  /// Ask the user the authorization to use the photo library.
+  /// User can redirect to Settings if authorization not granted.
+  /// Call Image Picker if authorization has already been granted
+  ///
+  /// - Parameters:
+  ///   - status: Authorization status to use PhotoLibrary
+  ///   - noPermissionMessage: Message to display if authorization not granted
+  func actionAccordingTo(status: PHAuthorizationStatus , noPermissionMessage: String?) {
+    let sourceType = UIImagePickerControllerSourceType.photoLibrary
     switch status {
     case .notDetermined:
       PHPhotoLibrary.requestAuthorization {
@@ -85,6 +108,14 @@ extension IntroViewController: IntroViewDelegate {
     }
   }
   
+  /// Check if user has just granted or denied access to the ressource.
+  /// If granted, call image picker
+  /// If not granted, User can redirect to Settings
+  ///
+  /// - Parameters:
+  ///   - granted: True if authorization has been granted
+  ///   - sourceType: Camera or Photo library
+  ///   - noPermissionMessage: Message to display if authorization not granted
   func checkAuthorizationAccess(granted: Bool, sourceType: UIImagePickerControllerSourceType, noPermissionMessage: String?) {
     if granted {
       self.presentImagePicker(sourceType: sourceType)
@@ -93,6 +124,9 @@ extension IntroViewController: IntroViewDelegate {
     }
   }
   
+  /// Present image picker
+  ///
+  /// - Parameter sourceType: Camera or photo library
   func presentImagePicker(sourceType: UIImagePickerControllerSourceType) {
     let imagePickerController = UIImagePickerController()
     imagePickerController.delegate = self
@@ -100,6 +134,9 @@ extension IntroViewController: IntroViewDelegate {
     present(imagePickerController, animated: true, completion: nil)
   }
   
+  ///   User can go the Settings from here if wanted
+  ///
+  /// - Parameter message: Description about why user needs to go to Settings
   func openSettingsWithUIAlert(message: String?) {
     let alertController = UIAlertController (title: "Oops...", message: message, preferredStyle: .alert)
     
@@ -119,6 +156,10 @@ extension IntroViewController: IntroViewDelegate {
     present(alertController, animated: true, completion: nil)
   }
   
+  
+  /// Popup an alert message
+  ///
+  /// - Parameter message: Description of the issue
   func troubleAlert(message: String?) {
     let alertController = UIAlertController(title: title, message: message , preferredStyle: .alert)
     let alertAction = UIAlertAction(title: "Got it", style: .cancel)

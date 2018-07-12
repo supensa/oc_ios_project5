@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Class used to calculate the frame of squares inside a view
 class Position {
   private var safeArea: UIEdgeInsets
   private var height: CGFloat
@@ -29,8 +30,8 @@ class Position {
   
   init(parentView: UIView) {
     safeArea = (parentView.superview?.safeAreaInsets)!
-    height = UIScreen.main.bounds.height - safeArea.top - safeArea.bottom
-    width = UIScreen.main.bounds.width - safeArea.right - safeArea.left
+    height = (parentView.superview?.bounds.height)! - safeArea.top - safeArea.bottom
+    width = (parentView.superview?.bounds.width)! - safeArea.right - safeArea.left
     isLandscape = width > height
     countInRow = 4
     gapLength = 1
@@ -43,10 +44,12 @@ class Position {
     marginY = (height - allSquares) / 2
   }
   
+  // Get all the squares "frame"
   func getSquares() -> [CGRect] {
     return getSquares(borderWidth: 0)
   }
   
+  // Calculate all the frame of the squares
   private func getSquares(borderWidth: CGFloat) -> [CGRect] {
     var rectangles = [CGRect]()
     numberSquares = 16

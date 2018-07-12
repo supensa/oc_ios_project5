@@ -8,12 +8,18 @@
 
 import UIKit
 
+
+/// Use of delegate pattern
 protocol IntroViewDelegate: AnyObject {
+  /// Called when the randomButton has been touched up inside
   func randomButtonTouched()
+  /// Called when the cameraButton has been touched up inside
   func cameraButtonTouched()
+  /// Called when the photosButton has been touched up inside
   func photosButtonTouched()
 }
-  
+
+/// This is the main View that will be setup in the IntroViewComtroller
 class IntroView: UIView {
   
   required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
@@ -37,6 +43,7 @@ class IntroView: UIView {
   
   private var verticalStackViewSpacing: NSLayoutConstraint!
   
+  // Use of delegate pattern
   weak var delegate: IntroViewDelegate?
   
   init() {
@@ -202,6 +209,7 @@ class IntroView: UIView {
 extension IntroView {
   // Delegation from protocol: UITraitEnvironment
   // UIView and UIViewController conform to it
+  // Handle SizeClasses here for iPad and iPhone
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     super.traitCollectionDidChange(previousTraitCollection)
     
