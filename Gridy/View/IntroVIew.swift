@@ -180,7 +180,7 @@ class IntroView: UIView {
     self.setup(stackView: buttonStackView)
   }
   
-  private func setup(stackView: UIStackView, axis: UILayoutConstraintAxis = .vertical) {
+  private func setup(stackView: UIStackView, axis: NSLayoutConstraint.Axis = .vertical) {
     stackView.translatesAutoresizingMaskIntoConstraints = false
     stackView.axis = axis
     stackView.alignment = .center
@@ -188,9 +188,9 @@ class IntroView: UIView {
   }
   
   private func detectUserActions() {
-    randomButton.addTarget(self, action: #selector(randomButtonTouched), for: UIControlEvents.touchUpInside)
-    cameraButton.addTarget(self, action: #selector(cameraButtonTouched), for: UIControlEvents.touchUpInside)
-    photosButton.addTarget(self, action: #selector(photosButtonTouched), for: UIControlEvents.touchUpInside)
+    randomButton.addTarget(self, action: #selector(randomButtonTouched), for: UIControl.Event.touchUpInside)
+    cameraButton.addTarget(self, action: #selector(cameraButtonTouched), for: UIControl.Event.touchUpInside)
+    photosButton.addTarget(self, action: #selector(photosButtonTouched), for: UIControl.Event.touchUpInside)
   }
 
   @objc private func randomButtonTouched() {

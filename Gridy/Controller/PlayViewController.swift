@@ -127,14 +127,14 @@ extension PlayViewController: PlayViewDelegate {
   // Called when an imageView is moved by user
   func moveImageView(_ sender: UIPanGestureRecognizer) {
     if let view = sender.view {
-      self.playView.bringSubview(toFront: view)
+      self.playView.bringSubviewToFront(view)
       let translation = sender.translation(in: self.view)
       let newPoint = CGPoint(x: view.center.x + translation.x,
                              y: view.center.y + translation.y)
       view.center = newPoint
       sender.setTranslation(CGPoint.zero, in: self.view)
       
-      if sender.state == UIGestureRecognizerState.ended {
+      if sender.state == UIGestureRecognizer.State.ended {
         updateModelAndView(view: view)
         if puzzleGridModel.isFull() {
           if puzzleGridModel.isMatching() {
@@ -224,7 +224,7 @@ extension PlayViewController: GridViewDelegate {
   // Called when eyeImageView is touched up inside
   // Show hint image
   func eyeImageViewTapped() {
-    playView.bringSubview(toFront: playView.hintView)
+    playView.bringSubviewToFront(playView.hintView)
     playView.hintView.appearsTemporarily(for: 2)
   }
   

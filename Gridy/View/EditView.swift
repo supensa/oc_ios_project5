@@ -138,7 +138,7 @@ class EditView: UIView {
     
     let maskLayer = CAShapeLayer()
     maskLayer.path = path
-    maskLayer.fillRule = kCAFillRuleEvenOdd
+    maskLayer.fillRule = CAShapeLayerFillRule.evenOdd
     
     return maskLayer
   }
@@ -194,7 +194,7 @@ class EditView: UIView {
     var topConstraint = NSLayoutConstraint()
     var leftConstraint = NSLayoutConstraint()
     
-    let view = forStartButton ? startButton : instructionLabel
+    let view: UIView = forStartButton ? startButton : instructionLabel
     
     let offset = self.calculateOffset(forStartButton: forStartButton)
     

@@ -34,21 +34,21 @@ extension IntroViewController: IntroViewDelegate {
   // Delegate method: IntroViewDelegate
   /// Take a picture and use it
   func cameraButtonTouched() {
-    let sourceType = UIImagePickerControllerSourceType.camera
+    let sourceType = UIImagePickerController.SourceType.camera
     displayMediaPicker(sourceType: sourceType)
   }
   
   // Delegate method: IntroViewDelegate
   /// Select a picture from photo library
   func photosButtonTouched() {
-    let sourceType = UIImagePickerControllerSourceType.photoLibrary
+    let sourceType = UIImagePickerController.SourceType.photoLibrary
     displayMediaPicker(sourceType: sourceType)
   }
   
   /// Use the Image Picker for: camera or photo library
   ///
   /// - Parameter sourceType: camera or photo library
-  func displayMediaPicker(sourceType: UIImagePickerControllerSourceType) {
+  func displayMediaPicker(sourceType: UIImagePickerController.SourceType) {
     
     let usingCamera = sourceType == .camera
     let media = usingCamera ? "camera" : "photos"
@@ -74,7 +74,7 @@ extension IntroViewController: IntroViewDelegate {
   ///   - status: Authorization status to use Camera
   ///   - noPermissionMessage: Message to display if authorization not granted
   func actionAccordingTo(status: AVAuthorizationStatus , noPermissionMessage: String?) {
-     let sourceType = UIImagePickerControllerSourceType.camera
+     let sourceType = UIImagePickerController.SourceType.camera
     switch status {
     case .notDetermined:
       AVCaptureDevice.requestAccess(for: AVMediaType.video) {
@@ -95,7 +95,7 @@ extension IntroViewController: IntroViewDelegate {
   ///   - status: Authorization status to use PhotoLibrary
   ///   - noPermissionMessage: Message to display if authorization not granted
   func actionAccordingTo(status: PHAuthorizationStatus , noPermissionMessage: String?) {
-    let sourceType = UIImagePickerControllerSourceType.photoLibrary
+    let sourceType = UIImagePickerController.SourceType.photoLibrary
     switch status {
     case .notDetermined:
       PHPhotoLibrary.requestAuthorization {
@@ -116,7 +116,7 @@ extension IntroViewController: IntroViewDelegate {
   ///   - granted: True if authorization has been granted
   ///   - sourceType: Camera or Photo library
   ///   - noPermissionMessage: Message to display if authorization not granted
-  func checkAuthorizationAccess(granted: Bool, sourceType: UIImagePickerControllerSourceType, noPermissionMessage: String?) {
+  func checkAuthorizationAccess(granted: Bool, sourceType: UIImagePickerController.SourceType, noPermissionMessage: String?) {
     if granted {
       self.presentImagePicker(sourceType: sourceType)
     } else {
@@ -127,7 +127,7 @@ extension IntroViewController: IntroViewDelegate {
   /// Present image picker
   ///
   /// - Parameter sourceType: Camera or photo library
-  func presentImagePicker(sourceType: UIImagePickerControllerSourceType) {
+  func presentImagePicker(sourceType: UIImagePickerController.SourceType) {
     let imagePickerController = UIImagePickerController()
     imagePickerController.delegate = self
     imagePickerController.sourceType = sourceType
@@ -143,7 +143,7 @@ extension IntroViewController: IntroViewDelegate {
     let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
     let settingsAction = UIAlertAction.init(title: "Settings", style: .default) {
       _ in
-      guard let settingsUrl = URL(string: UIApplicationOpenSettingsURLString)
+      guard let settingsUrl = URL(string: UIApplication.openSettingsURLString)
         else { return }
       if UIApplication.shared.canOpenURL(settingsUrl) {
         UIApplication.shared.open(settingsUrl, completionHandler: nil)
@@ -170,15 +170,18 @@ extension IntroViewController: IntroViewDelegate {
 
 extension IntroViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
   // Delegate Function: UIImagePickerControllerDelegate
-  func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+  func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+// Local variable inserted by Swift 4.2 migrator.
+let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+
     picker.dismiss(animated: true, completion: nil)
     
     var image: UIImage?
     
     if picker.allowsEditing {
-      image = info[UIImagePickerControllerEditedImage] as? UIImage
+      image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.editedImage)] as? UIImage
     } else {
-      image = info[UIImagePickerControllerOriginalImage] as? UIImage
+      image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
     }
     
     if let image = image {
@@ -198,4 +201,14 @@ extension UIImagePickerController {
   override open var supportedInterfaceOrientations : UIInterfaceOrientationMask {
     return .all
   }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
+	return input.rawValue
 }
