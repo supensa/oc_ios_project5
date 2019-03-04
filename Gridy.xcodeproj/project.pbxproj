@@ -82,6 +82,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		593AF280222CB1BB004B0DDA /* Business Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Business Rules";
+			sourceTree = "<group>";
+		};
+		593AF281222CB1D3004B0DDA /* Display */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Display;
+			sourceTree = "<group>";
+		};
+		593AF282222CB204004B0DDA /* Data */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		5948388720F244CB007A3644 /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -142,6 +163,9 @@
 		59BD7010205DB1E00061E82C /* Gridy */ = {
 			isa = PBXGroup;
 			children = (
+				593AF280222CB1BB004B0DDA /* Business Rules */,
+				593AF282222CB204004B0DDA /* Data */,
+				593AF281222CB1D3004B0DDA /* Display */,
 				59BD7023205DB2090061E82C /* Model */,
 				59BD7024205DB2200061E82C /* View */,
 				59BD7025205DB22A0061E82C /* Controller */,
