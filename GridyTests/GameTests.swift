@@ -11,18 +11,23 @@ import XCTest
 
 class GameTests: XCTestCase {
   var game: Game!
+  var rules: Rules!
   
   override func setUp() {
     super.setUp()
-    let initial = Board()
     let main = Board()
     let numberMaxImages = main.width * main.height
     game = Game(main: main,
-                initial: initial,
+                initial: Board(),
                 imagesOrder: Array(1...numberMaxImages))
+    rules = Rules()
   }
   
   func testNewInitialBoard_BoardIsFull() {
     XCTAssertTrue(game.initialBoard.isFull())
+  }
+  
+  func testNewInitialBoard_BoardIsNotInOrder() {
+    XCTAssertFalse(rules.isMatching(game.initialBoard))
   }
 }

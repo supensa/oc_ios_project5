@@ -11,7 +11,7 @@ class Rules {
     return board.isFull() && isMatching(board)
   }
   
-  private func isMatching(_ board: Board) -> Bool {
+  func isMatching(_ board: Board) -> Bool {
     var order = 1
     for row in 1...board.height {
       for column in 1...board.width {

@@ -28,9 +28,9 @@ class Game {
       for column in 1...board.width {
         let max = imagesId.count - 1
         let random = max == 0 ? 0 : Int.random(in: 0..<max)
-        let imageId = imagesId.remove(at: random)
+        let image = imagesId.remove(at: random)
         let position = Position(column: column, row: row)
-        try! board.place(imageId, at: position)
+        try! board.place(image, at: position)
       }
     }
   }
