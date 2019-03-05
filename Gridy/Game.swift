@@ -11,7 +11,9 @@ class Game {
   private(set) var mainBoard: Board
   private(set) var imagesId: [Int]
   
-  init(main: Board, initial: Board, imagesOrder: [Int]) {
+  init(main: Board,
+       initial: Board,
+       imagesOrder: [Int]) {
     initialBoard = initial
     mainBoard = main
     imagesId = imagesOrder
