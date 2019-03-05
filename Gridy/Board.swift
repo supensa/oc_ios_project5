@@ -6,28 +6,28 @@
 //  Copyright © 2019 Spencer Forrest. All rights reserved.
 //
 
-enum BoardError: Error {
-  case spaceOccupied
-  case badPosition
-}
-
 class Board {
-  private(set) var width = 4
-  private(set) var height = 4
+  private(set) var width: Int
+  private(set) var height: Int
   
-  private var imagesId = [Int : Int]()
+  private var imagesOrder = [Int : Int]()
+  
+  init(width: Int = 4, height: Int = 4) {
+    self.width = width
+    self.height = height
+  }
   
   func countImagesPlaced() -> Int {
-    return imagesId.count
+    return imagesOrder.count
   }
   
   func isFull() -> Bool {
-    return imagesId.count == width * height
+    return imagesOrder.count == width * height
   }
   
   func get(from position: Position) -> Int? {
     let location = makeLocation(position)
-    return imagesId[location]
+    return imagesOrder[location]
   }
   
   func place(_ image: Int,
@@ -42,16 +42,16 @@ class Board {
       throw BoardError.spaceOccupied
     }
     
-    imagesId[location] = image
+    imagesOrder[location] = image
   }
   
   func remove(from position: Position) -> Int? {
     let location = makeLocation(position)
-    return imagesId.removeValue(forKey: location)
+    return imagesOrder.removeValue(forKey: location)
   }
   
   private func isOccupied(_ location: Int) -> Bool {
-    return imagesId[location] != nil
+    return imagesOrder[location] != nil
   }
   
   private func isOutOfBound(_ position: Position) -> Bool {

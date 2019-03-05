@@ -11,19 +11,17 @@ class Rules {
     return board.isFull() && isMatching(board)
   }
   
-  func isMatching(_ board: Board) -> Bool {
-    var imageId = 1
-    
+  private func isMatching(_ board: Board) -> Bool {
+    var order = 1
     for row in 1...board.height {
       for column in 1...board.width {
         let position = Position(column: column, row: row)
-        guard let id = board.get(from: position),
-          id == imageId
+        guard let imagesOrder = board.get(from: position),
+          imagesOrder == order
           else { return false }
-        imageId += 1
+        order += 1
       }
     }
-    
     return true
   }
 }
