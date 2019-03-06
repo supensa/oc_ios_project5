@@ -7,10 +7,14 @@
 //
 
 class Board {
+  var cellCount: Int {
+    return width * height
+  }
+  
   private(set) var width: Int
   private(set) var height: Int
   
-  private var imagesOrder = [Int : Int]()
+  private var imagesId = [Int : Int]()
   
   init(width: Int = 4, height: Int = 4) {
     self.width = width
@@ -18,19 +22,19 @@ class Board {
   }
   
   func countImagesPlaced() -> Int {
-    return imagesOrder.count
+    return imagesId.count
   }
-  
+    
   func isFull() -> Bool {
-    return imagesOrder.count == width * height
+    return imagesId.count == cellCount
   }
   
   func get(from position: Position) -> Int? {
     let location = makeLocation(position)
-    return imagesOrder[location]
+    return imagesId[location]
   }
   
-  func place(_ image: Int,
+  func place(_ imageId: Int,
              at position: Position) throws {
     if isOutOfBound(position) {
       throw BoardError.badPosition
@@ -42,16 +46,16 @@ class Board {
       throw BoardError.spaceOccupied
     }
     
-    imagesOrder[location] = image
+    imagesId[location] = imageId
   }
   
   func remove(from position: Position) -> Int? {
     let location = makeLocation(position)
-    return imagesOrder.removeValue(forKey: location)
+    return imagesId.removeValue(forKey: location)
   }
   
   private func isOccupied(_ location: Int) -> Bool {
-    return imagesOrder[location] != nil
+    return imagesId[location] != nil
   }
   
   private func isOutOfBound(_ position: Position) -> Bool {

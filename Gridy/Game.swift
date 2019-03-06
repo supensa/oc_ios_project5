@@ -7,17 +7,25 @@
 //
 
 class Game {
-  private(set) var initialBoard: Board
-  private(set) var mainBoard: Board
-  private(set) var imagesId: [Int]
+  private(set) var startingBoard: Board
+  private(set) var finishingBoard: Board
   
-  init(main: Board,
-       initial: Board,
-       imagesOrder: [Int]) {
-    initialBoard = initial
-    mainBoard = main
-    imagesId = imagesOrder
-    randomlyFill(initialBoard, with: imagesId)
+  private let rules = Rules()
+  
+  init(_ starting: Board,
+       _ finishing: Board,
+       _ imagesOrder: [Int]) {
+    finishingBoard = finishing
+    startingBoard = starting
+    randomlyFill(startingBoard, with: imagesOrder)
+  }
+  
+  convenience init(_ imagesOrder: [Int]) {
+    self.init(Board(), Board(), imagesOrder)
+  }
+  
+  func checkForWin() -> Bool {
+    return rules.isWin(finishingBoard)
   }
   
   private func randomlyFill(_ board: Board,
