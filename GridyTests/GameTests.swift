@@ -42,10 +42,10 @@ class GameTests: XCTestCase {
     XCTAssertNotNil(game.findAnEmptyCell())
   }
   
-  func testOutOfBound_PlacedOnFirstEmptyStartingBoardCell() {
-    let firstPosition = Position(column: 2, row: 3)
+  func testOutOfPosition_PlacedOnFirstEmptyStartingBoardCell() {
+    let firstPosition = Position(column: 2, row: 1)
     _ = game.startingBoard.remove(from: firstPosition)!
-    let secondPosition = Position(column: 3, row: 1)
+    let secondPosition = Position(column: 4, row: 3)
     let imageId = game.startingBoard.remove(from: secondPosition)!
     
     XCTAssertFalse(game.startingBoard.isFull())

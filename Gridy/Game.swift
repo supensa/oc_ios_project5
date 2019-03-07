@@ -28,10 +28,9 @@ class Game {
     do {
       try finishingBoard.place(imageId, at: position)
     } catch {
-      let error = error as! BoardError
-      switch error {
+      switch error as! BoardError {
       case .badPosition:
-        // handle error
+        placeOnStartingBoard(imageId)
         break
       case .spaceOccupied:
         break
@@ -39,15 +38,14 @@ class Game {
     }
   }
   
-  // TODO: - Move Logic from one board to another
-  func move(_ imageId: Int,
-            from startPosition: Position,
-            to endPosition: Position) {
-    place(imageId, at: endPosition)
-  }
-  
   func isWin() -> Bool {
     return rules.isWin(finishingBoard)
+  }
+  
+  func placeOnStartingBoard(_ imageId: Int) {
+    if let position = findAnEmptyCell() {
+      try! startingBoard.place(imageId, at: position)
+    }
   }
   
   func findAnEmptyCell() -> Position? {
@@ -61,15 +59,6 @@ class Game {
       }
     }
     return nil
-  }
-  
-  private func handleBadPosition(_ imageId: Int) {
-    if let position = findAnEmptyCell(),
-      let _ = try? startingBoard.place(imageId, at: position) {
-      
-    } else {
-      fatalError("Starting board should have at least one empty cell")
-    }
   }
   
   private func randomlyFill(_ board: Board,
