@@ -7,49 +7,68 @@
 //
 
 class Game {
-  private(set) var startingBoard: Board
-  private(set) var finishingBoard: Board
+  private var startBoard: Board
+  private var answerBoard: Board
   
   private let rules = Rules()
   
-  init(_ starting: Board,
-       _ finishing: Board,
+  init(_ start: Board,
+       _ answer: Board,
        _ imagesOrder: [Int]) {
-    finishingBoard = finishing
-    startingBoard = starting
-    randomlyFill(startingBoard, with: imagesOrder)
+    answerBoard = answer
+    startBoard = start
+    randomlyFill(startBoard, with: imagesOrder)
   }
   
   convenience init(_ imagesOrder: [Int]) {
     self.init(Board(), Board(), imagesOrder)
   }
   
-  func place(_ imageId: Int, at position: Position) {
+  func isWin() -> Bool {
+    return rules.isWin(answerBoard)
+  }
+  
+  func move(from provenance: Provenance,
+            to position: Position) {
+    let isStartingBoard = provenance.boardType == .start
+    let board = isStartingBoard ? startBoard : answerBoard
+    if let imageId = board.remove(from: provenance.position) {
+      move(imageId, from: provenance, to: position)
+    }
+  }
+  
+  func placeOnStartBoard(_ imageId: Int) {
+    if let position = findAnEmptyCell() {
+      try! startBoard.place(imageId, at: position)
+    }
+  }
+  
+  private func move(_ imageId: Int,
+                     from provenance: Provenance,
+                     to position: Position) {
     do {
-      try finishingBoard.place(imageId, at: position)
+      try answerBoard.place(imageId, at: position)
     } catch {
       switch error as! BoardError {
       case .badPosition:
-        placeOnStartingBoard(imageId)
+        placeOnStartBoard(imageId)
         break
       case .spaceOccupied:
+        moveBack(imageId, to: provenance)
         break
       }
     }
   }
   
-  func isWin() -> Bool {
-    return rules.isWin(finishingBoard)
+  private func moveBack(_ imageId: Int,
+                        to provenance: Provenance) {
+    let isStartingBoard = provenance.boardType == .start
+    let board = isStartingBoard ? startBoard : answerBoard
+    try! board.place(imageId, at: provenance.position)
   }
   
-  func placeOnStartingBoard(_ imageId: Int) {
-    if let position = findAnEmptyCell() {
-      try! startingBoard.place(imageId, at: position)
-    }
-  }
-  
-  func findAnEmptyCell() -> Position? {
-    let board = startingBoard
+  private func findAnEmptyCell() -> Position? {
+    let board = startBoard
     for row in 1...board.height {
       for column in 1...board.width {
         let position = Position(column: column, row: row)
