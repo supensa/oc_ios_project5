@@ -49,7 +49,7 @@ class BoardTests: XCTestCase {
     
     XCTAssertNoThrow(try! board.place(imageId, at: position))
     
-    let placedImage = board.get(from: position)
+    let placedImage = board.getImageId(from: position)
     
     XCTAssertEqual(1, board.countImagesPlaced())
     XCTAssertEqual(placedImage, imageId)
@@ -71,7 +71,7 @@ class BoardTests: XCTestCase {
   func testEmptySpace_GetNil() {
     let position = Position(column: 2, row: 3)
     
-    XCTAssertNil(board.get(from: position))
+    XCTAssertNil(board.getImageId(from: position))
   }
   
   func testPlaceOnOccupiedSpace_Error() {
@@ -80,7 +80,7 @@ class BoardTests: XCTestCase {
     
     XCTAssertNoThrow(try! board.place(imageId, at: position))
     
-    var placedImage = board.get(from: position)
+    var placedImage = board.getImageId(from: position)
     
     XCTAssertEqual(1, board.countImagesPlaced())
     XCTAssertEqual(placedImage, imageId)
@@ -92,7 +92,7 @@ class BoardTests: XCTestCase {
       XCTAssertEqual(error as! BoardError, BoardError.spaceOccupied)
     }
     
-    placedImage = board.get(from: position)
+    placedImage = board.getImageId(from: position)
     
     XCTAssertEqual(1, board.countImagesPlaced())
     XCTAssertEqual(placedImage, imageId)

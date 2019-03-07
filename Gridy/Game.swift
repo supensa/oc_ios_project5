@@ -24,8 +24,52 @@ class Game {
     self.init(Board(), Board(), imagesOrder)
   }
   
-  func checkForWin() -> Bool {
+  func place(_ imageId: Int, at position: Position) {
+    do {
+      try finishingBoard.place(imageId, at: position)
+    } catch {
+      let error = error as! BoardError
+      switch error {
+      case .badPosition:
+        // handle error
+        break
+      case .spaceOccupied:
+        break
+      }
+    }
+  }
+  
+  // TODO: - Move Logic from one board to another
+  func move(_ imageId: Int,
+            from startPosition: Position,
+            to endPosition: Position) {
+    place(imageId, at: endPosition)
+  }
+  
+  func isWin() -> Bool {
     return rules.isWin(finishingBoard)
+  }
+  
+  func findAnEmptyCell() -> Position? {
+    let board = startingBoard
+    for row in 1...board.height {
+      for column in 1...board.width {
+        let position = Position(column: column, row: row)
+        if board.getImageId(from: position) == nil {
+          return position
+        }
+      }
+    }
+    return nil
+  }
+  
+  private func handleBadPosition(_ imageId: Int) {
+    if let position = findAnEmptyCell(),
+      let _ = try? startingBoard.place(imageId, at: position) {
+      
+    } else {
+      fatalError("Starting board should have at least one empty cell")
+    }
   }
   
   private func randomlyFill(_ board: Board,

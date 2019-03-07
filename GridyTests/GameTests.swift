@@ -21,12 +21,39 @@ class GameTests: XCTestCase {
     
   }
   
-  func testNewInitialBoard_BoardIsFull() {
+  func testNewStartingBoard_BoardIsFull() {
     XCTAssertTrue(game.startingBoard.isFull())
   }
   
   func testNewInitialBoard_BoardIsNotInOrder() {
     let rules = Rules()
-    XCTAssertFalse(rules.isMatching(game.startingBoard))
+    XCTAssertFalse(rules.areOrderedImages(on: game.startingBoard))
+  }
+  
+  func testNewFinishingBoard_BoardIsEmpty() {
+    XCTAssertTrue(game.finishingBoard.countImagesPlaced() == 0)
+  }
+  
+  func testStartingBoardNotFull_EmptyPositionNotNil() {
+    let position = Position(column: 1, row: 1)
+    _ = game.startingBoard.remove(from: position)
+    
+    XCTAssertFalse(game.startingBoard.isFull())
+    XCTAssertNotNil(game.findAnEmptyCell())
+  }
+  
+  func testOutOfBound_PlacedOnFirstEmptyStartingBoardCell() {
+    let firstPosition = Position(column: 2, row: 3)
+    _ = game.startingBoard.remove(from: firstPosition)!
+    let secondPosition = Position(column: 3, row: 1)
+    let imageId = game.startingBoard.remove(from: secondPosition)!
+    
+    XCTAssertFalse(game.startingBoard.isFull())
+    
+    let outOfBoundPosition = Position(column: 0, row: 0)
+    game.place(imageId, at: outOfBoundPosition)
+    let sameImageId = game.startingBoard.getImageId(from: firstPosition)
+    
+    XCTAssertTrue(imageId == sameImageId)
   }
 }

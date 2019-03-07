@@ -29,7 +29,7 @@ class Board {
     return imagesId.count == cellCount
   }
   
-  func get(from position: Position) -> Int? {
+  func getImageId(from position: Position) -> Int? {
     let location = makeLocation(position)
     return imagesId[location]
   }
