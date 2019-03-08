@@ -10,7 +10,7 @@ enum BoardType {
   case start, answer
 }
 
-struct Provenance {
+struct Source {
   var boardType: BoardType
   var position: Position
 }

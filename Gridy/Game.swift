@@ -36,12 +36,12 @@ class Game {
     return rules.isWin(answerBoard)
   }
   
-  func move(from provenance: Provenance,
+  func move(from source: Source,
             to position: Position) {
-    let isStartingBoard = provenance.boardType == .start
+    let isStartingBoard = source.boardType == .start
     let board = isStartingBoard ? startBoard : answerBoard
-    if let imageId = board.remove(from: provenance.position) {
-      move(imageId, from: provenance, to: position)
+    if let imageId = board.remove(from: source.position) {
+      move(imageId, from: source, to: position)
     }
   }
   
@@ -52,7 +52,7 @@ class Game {
   }
   
   private func move(_ imageId: Int,
-                     from provenance: Provenance,
+                     from source: Source,
                      to position: Position) {
     do {
       try answerBoard.place(imageId, at: position)
@@ -62,17 +62,17 @@ class Game {
         placeOnStartBoard(imageId)
         break
       case .spaceOccupied:
-        moveBack(imageId, to: provenance)
+        moveBack(imageId, to: source)
         break
       }
     }
   }
   
   private func moveBack(_ imageId: Int,
-                        to provenance: Provenance) {
-    let isStartingBoard = provenance.boardType == .start
+                        to source: Source) {
+    let isStartingBoard = source.boardType == .start
     let board = isStartingBoard ? startBoard : answerBoard
-    try! board.place(imageId, at: provenance.position)
+    try! board.place(imageId, at: source.position)
   }
   
   private func findAnEmptyCell() -> Position? {
