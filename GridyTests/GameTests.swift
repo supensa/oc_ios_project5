@@ -16,7 +16,8 @@ class GameTests: XCTestCase {
   
   override func setUp() {
     super.setUp()
-    let imageCount = Board().cellCount
+    let board = Board()
+    let imageCount = board.width * board.height
     let imagesOrder = Array(1...imageCount)
     startBoard = Board()
     answerBoard = Board()

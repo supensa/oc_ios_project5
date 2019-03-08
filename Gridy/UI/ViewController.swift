@@ -9,9 +9,22 @@
 import UIKit
 
 class ViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-    }
+  
+  var startBoard: StartBoardView!
+  var game: Game!
+  var imagesId: [Int]!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    // TODO: Remove when previous controller is implemented
+    imagesId = fakeImages()
+    game = Game(imagesId)
+    startBoard = StartBoardView(cellCount: imagesId.count)
+  }
+  
+  func fakeImages() -> [Int] {
+    let board = Board()
+    let max = board.height * board.width
+    return Array(1...max)
+  }
 }

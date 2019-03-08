@@ -7,14 +7,14 @@
 //
 
 class Board {
-  var cellCount: Int {
-    return width * height
-  }
   
   private(set) var width: Int
   private(set) var height: Int
   
   private var imagesId = [Int : Int]()
+  private var cellCount: Int {
+    return width * height
+  }
   
   init(width: Int = 4, height: Int = 4) {
     self.width = width

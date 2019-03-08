@@ -24,6 +24,14 @@ class Game {
     self.init(Board(), Board(), imagesOrder)
   }
   
+  func boardWidth() -> Int {
+    return answerBoard.width
+  }
+  
+  func boardHeight() -> Int {
+    return answerBoard.height
+  }
+  
   func isWin() -> Bool {
     return rules.isWin(answerBoard)
   }
