@@ -12,6 +12,11 @@ There is a "hint" feature to help the user solve it if needed.
 4. Share your solved puzzle with friends
 
 ## "Clean Architecture"
+### Component Diagram
+
+![Class diagram](Images/Component.png)
+
+
 ### Class Diagram
 
 ![Class diagram](Images/Class.png)
