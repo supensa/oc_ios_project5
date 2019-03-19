@@ -11,6 +11,12 @@ There is a "hint" feature to help the user solve it if needed.
 3. Solve the puzzle (the fewer the moves, the better)
 4. Share your solved puzzle with friends
 
+## "Clean Architecture"
+### Class Diagram
+
+<p align="center">
+<img src="Images/Class.png" width="300">
+</p>
 
 ## Screenshots:
 ## Portrait
