@@ -14,9 +14,7 @@ There is a "hint" feature to help the user solve it if needed.
 ## "Clean Architecture"
 ### Class Diagram
 
-<p align="center">
-<img src="Images/Class.png" width="300">
-</p>
+![Class diagram](Images/Class.png)
 
 ## Screenshots:
 ## Portrait
