@@ -1,40 +1,40 @@
 //
-//  Board.swift
+//  BoardData.swift
 //  Gridy
 //
-//  Created by Spencer Forrest on 04/03/2019.
+//  Created by Spencer Forrest on 15/03/2019.
 //  Copyright © 2019 Spencer Forrest. All rights reserved.
 //
 
-class Board {
-  
+class BoardFactoryImplementation: BoardFactory {
+  func makeBoard() -> Board {
+    return BoardData()
+  }
+}
+
+class BoardData: Board {
   private(set) var width: Int
   private(set) var height: Int
-  
-  private var imagesId = [Int : Int]()
-  private var cellCount: Int {
-    return width * height
-  }
   
   init(width: Int = 4, height: Int = 4) {
     self.width = width
     self.height = height
   }
   
-  func countImagesPlaced() -> Int {
-    return imagesId.count
+  func countTilesPlaced() -> Int {
+    return imagesOrder.count
   }
-    
+  
   func isFull() -> Bool {
-    return imagesId.count == cellCount
+    return imagesOrder.count == cellCount
   }
   
-  func getImageId(from position: Position) -> Int? {
+  func getTileId(from position: Position) -> Int? {
     let location = makeLocation(position)
-    return imagesId[location]
+    return imagesOrder[location]
   }
   
-  func place(_ imageId: Int,
+  func place(_ imageOrder: Int,
              at position: Position) throws {
     if isOutOfBound(position) {
       throw BoardError.badPosition
@@ -46,16 +46,16 @@ class Board {
       throw BoardError.spaceOccupied
     }
     
-    imagesId[location] = imageId
+    imagesOrder[location] = imageOrder
   }
   
   func remove(from position: Position) -> Int? {
     let location = makeLocation(position)
-    return imagesId.removeValue(forKey: location)
+    return imagesOrder.removeValue(forKey: location)
   }
   
   private func isOccupied(_ location: Int) -> Bool {
-    return imagesId[location] != nil
+    return imagesOrder[location] != nil
   }
   
   private func isOutOfBound(_ position: Position) -> Bool {
@@ -66,5 +66,10 @@ class Board {
   
   private func makeLocation(_ position: Position) -> Int {
     return position.column * width + position.row
+  }
+  
+  private var imagesOrder = [Int : Int]()
+  private var cellCount: Int {
+    return width * height
   }
 }

@@ -44,10 +44,10 @@ class GameTests: XCTestCase {
     XCTAssertNil(startBoard.getImageId(from: positionOne))
     
     let positionTwelve = Position(column: 4, row: 3)
-    let provenance = Provenance(boardType: .start, position: positionTwelve)
+    let source = Source(boardType: .start, position: positionTwelve)
     let outOfBoundPosition = Position(column: 0, row: 0)
     let imageId = startBoard.getImageId(from: positionTwelve)
-    game.move(from: provenance, to: outOfBoundPosition)
+    game.move(from: source, to: outOfBoundPosition)
     let sameImageId = startBoard.getImageId(from: positionOne)
     
     XCTAssertTrue(imageId == sameImageId)
@@ -63,9 +63,9 @@ class GameTests: XCTestCase {
     XCTAssertNil(startBoard.getImageId(from: positionOne))
     XCTAssertTrue(answerBoard.countImagesPlaced() == 1)
     
-    let provenance = Provenance(boardType: .answer, position: positionTwelve)
+    let source = Source(boardType: .answer, position: positionTwelve)
     let outOfBoundPosition = Position(column: 0, row: 0)
-    game.move(from: provenance, to: outOfBoundPosition)
+    game.move(from: source, to: outOfBoundPosition)
     let sameImageId = startBoard.getImageId(from: positionOne)
     
     XCTAssertTrue(imageId == sameImageId)
@@ -77,10 +77,10 @@ class GameTests: XCTestCase {
     let positionTwo = Position(column: 2,row: 1)
     let imageIdOne = startBoard.getImageId(from: positionOne)
     let imageIdTwo = startBoard.getImageId(from: positionTwo)
-    let provenanceOne = Provenance(boardType: .start, position: positionOne)
-    let provenanceTwo = Provenance(boardType: .start, position: positionTwo)
-    game.move(from: provenanceOne, to: positionOne)
-    game.move(from: provenanceTwo, to: positionOne)
+    let sourceOne = Source(boardType: .start, position: positionOne)
+    let sourceTwo = Source(boardType: .start, position: positionTwo)
+    game.move(from: sourceOne, to: positionOne)
+    game.move(from: sourceTwo, to: positionOne)
     let sameImageIdOne = answerBoard.getImageId(from: positionOne)
     let sameImageIdTwo = startBoard.getImageId(from: positionTwo)
     
@@ -95,8 +95,8 @@ class GameTests: XCTestCase {
     let positionTwo = Position(column: 2,row: 1)
     try! answerBoard.place(imageIdOne, at: positionOne)
     try! answerBoard.place(imageIdTwo, at: positionTwo)
-    let provenanceTwo = Provenance(boardType: .answer, position: positionTwo)
-    game.move(from: provenanceTwo, to: positionOne)
+    let sourceTwo = Source(boardType: .answer, position: positionTwo)
+    game.move(from: sourceTwo, to: positionOne)
     let sameImageIdOne = answerBoard.getImageId(from: positionOne)
     let sameImageIdTwo = answerBoard.getImageId(from: positionTwo)
     

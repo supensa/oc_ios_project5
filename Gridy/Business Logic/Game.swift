@@ -6,7 +6,13 @@
 //  Copyright © 2019 Spencer Forrest. All rights reserved.
 //
 
+protocol BoardFactory {
+  func makeBoard() -> Board
+}
+
 class Game {
+  static var boardFactory: BoardFactory!
+  
   private var startBoard: Board
   private var answerBoard: Board
   
@@ -21,7 +27,9 @@ class Game {
   }
   
   convenience init(_ imagesOrder: [Int]) {
-    self.init(Board(), Board(), imagesOrder)
+    let answerBoard = Game.boardFactory.makeBoard()
+    let startBoard = Game.boardFactory.makeBoard()
+    self.init(startBoard, answerBoard, imagesOrder)
   }
   
   func boardWidth() -> Int {
@@ -80,7 +88,7 @@ class Game {
     for row in 1...board.height {
       for column in 1...board.width {
         let position = Position(column: column, row: row)
-        if board.getImageId(from: position) == nil {
+        if board.getTileId(from: position) == nil {
           return position
         }
       }
@@ -90,15 +98,15 @@ class Game {
   
   private func randomlyFill(_ board: Board,
                             with imagesOrder: [Int]) {
-    var imagesId = imagesOrder
+    var imagesOrder = imagesOrder
     
     for row in 1...board.height {
       for column in 1...board.width {
-        let max = imagesId.count - 1
+        let max = imagesOrder.count - 1
         let random = max == 0 ? 0 : Int.random(in: 0..<max)
-        let image = imagesId.remove(at: random)
+        let imageOrder = imagesOrder.remove(at: random)
         let position = Position(column: column, row: row)
-        try! board.place(image, at: position)
+        try! board.place(imageOrder, at: position)
       }
     }
   }

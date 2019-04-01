@@ -8,15 +8,16 @@
 
 class Rules {
   func isWin(_ board: Board) -> Bool {
-    return board.isFull() && areOrderedImages(on: board)
+    return areOrderedImages(on: board)
   }
   
   func areOrderedImages(on board: Board) -> Bool {
+    guard board.isFull() else { return false }
     var order = 1
     for row in 1...board.height {
       for column in 1...board.width {
         let position = Position(column: column, row: row)
-        guard let imagesOrder = board.getImageId(from: position),
+        guard let imagesOrder = board.getTileId(from: position),
           imagesOrder == order
           else { return false }
         order += 1

@@ -12,18 +12,18 @@ class ViewController: UIViewController {
   
   var startBoard: StartBoardView!
   var game: Game!
-  var imagesId: [Int]!
+  var imagesOrder: [Int]!
   
   override func viewDidLoad() {
     super.viewDidLoad()
     // TODO: Remove when previous controller is implemented
-    imagesId = fakeImages()
-    game = Game(imagesId)
-    startBoard = StartBoardView(cellCount: imagesId.count)
+    imagesOrder = makeImagesOrder()
+    game = Game(imagesOrder)
+    startBoard = StartBoardView(cellCount: imagesOrder.count)
   }
   
-  func fakeImages() -> [Int] {
-    let board = Board()
+  func makeImagesOrder() -> [Int] {
+    let board = Game.boardFactory.makeBoard()
     let max = board.height * board.width
     return Array(1...max)
   }
