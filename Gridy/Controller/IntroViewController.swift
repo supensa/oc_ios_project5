@@ -84,6 +84,8 @@ extension IntroViewController: IntroViewDelegate {
       self.presentImagePicker(sourceType: sourceType)
     case .denied, .restricted:
       self.openSettingsWithUIAlert(message: noPermissionMessage)
+    @unknown default:
+      fatalError()
     }
   }
   
@@ -105,6 +107,8 @@ extension IntroViewController: IntroViewDelegate {
       self.presentImagePicker(sourceType: sourceType)
     case .denied, .restricted:
       self.openSettingsWithUIAlert(message: noPermissionMessage)
+    @unknown default:
+      fatalError()
     }
   }
   
