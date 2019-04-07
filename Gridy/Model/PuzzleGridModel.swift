@@ -1,22 +1,20 @@
 //
-//  GridModel.swift
+//  PuzzleGridModel.swift
 //  Gridy
 //
 //  Created by Spencer Forrest on 19/06/2018.
 //  Copyright © 2018 Spencer Forrest. All rights reserved.
 //
 
-import Foundation
-
 /// Logic of a Grid:
 /// -> Total number of tiles
 /// -> Which image is on which tile
 /// -> What tiles are free
-class GridModel {
+class PuzzleGridModel {
   typealias Id = Int
   typealias Position = Int
   
-  private var dictionary: [Id:Position]
+  private var dictionary: [Id: Position]
   private var freeTile: [Position:Bool]
   private var numberOftile: Int
   
@@ -29,22 +27,19 @@ class GridModel {
     }
   }
   
-  /// Check if all images are on the right tile
+  /// Check if the user just won
   ///
-  /// - Returns: true puzzle is solved
-  func isMatching() -> Bool{
-    for (id, position) in dictionary {
-      if id != position { return false }
-    }
-    return true
+  /// - Returns: True if the user completed the puzzle
+  func isAwin() -> Bool {
+    return isFull() && isMatching()
   }
   
-  
-  /// Check if all the images are on the Grid
+  /// Check if the grid contains the image
   ///
-  /// - Returns: True if all images are on the grid
-  func isFull() -> Bool {
-    return dictionary.count == numberOftile
+  /// - Parameter id: image's id
+  /// - Returns: true if the grid contains the image
+  func contains(id: Id) -> Bool {
+    return dictionary[id] != nil
   }
   
   /// Get position of image on the grid
@@ -66,18 +61,6 @@ class GridModel {
     return false
   }
   
-  /// Gives the position of the first free tile if any
-  ///
-  /// - Returns: Return position or nil
-  func getFreeTilePosition() -> Int? {
-    for position in 0..<freeTile.count {
-      if let isFree = freeTile[position] {
-        if isFree { return position }
-      }
-    }
-    return nil
-  }
-  
   /// Update position of an image on a tile
   ///
   /// - Parameters:
@@ -93,5 +76,22 @@ class GridModel {
     } else {
       dictionary[id] = nil
     }
+  }
+  
+  /// Check if all the images are on the Grid
+  ///
+  /// - Returns: True if all images are on the grid
+  private func isFull() -> Bool {
+    return dictionary.count == numberOftile
+  }
+  
+  /// Check if all images are on the right tile
+  ///
+  /// - Returns: true puzzle is solved
+  private func isMatching() -> Bool{
+    for (id, position) in dictionary {
+      if id != position { return false }
+    }
+    return true
   }
 }

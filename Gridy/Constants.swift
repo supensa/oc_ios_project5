@@ -65,7 +65,7 @@ struct Constant {
     static let title = "Gridy"
     static let comment = "Challenge yourself with a photo puzzle"
     static let choice = "- OR load your own -"
-    static let information = "Drag pieces to the grid.\nSwipe out of the grid to undo"
+    static let instruction = "Drag pieces to the puzzle grid.\nSwipe out of the grid to undo"
     static let shareButtonTitle = "SHARE PUZZLE"
     static let newGameButtonTitle = "New Game"
     static let movesLabelText = "Moves:"

@@ -57,7 +57,7 @@ extension EditViewController: EditViewDelegate {
   /// Get screenshots and present PlayViewController
   func startButtonTouched() {
     let playViewController = PlayViewController()
-    playViewController.images = self.getSnapshots()
+    playViewController.imagesWithInitialPosition = self.getSnapshots()
     playViewController.hintImage = self.getHintImage()
     self.present(playViewController, animated: true)
   }

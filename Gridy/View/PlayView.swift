@@ -9,280 +9,490 @@
 import UIKit
 
 protocol PlayViewDelegate: AnyObject {
-  func moveImageView(_ sender: UIPanGestureRecognizer)
+  func handlePuzzleViewDrag(_ gestureRecognizer: UIPanGestureRecognizer)
+  func handleShareButtonTapped()
 }
 
 class PlayView: UIView {
   
   weak var delegate: PlayViewDelegate?
   
-  var containerGridView: GridView!
-  var puzzleGridView: GridView!
-  var header: HeaderView!
+  var puzzleGridView = PuzzleGridView()
+  var headerView = HeaderView()
+  var centeringView = UIView()
+  lazy var containerGridView: ContainerGridView = {
+    let view = ContainerGridView()
+    view.delegate = self
+    return view
+  }()
   
-  var imageViews: [ImageView]!
-  var informationLabel: UILabel!
+  var shareButton: UIButton?
+  
+  let instructionLabel: UILabel = {
+    let label = UILabel()
+    label.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
+    label.text = Constant.String.instruction
+    label.textAlignment = .center
+    label.numberOfLines = 2
+    return label
+  }()
+  
+  var puzzlePieceViews = [UIImageView]()
+  var puzzlePieceViewConstraints = [Int: [NSLayoutConstraint]]()
   
   var hintView: HintView!
   
-  private var unsharedConstraints: [NSLayoutConstraint]!
-  private var commonConstraints: [NSLayoutConstraint]!
+  private var landscapeConstraints = [NSLayoutConstraint]()
+  private var portraitConstraints = [NSLayoutConstraint]()
+  private var regularPortraitConstraints = [NSLayoutConstraint]()
+  private var regularLandscapeConstraints = [NSLayoutConstraint]()
   
- required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
+  required init?(coder aDecoder: NSCoder) { super.init(coder: aDecoder) }
   
-  init(hintImage: UIImage, images: [Image]!) {
+  init(hintImage: UIImage, puzzlePieceViews: [UIImageView]) {
     super.init(frame: .zero)
     
-    self.translatesAutoresizingMaskIntoConstraints = false
+    hintView = HintView(image: hintImage)
     
-    self.unsharedConstraints = [NSLayoutConstraint]()
-    self.commonConstraints = [NSLayoutConstraint]()
-    
-    self.isUserInteractionEnabled = true
-    self.backgroundColor = UIColor.white
-    
-    instantiateSubviews(hintImage: hintImage, images: images)
     addSubviews()
-    detectUserActions()
-    setupHintViewConstraints()
-    setupCommonConstraintsPriority()
-    NSLayoutConstraint.activate(self.commonConstraints)
-  }
-    
-  func setup(parentView view: UIView) {
-    view.backgroundColor = UIColor.white
-    view.addSubview(self)
-    let safeArea = view.safeAreaLayoutGuide
-    self.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 0).isActive = true
-    self.leftAnchor.constraint(equalTo: safeArea.leftAnchor, constant: 0).isActive = true
-    self.rightAnchor.constraint(equalTo: safeArea.rightAnchor, constant: 0).isActive = true
-    self.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: 0).isActive = true
-  }
-  
-  func setupConstraintsInPortraitEnvironment(offset: CGFloat) {
-    setupBigGridViewConstraintsInPortraitEnvironmen(offset: offset)
-    setupSmallGridViewConstraintsInPortraitEnvironment(offset: offset)
-    setupOtherViewsConstraintsInPortraitEnvironment()
-  }
-  
-  func setupConstraintsInLandscapeEnvironment(offset: CGFloat) {
-    setupBigGridViewConstraintInLandscapeEnvironment(offset: offset)
-    setupSmallGridViewConstraintsInLandscapeEnvironment(offset: offset)
-    setupOtherViewsConstraintsInLandscapeEnvironment()
-  }
-  
-  func deactivateConstraints() {
-    NSLayoutConstraint.deactivate(self.unsharedConstraints)
-    self.unsharedConstraints.removeAll()
-  }
-  
-  func activateConstraints() {
-    setupConstraintsPriority()
-    NSLayoutConstraint.activate(self.unsharedConstraints)
-  }
-  
-  func updateLabels(fontSize: CGFloat) {
-    informationLabel.font = informationLabel.font.withSize(fontSize)
-    
-    header.scoreLabel.font = header.scoreLabel.font.withSize(fontSize)
-    header.newGameButton.titleLabel?.font = header.newGameButton.titleLabel?.font.withSize(fontSize)
-    header.gridyLabel.font = header.gridyLabel.font.withSize(fontSize * 2)
-    header.movesLabel.font = header.movesLabel.font.withSize(fontSize)
-  }
-  
-  func convertFrame(of tile: UIView, in view: UIView) -> CGRect {
-    let width = tile.frame.width
-    let height = tile.frame.height
-    let origin = convertCoordinates(of: tile.frame.origin, from: view)
-    let size = CGSize(width: width, height: height)
-    return CGRect(origin: origin, size: size)
-  }
-  
-  func convertCoordinates(of point: CGPoint, from view: UIView) -> CGPoint {
-    let x = point.x + view.frame.origin.x
-    let y = point.y + view.frame.origin.y
-    return CGPoint(x: x, y: y)
-  }
-  
-  func convertCoordinates(of point: CGPoint, into view: UIView) -> CGPoint {
-    let x = point.x - view.frame.origin.x
-    let y = point.y - view.frame.origin.y
-    return CGPoint(x: x, y: y)
-  }
-  
-  private func setupConstraintsPriority() {
-    for constraint in unsharedConstraints {
-      constraint.priority = .defaultHigh
-    }
-  }
-  
-  private func instantiateSubviews(hintImage: UIImage, images: [Image]!) {
-    instantiateViews(hintImage: hintImage)
-    instantiateImageViews(images: images)
-    instantiateGridViews()
-  }
-  
-  private func addSubviews() {
-    self.addSubview(header)
-    self.addSubview(puzzleGridView)
-    self.addSubview(containerGridView)
-    self.addSubview(informationLabel)
-    
-    for imageView in imageViews {
-      self.addSubview(imageView)
-    }
-    self.addSubview(hintView)
-  }
-  
-  private func setupCommonConstraintsPriority() {
-    for constraint in commonConstraints {
-      constraint.priority = .defaultHigh
-    }
-  }
-  
-  private func instantiateGridViews() {
-    containerGridView = GridView(tag: 0, eyeOption: true)
-    containerGridView.backgroundColor = UIColor.white
-    puzzleGridView = GridView(tag: 1)
-    puzzleGridView.backgroundColor = UIColor.janna
-    
-    containerGridView.translatesAutoresizingMaskIntoConstraints = false
-    puzzleGridView.translatesAutoresizingMaskIntoConstraints = false
-  }
-  
-  private func instantiateViews(hintImage: UIImage) {
-    self.informationLabel = UILabel()
-    informationLabel.text = Constant.String.information
-    informationLabel.numberOfLines = 0
-    informationLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 1)
-    informationLabel.textAlignment = .center
-    
-    self.header = HeaderView()
-    
-    self.hintView = HintView(image: hintImage)
-    hintView.isUserInteractionEnabled = false
-    hintView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0)
-    hintView.imageView.alpha = 0
-    
-    header.translatesAutoresizingMaskIntoConstraints = false
-    informationLabel.translatesAutoresizingMaskIntoConstraints = false
-    hintView.translatesAutoresizingMaskIntoConstraints = false
-  }
-  
-  private func instantiateImageViews(images: [Image]!) {
-    self.imageViews = Array(repeating: ImageView(), count: images.count)
-    for image in images {
-      let imageView = ImageView.init(image: image.image)
-      imageView.tag = image.id
-      imageView.translatesAutoresizingMaskIntoConstraints = true
-      self.imageViews[image.id] = imageView
-    }
-  }
-  
-  private func setupHintViewConstraints() {
-    self.commonConstraints.append(hintView.topAnchor.constraint(equalTo: self.topAnchor))
-    self.commonConstraints.append(hintView.bottomAnchor.constraint(equalTo: self.bottomAnchor))
-    self.commonConstraints.append(hintView.leftAnchor.constraint(equalTo: self.leftAnchor))
-    self.commonConstraints.append(hintView.rightAnchor.constraint(equalTo: self.rightAnchor))
-  }
-  
-  private func setupOtherViewsConstraintsInPortraitEnvironment() {
-    
-    if let margin = self.superview?.layoutMarginsGuide {
-      self.unsharedConstraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 0))
-      self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: containerGridView.topAnchor, constant: -10))
-      self.unsharedConstraints.append(header.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
-      
-      self.unsharedConstraints.append(informationLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(informationLabel.bottomAnchor.constraint(equalTo: puzzleGridView.topAnchor, constant: 0))
-      self.unsharedConstraints.append(informationLabel.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(informationLabel.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
-    }
-  }
-  
-  private func setupOtherViewsConstraintsInLandscapeEnvironment() {
-    if let margin = self.superview?.layoutMarginsGuide {
-      self.unsharedConstraints.append(header.topAnchor.constraint(equalTo: margin.topAnchor, constant: 10))
-      self.unsharedConstraints.append(header.bottomAnchor.constraint(equalTo: containerGridView.topAnchor, constant: -5))
-      self.unsharedConstraints.append(header.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(header.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
-      
-      self.unsharedConstraints.append(informationLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(informationLabel.leftAnchor.constraint(equalTo: containerGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(informationLabel.rightAnchor.constraint(equalTo: containerGridView.rightAnchor, constant: 0))
-      self.unsharedConstraints.append(informationLabel.heightAnchor.constraint(equalToConstant: Constant.Layout.Height.informationLabel))
-    }
-  }
-  
-  private func setupBigGridViewConstraintsInPortraitEnvironmen(offset: CGFloat) {
-    if let margin = self.superview?.layoutMarginsGuide {
-      self.unsharedConstraints.append(puzzleGridView.leftAnchor.constraint(equalTo: margin.leftAnchor, constant: offset))
-      self.unsharedConstraints.append(puzzleGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: -offset))
-      self.unsharedConstraints.append(puzzleGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: 0))
-      self.unsharedConstraints.append(puzzleGridView.heightAnchor.constraint(equalTo: puzzleGridView.widthAnchor))
-    }
-  }
-  
-  private func setupBigGridViewConstraintInLandscapeEnvironment(offset: CGFloat) {
-    if let margin = self.superview?.layoutMarginsGuide {
-      self.unsharedConstraints.append(puzzleGridView.topAnchor.constraint(equalTo: margin.topAnchor, constant: offset))
-      self.unsharedConstraints.append(puzzleGridView.bottomAnchor.constraint(equalTo: margin.bottomAnchor, constant: -offset))
-      self.unsharedConstraints.append(puzzleGridView.rightAnchor.constraint(equalTo: margin.rightAnchor, constant: 0))
-      self.unsharedConstraints.append(puzzleGridView.widthAnchor.constraint(equalTo: puzzleGridView.heightAnchor))
-    }
-  }
-  
-  private func setupSmallGridViewConstraintsInPortraitEnvironment(offset: CGFloat) {
-    if let superview = self.superview {
-      let containerGridWidth = superview.bounds.width - superview.layoutMargins.left - superview.layoutMargins.right - offset * 2
-      let containerGridHeight = containerGridViewHeight(tileWidth: containerTileWidth(width: containerGridWidth))
-      
-      self.unsharedConstraints.append(containerGridView.heightAnchor.constraint(equalToConstant: containerGridHeight))
-      self.unsharedConstraints.append(containerGridView.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0))
-    }
-  }
-  
-  private func setupSmallGridViewConstraintsInLandscapeEnvironment(offset: CGFloat) {
-    if let superview = self.superview {
-      let containerGridWidth = superview.bounds.width - superview.layoutMargins.left - superview.layoutMargins.right - superview.bounds.height
-        + superview.layoutMargins.bottom + superview.layoutMargins.top + offset * 2
-      let containerGridHeight = containerGridViewHeight(tileWidth: containerTileWidth(width: containerGridWidth))
-      
-      self.unsharedConstraints.append(containerGridView.heightAnchor.constraint(equalToConstant: containerGridHeight))
-      self.unsharedConstraints.append(containerGridView.topAnchor.constraint(equalTo: puzzleGridView.topAnchor, constant: 0))
-      self.unsharedConstraints.append(containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0))
-      self.unsharedConstraints.append(containerGridView.leftAnchor.constraint(equalTo: header.leftAnchor, constant: 0))
-    }
-  }
-  
-  private func containerTileWidth(width: CGFloat) -> CGFloat {
-    let countByRow =  CGFloat.init(Constant.Tiles.Container.countByRow )
-    let tileWidth = (width - Constant.Tiles.Container.gapLength * (countByRow + 1)) / countByRow
-    return tileWidth
-  }
-  
-  private func containerGridViewHeight(tileWidth: CGFloat) -> CGFloat {
-    let numberOfRow = (CGFloat(imageViews.count) / CGFloat(Constant.Tiles.Container.countByRow)).rounded(.up)
-    return tileWidth * numberOfRow + (numberOfRow + 1) * Constant.Tiles.Container.gapLength
-  }
-  
-  private func detectUserActions() {
+    initialLayout(for: puzzlePieceViews)
     setupGestureRecognizers()
   }
   
-  private func setupGestureRecognizers() {
-    var tag = 0
-    for imageView in imageViews {
-      imageView.tag = tag
-      tag += 1
-      let panGestureRecognizer = UIPanGestureRecognizer.init(target: self, action: #selector(moveImageView))
-      imageView.addGestureRecognizer(panGestureRecognizer)
+  // Setup and update constraints according to sizeClass
+  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    super.traitCollectionDidChange(previousTraitCollection)
+    
+    let horizontaSizeClassChanged = previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
+    let verticalSizeClassChanged = previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass
+    
+    if verticalSizeClassChanged || horizontaSizeClassChanged {
+      updateLayoutAccordingToSizeClass()
     }
   }
   
-  @objc private func moveImageView(_ sender: UIPanGestureRecognizer) {
-    delegate?.moveImageView(sender)
+  func place(_ puzzlePieceView: UIImageView, inside tile: UIView) {
+    let id = puzzlePieceView.tag
+    
+    if let oldConstraints = self.puzzlePieceViewConstraints[id] {
+      NSLayoutConstraint.deactivate(oldConstraints)
+      puzzlePieceView.translatesAutoresizingMaskIntoConstraints = true
+    }
+    
+    let newConstraints = [
+      puzzlePieceView.topAnchor.constraint(equalTo: tile.topAnchor, constant: -1/2),
+      puzzlePieceView.leftAnchor.constraint(equalTo: tile.leftAnchor, constant: -1/2),
+      puzzlePieceView.bottomAnchor.constraint(equalTo: tile.bottomAnchor, constant: 1/2),
+      puzzlePieceView.rightAnchor.constraint(equalTo: tile.rightAnchor, constant: 1/2)
+    ]
+    
+    NSLayoutConstraint.setAndActivate(newConstraints)
+    
+    self.puzzlePieceViewConstraints[id] = newConstraints
+  }
+  
+  func activateRegularPortraitLayout() {
+    NSLayoutConstraint.deactivate(self.landscapeConstraints)
+    NSLayoutConstraint.deactivate(self.portraitConstraints)
+    NSLayoutConstraint.deactivate(self.regularLandscapeConstraints)
+    NSLayoutConstraint.setAndActivate(self.regularPortraitConstraints)
+    headerView.setBigFontSize()
+    instructionLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 30)
+    shareButton?.titleLabel?.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 30)
+  }
+  
+  func activateRegularLandscapeLayout() {
+    NSLayoutConstraint.deactivate(self.landscapeConstraints)
+    NSLayoutConstraint.deactivate(self.portraitConstraints)
+    NSLayoutConstraint.deactivate(self.regularPortraitConstraints)
+    NSLayoutConstraint.setAndActivate(self.regularLandscapeConstraints)
+    headerView.setBigFontSize()
+    instructionLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 30)
+    shareButton?.titleLabel?.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 30)
+  }
+  
+  func activatePortraitLayout() {
+    NSLayoutConstraint.deactivate(self.landscapeConstraints)
+    NSLayoutConstraint.deactivate(self.regularPortraitConstraints)
+    NSLayoutConstraint.deactivate(self.regularLandscapeConstraints)
+    NSLayoutConstraint.setAndActivate(self.portraitConstraints)
+    headerView.setNormalFontSize()
+    instructionLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
+    shareButton?.titleLabel?.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
+  }
+  
+  func activateLandscapeLayout() {
+    NSLayoutConstraint.deactivate(self.portraitConstraints)
+    NSLayoutConstraint.deactivate(self.regularPortraitConstraints)
+    NSLayoutConstraint.deactivate(self.regularLandscapeConstraints)
+    NSLayoutConstraint.setAndActivate(self.landscapeConstraints)
+    headerView.setNormalFontSize()
+    instructionLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
+    shareButton?.titleLabel?.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
+  }
+  
+  func convertCenterPointCoordinateSystem(of view: UIView, to containerView: UIView) -> CGPoint {
+    let newX = view.frame.origin.x - containerView.frame.origin.x
+    let newY = view.frame.origin.y - containerView.frame.origin.y
+    
+    let centerX = view.frame.width/2 + newX
+    let centerY = view.frame.height/2 + newY
+    
+    return CGPoint(x: centerX, y: centerY)
+  }
+  
+  func layoutEndGameMode() {
+    containerGridView.isUserInteractionEnabled = false
+    removeUserInteraction(from: puzzlePieceViews)
+    instructionLabel.isHidden = true
+    addSharePuzzleButton()
+  }
+  
+  private func updateLayoutAccordingToSizeClass() {
+    let sizeClass = (traitCollection.horizontalSizeClass, traitCollection.verticalSizeClass)
+    switch sizeClass {
+    case (.compact, .regular):
+      self.activatePortraitLayout()
+      break
+    case (.compact, .compact), (.regular,.compact):
+      self.activateLandscapeLayout()
+      break
+    case (.regular, .regular):
+      self.activateRegularPortraitLayout()
+      break
+    case (.unspecified, .unspecified):
+      self.activateRegularLandscapeLayout()
+      break
+    default:
+      break
+    }
+  }
+  
+  private func removeUserInteraction(from views: [UIView]) {
+    for view in views {
+      view.isUserInteractionEnabled = false
+    }
+  }
+  
+  private func addSubviews() {
+    self.translatesAutoresizingMaskIntoConstraints = false
+    self.backgroundColor = UIColor.white
+    
+    headerView.backgroundColor = UIColor.brown
+    
+    addSubview(centeringView)
+    addSubview(puzzleGridView)
+    addSubview(headerView)
+    addSubview(containerGridView)
+    addSubview(instructionLabel)
+    addSubview(hintView)
+    
+    setAndActivateCenteringView()
+    setAndActivateHintViewConstraints()
+    
+    setupLandscapeConstraints()
+    setupPortraitConstraints()
+    setupRegularRegularPortraitConstraints()
+    setupRegularRegularLandscapeConstraints()
+  }
+  
+  private func setupGestureRecognizers() {
+    setupPuzzlePiecesGestureRecognizers()
+  }
+  
+  private func initialLayout(for puzzlePieceViews: [UIImageView]) {
+    
+    for i in 0...puzzlePieceViews.count - 1 {
+      if let tile = containerGridView.getTile(from: i) {
+        
+        let puzzlePieceView = puzzlePieceViews[i]
+        puzzlePieceView.isUserInteractionEnabled = true
+        
+        addSubview(puzzlePieceView)
+        place(puzzlePieceView, inside: tile)
+        
+        self.puzzlePieceViews.append(puzzlePieceView)
+      }
+    }
+  }
+}
+
+// MARK: - Layout constraints (Universal)
+extension PlayView {
+  private func setAndActivateHintViewConstraints() {
+    NSLayoutConstraint.setAndActivate([
+      hintView.topAnchor.constraint(equalTo: self.topAnchor, constant: -1),
+      hintView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 1),
+      hintView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: -1),
+      hintView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 1)
+      ])
+  }
+  
+  private func setAndActivateCenteringView() {
+    NSLayoutConstraint.setAndActivate([
+      centeringView.leftAnchor.constraint(equalTo: self.leftAnchor),
+      centeringView.rightAnchor.constraint(equalTo: self.rightAnchor),
+      centeringView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+      centeringView.topAnchor.constraint(equalTo: headerView.bottomAnchor)
+      ])
+  }
+}
+
+// MARK: - Layout constraints (iPad + iPhone)
+extension PlayView {
+  private func setupRegularRegularPortraitConstraints() {
+    
+    let puzzleGridViewConstraints = [
+      puzzleGridView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),
+      puzzleGridView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: 1/2),
+      puzzleGridView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+      puzzleGridView.widthAnchor.constraint(equalTo: puzzleGridView.heightAnchor, constant: 0)
+    ]
+    
+    let headerViewConstraints = [
+      headerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+      headerView.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0),
+      headerView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0),
+      headerView.heightAnchor.constraint(equalToConstant: 60)
+    ]
+    
+    let containerGridViewConstraints = [
+      containerGridView.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor),
+      containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor),
+      containerGridView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
+      containerGridView.heightAnchor.constraint(equalTo: containerGridView.widthAnchor, multiplier: 1/2)
+    ]
+    
+    let instructionLabelConstraints = [
+      instructionLabel.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor),
+      instructionLabel.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor),
+      instructionLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor),
+      instructionLabel.bottomAnchor.constraint(equalTo: puzzleGridView.topAnchor)
+    ]
+    
+    self.regularPortraitConstraints.append(contentsOf: puzzleGridViewConstraints)
+    self.regularPortraitConstraints.append(contentsOf: headerViewConstraints)
+    self.regularPortraitConstraints.append(contentsOf: containerGridViewConstraints)
+    self.regularPortraitConstraints.append(contentsOf: instructionLabelConstraints)
+  }
+  
+  private func setupRegularRegularLandscapeConstraints() {
+    
+    let puzzleGridViewConstraints = [
+      puzzleGridView.centerYAnchor.constraint(equalTo: centeringView.centerYAnchor, constant: 0),
+      puzzleGridView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+      puzzleGridView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/2),
+      puzzleGridView.heightAnchor.constraint(equalTo: puzzleGridView.widthAnchor)
+    ]
+    
+    let headerViewConstraints = [
+      headerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+      headerView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
+      headerView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+      headerView.heightAnchor.constraint(equalToConstant: 60)
+    ]
+    
+    let containerGridViewConstraints = [
+      containerGridView.leftAnchor.constraint(equalTo: self.leftAnchor),
+      containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: -16),
+      containerGridView.topAnchor.constraint(equalTo: puzzleGridView.topAnchor, constant: 0),
+      containerGridView.heightAnchor.constraint(equalTo: containerGridView.widthAnchor, multiplier: 1/2)
+    ]
+    
+    let instructionLabelConstraints = [
+      instructionLabel.leftAnchor.constraint(equalTo: containerGridView.leftAnchor),
+      instructionLabel.rightAnchor.constraint(equalTo: containerGridView.rightAnchor),
+      instructionLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor),
+      instructionLabel.bottomAnchor.constraint(equalTo: puzzleGridView.bottomAnchor)
+    ]
+    
+    self.regularLandscapeConstraints.append(contentsOf: puzzleGridViewConstraints)
+    self.regularLandscapeConstraints.append(contentsOf: headerViewConstraints)
+    self.regularLandscapeConstraints.append(contentsOf: containerGridViewConstraints)
+    self.regularLandscapeConstraints.append(contentsOf: instructionLabelConstraints)
+  }
+  
+  private func setupPortraitConstraints() {
+    
+    let puzzleGridViewConstraints = [
+      puzzleGridView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),
+      puzzleGridView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
+      puzzleGridView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+      puzzleGridView.heightAnchor.constraint(equalTo: puzzleGridView.widthAnchor, constant: 0)
+    ]
+    
+    let headerViewConstraints = [
+      headerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+      headerView.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0),
+      headerView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0),
+      headerView.heightAnchor.constraint(equalToConstant: 30)
+    ]
+    
+    let containerGridViewConstraints = [
+      containerGridView.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor),
+      containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor),
+      containerGridView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
+      containerGridView.heightAnchor.constraint(equalTo: containerGridView.widthAnchor, multiplier: 1/2)
+    ]
+    
+    let instructionLabelConstraints = [
+      instructionLabel.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor),
+      instructionLabel.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor),
+      instructionLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor),
+      instructionLabel.bottomAnchor.constraint(equalTo: puzzleGridView.topAnchor)
+    ]
+    
+    self.portraitConstraints.append(contentsOf: puzzleGridViewConstraints)
+    self.portraitConstraints.append(contentsOf: headerViewConstraints)
+    self.portraitConstraints.append(contentsOf: containerGridViewConstraints)
+    self.portraitConstraints.append(contentsOf: instructionLabelConstraints)
+  }
+  
+  private func setupLandscapeConstraints() {
+    
+    let headerViewConstraints = [
+      headerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+      headerView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
+      headerView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+      headerView.heightAnchor.constraint(equalToConstant: 30)
+    ]
+    
+    let puzzleGridViewConstraints = [
+      puzzleGridView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),
+      puzzleGridView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
+      puzzleGridView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+      puzzleGridView.widthAnchor.constraint(equalTo: puzzleGridView.heightAnchor, constant: 0)
+    ]
+    
+    let containerGridViewConstraints = [
+      containerGridView.leftAnchor.constraint(equalTo: self.leftAnchor),
+      containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: -16),
+      containerGridView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
+      containerGridView.heightAnchor.constraint(equalTo: containerGridView.widthAnchor, multiplier: 1/2)
+    ]
+    
+    let instructionLabelConstraints = [
+      instructionLabel.leftAnchor.constraint(equalTo: containerGridView.leftAnchor),
+      instructionLabel.rightAnchor.constraint(equalTo: containerGridView.rightAnchor),
+      instructionLabel.topAnchor.constraint(equalTo: containerGridView.bottomAnchor),
+      instructionLabel.bottomAnchor.constraint(equalTo: puzzleGridView.bottomAnchor)
+    ]
+    
+    self.landscapeConstraints.append(contentsOf: puzzleGridViewConstraints)
+    self.landscapeConstraints.append(contentsOf: headerViewConstraints)
+    self.landscapeConstraints.append(contentsOf: containerGridViewConstraints)
+    self.landscapeConstraints.append(contentsOf: instructionLabelConstraints)
+  }
+}
+
+// MARK: - ContainerGridView delegate
+extension PlayView: ContainerGridViewDelegate {
+  func eyeViewTapped() {
+    bringSubviewToFront(hintView)
+    hintView.appearsTemporarily(for: 2)
+  }
+}
+
+// MARK: - PuzzlePieces gesture recognizer logic
+extension PlayView {
+  private func setupPuzzlePiecesGestureRecognizers() {
+    for puzzlePieceView in puzzlePieceViews {
+      let panGestureRecognizer = UIPanGestureRecognizer.init(target: self, action: #selector(movePuzzlePieceView))
+      puzzlePieceView.addGestureRecognizer(panGestureRecognizer)
+    }
+  }
+  
+  @objc private func movePuzzlePieceView(_ gestureRecognizer: UIPanGestureRecognizer) {
+    delegate?.handlePuzzleViewDrag(gestureRecognizer)
+  }
+}
+
+// MARK: - ShareButton creation
+extension PlayView {
+  private func addSharePuzzleButton() {
+    shareButton = UIButton(type: .custom)
+    shareButton?.layer.cornerRadius = 5
+    shareButton?.clipsToBounds = true
+    shareButton?.backgroundColor = UIColor.vistaBlue
+    shareButton?.setTitleColor(.white, for: .normal)
+    shareButton?.setTitle(Constant.String.shareButtonTitle, for: .normal)
+    shareButton?.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
+    
+    let centeringView = UIView()
+    
+    addSubview(centeringView)
+    addSubview(shareButton!)
+    
+    bringPuzzleToFront()
+    
+    setupPortraitConstraintsForShareButton(centeringView)
+    setupLandscapeConstraintsForShareButton()
+    
+    updateLayoutAccordingToSizeClass()
+  }
+  
+  @objc private func shareButtonTapped() {
+    delegate?.handleShareButtonTapped()
+  }
+  
+  private func setupPortraitConstraintsForShareButton(_ centeringView: UIView) {
+    guard let shareButton = shareButton else { fatalError("Share Button is nil") }
+    
+    var portraitConstraints = [
+      centeringView.topAnchor.constraint(equalTo: containerGridView.bottomAnchor),
+      centeringView.bottomAnchor.constraint(equalTo: puzzleGridView.topAnchor),
+      centeringView.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor),
+      centeringView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor)
+    ]
+    
+    self.portraitConstraints.append(contentsOf: portraitConstraints)
+    self.regularPortraitConstraints.append(contentsOf: portraitConstraints)
+    
+    portraitConstraints = [
+      shareButton.centerYAnchor.constraint(equalTo: centeringView.centerYAnchor),
+      shareButton.leftAnchor.constraint(equalTo: centeringView.leftAnchor),
+      shareButton.rightAnchor.constraint(equalTo: centeringView.rightAnchor),
+      shareButton.heightAnchor.constraint(equalToConstant: 30)
+    ]
+    
+    self.portraitConstraints.append(contentsOf: portraitConstraints)
+    
+    portraitConstraints = [
+      shareButton.centerYAnchor.constraint(equalTo: centeringView.centerYAnchor),
+      shareButton.leftAnchor.constraint(equalTo: centeringView.leftAnchor),
+      shareButton.rightAnchor.constraint(equalTo: centeringView.rightAnchor),
+      shareButton.heightAnchor.constraint(equalToConstant: 60)
+    ]
+    
+    self.regularPortraitConstraints.append(contentsOf: portraitConstraints)
+  }
+  
+  private func setupLandscapeConstraintsForShareButton() {
+    guard let shareButton = shareButton else { fatalError("Share Button is nil") }
+    
+    var landscapeConstraints = [
+      shareButton.bottomAnchor.constraint(equalTo: puzzleGridView.bottomAnchor),
+      shareButton.leftAnchor.constraint(equalTo: containerGridView.leftAnchor),
+      shareButton.rightAnchor.constraint(equalTo: containerGridView.rightAnchor),
+      shareButton.heightAnchor.constraint(equalToConstant: 30)
+    ]
+    
+    self.landscapeConstraints.append(contentsOf: landscapeConstraints)
+    
+    landscapeConstraints = [
+      shareButton.bottomAnchor.constraint(equalTo: puzzleGridView.bottomAnchor),
+      shareButton.leftAnchor.constraint(equalTo: containerGridView.leftAnchor),
+      shareButton.rightAnchor.constraint(equalTo: containerGridView.rightAnchor),
+      shareButton.heightAnchor.constraint(equalToConstant: 60)
+    ]
+    
+    self.regularLandscapeConstraints.append(contentsOf: landscapeConstraints)
+  }
+  
+  private func bringPuzzleToFront() {
+    bringSubviewToFront(puzzleGridView)
+    for piece in puzzlePieceViews {
+      bringSubviewToFront(piece)
+    }
   }
 }

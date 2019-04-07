@@ -9,257 +9,199 @@
 import UIKit
 
 class PlayViewController: UIViewController {
+  
   var playView: PlayView!
-  var images: [Image]!
+  var imagesWithInitialPosition: [Image]!
   var hintImage: UIImage!
   
-  private var puzzleGridModel: GridModel!
-  private var containerGridModel: GridModel!
+  private static var numberOftile: Int = { return 16 }()
+  private var puzzleGridModel = PuzzleGridModel(numberOftile: numberOftile)
+  private var containerGridModel = ContainerGridModel(numberOftile: numberOftile)
   private var score = 0
-    
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    self.puzzleGridModel = GridModel(numberOftile: images.count)
-    self.containerGridModel = GridModel(numberOftile: images.count)
+    view.backgroundColor = UIColor.white
     
-    randomizeImageViewsPosition()
-    
-    playView = PlayView(hintImage: hintImage, images: images)
-    
+    playView = PlayView(hintImage: hintImage, puzzlePieceViews: makeRandomOrderImageViews())
     playView.delegate = self
+    playView.headerView.delegate = self
+    playView.backgroundColor = UIColor.white
+    view.addSubview(playView)
     
-    playView.puzzleGridView.delegate = self
-    playView.containerGridView.delegate = self
-    
-    playView.puzzleGridView.datasource = self
-    playView.containerGridView.datasource = self
-    
-    playView.header.delegate = self
-    
-    playView.setup(parentView: self.view)
+    let margin = self.view.layoutMarginsGuide
+    NSLayoutConstraint.setAndActivate([
+      playView.topAnchor.constraint(equalTo: margin.topAnchor),
+      playView.bottomAnchor.constraint(equalTo: margin.bottomAnchor),
+      playView.leftAnchor.constraint(equalTo: margin.leftAnchor),
+      playView.rightAnchor.constraint(equalTo: margin.rightAnchor),
+      ])
   }
   
-  // Setup and update iPad 
-  override func viewWillLayoutSubviews() {
-    super.viewWillLayoutSubviews()
-    if traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .regular {
-      let isLandscape = view.bounds.width >= view.bounds.height
-      playView.layoutIfNeeded()
-      playView.deactivateConstraints()
-      if isLandscape {
-        // Landscape constraints for IPad
-        playView.setupConstraintsInLandscapeEnvironment(offset: 90)
-      } else {
-        // Portrait constraints for IPad
-        playView.setupConstraintsInPortraitEnvironment(offset: 130)
-      }
-      playView.activateConstraints()
+  // Unspecified trait if iPad is on landscape
+  override public var traitCollection: UITraitCollection {
+    
+    if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isLandscape {
+      let traitCollections = [
+        UITraitCollection(horizontalSizeClass: .unspecified),
+        UITraitCollection(verticalSizeClass: .unspecified)
+      ]
+      return UITraitCollection(traitsFrom: traitCollections)
     }
+    return super.traitCollection
   }
   
-  override func viewDidLayoutSubviews() {
-    refreshLayout()
-  }
-  
-  // Setup and update constraints according to sizeClass
-  override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-    super.traitCollectionDidChange(previousTraitCollection)
-    
-    let horizontaSizeClassChanged = previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
-    let verticalSizeClassChanged = previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass
-    
-    if verticalSizeClassChanged || horizontaSizeClassChanged {
-      playView.deactivateConstraints()
-      let sizeClass = (traitCollection.horizontalSizeClass, traitCollection.verticalSizeClass)
-      switch sizeClass {
-      case (.regular, .regular):
-        playView.updateLabels(fontSize: Constant.Font.Size.playViewLabels * 2)
-      case (.compact, .regular):
-        playView.layoutIfNeeded()
-        playView.updateLabels(fontSize: Constant.Font.Size.playViewLabels)
-        playView.setupConstraintsInPortraitEnvironment(offset: 0)
-      case (.compact, .compact), (.regular,.compact):
-        playView.layoutIfNeeded()
-        playView.updateLabels(fontSize: Constant.Font.Size.playViewLabels)
-        playView.setupConstraintsInLandscapeEnvironment(offset: 44)
-      default: break
-      }
-      playView.activateConstraints()
+  private func makeRandomOrderImageViews() -> [UIImageView] {
+    var array = [UIImageView]()
+    let max = imagesWithInitialPosition.count - 1
+    for index in 0...max {
+      guard let imageModel = imagesWithInitialPosition.randomPop()
+        else { fatalError("Image model is null") }
+      let imageView = UIImageView(image: imageModel.image)
+      imageView.tag = imageModel.id
+      array.append(imageView)
+      containerGridModel.updatePosition(id: imageModel.id, position: index)
     }
-  }
-  
-  /// Layout of imageViews according to the grid models
-  private func refreshLayout() {
-    playView.layoutIfNeeded()
-    for imageView in  playView.imageViews {
-      let idImage = imageView.tag
-      if let position = puzzleGridModel.position(id: idImage) {
-        let tile =  playView.puzzleGridView.subviews[position]
-        let frame =  playView.convertFrame(of: tile, in:  playView.puzzleGridView)
-        imageView.frame = frame
-      } else if let position = containerGridModel.position(id: idImage) {
-        let tile =  playView.containerGridView.subviews[position]
-        let frame =  playView.convertFrame(of: tile, in:  playView.containerGridView)
-        imageView.frame = frame
-      }
-    }
-    playView.header.scoreLabel?.text = "\(score)"
-    let smallSize =  playView.containerGridView.subviews[0].frame.size
-    let bigSize =  playView.puzzleGridView.subviews[0].frame.size
-    print("Container Tile size: \(smallSize)")
-    print("Puzzle Tile size: \(bigSize)")
-  }
-  
-  
-  /// Randomize the position of image in the containerGridModel
-  private func randomizeImageViewsPosition() {
-    var index = Array(0...images.count-1)
-    for image in images {
-      if let randomIndex = index.randomPop() {
-        containerGridModel.updatePosition(id: image.id, position: randomIndex)
-      }
-    }
+    return array
   }
 }
 
+// MARK: Delegation to handle PuzzlePieceView logic
 extension PlayViewController: PlayViewDelegate {
-  // Called when an imageView is moved by user
-  func moveImageView(_ sender: UIPanGestureRecognizer) {
-    if let view = sender.view {
-      self.playView.bringSubviewToFront(view)
-      let translation = sender.translation(in: self.view)
-      let newPoint = CGPoint(x: view.center.x + translation.x,
-                             y: view.center.y + translation.y)
-      view.center = newPoint
-      sender.setTranslation(CGPoint.zero, in: self.view)
-      
-      if sender.state == UIGestureRecognizer.State.ended {
-        updateModelAndView(view: view)
-        if puzzleGridModel.isFull() {
-          if puzzleGridModel.isMatching() {
-            endGame()
-          }
-        }
-      }
-    }
-  }
   
-  /// Update GridModels according to imageView position on the gridViews
-  private func updateModelAndView(view: UIView) {
-    let tag = view.tag
-    if playView.puzzleGridView.frame.contains(view.center) {
-      let max = playView.puzzleGridView.subviews.count - 1
-      for index in 0...max {
-        let tile = playView.puzzleGridView.subviews[index]
-        let center = playView.convertCoordinates(of: view.center, into: playView.puzzleGridView)
-        if tile.frame.contains(center) {
-          if puzzleGridModel.isTileFree(at: index) && index != puzzleGridModel.position(id: tag) {
-            containerGridModel.updatePosition(id: tag, position: nil)
-            puzzleGridModel.updatePosition(id: tag, position: index)
-            self.score += 1
-            break
-          }
-          break
-        }
-      }
-    } else {
-      containerGridModel.updatePosition(id: tag, position: nil)
-      if let _ = puzzleGridModel.position(id: tag) { self.score += 1 }
-      puzzleGridModel.updatePosition(id: tag, position: nil)
-      let position = containerGridModel.getFreeTilePosition()
-      containerGridModel.updatePosition(id: tag, position: position)
-    }
-    refreshLayout()
-  }
-  
-  
-  /// Create a shareButton
-  private func endGame() {
-    playView.informationLabel.text = ""
-    
-    for imageView in playView.imageViews {
-      imageView.isUserInteractionEnabled = false
-    }
-    
-    var font = UIFont(name: Constant.Font.Name.helveticaNeue, size:  Constant.Font.Size.playViewLabels)
-    var height: CGFloat =  Constant.Layout.Height.shareButton
-    
-    if traitCollection.verticalSizeClass == .regular && traitCollection.horizontalSizeClass == .regular {
-      font = font?.withSize(Constant.Font.Size.playViewLabels * 2)
-      height = Constant.Layout.Height.shareButton * 2
-    }
-    
-    let shareButton = UIButton(type: .custom)
-    shareButton.layer.cornerRadius = 5
-    shareButton.clipsToBounds = true
-    shareButton.setTitle(Constant.String.shareButtonTitle, for: .normal)
-    shareButton.titleLabel?.font = font
-    shareButton.setTitleColor(UIColor.white, for: .normal)
-    shareButton.backgroundColor = UIColor.vistaBlue
-    
-    shareButton.addTarget(self, action: #selector(displaySharingOptions), for: .touchUpInside)
-    
-    playView.addSubview(shareButton)
-    shareButton.translatesAutoresizingMaskIntoConstraints = false
-    shareButton.heightAnchor.constraint(equalToConstant: height).isActive = true
-    shareButton.leftAnchor.constraint(equalTo: playView.informationLabel.leftAnchor, constant: 0).isActive = true
-    shareButton.rightAnchor.constraint(equalTo: playView.informationLabel.rightAnchor, constant: 0).isActive = true
-    shareButton.centerXAnchor.constraint(equalTo: playView.informationLabel.centerXAnchor).isActive = true
-    shareButton.centerYAnchor.constraint(equalTo: playView.informationLabel.centerYAnchor).isActive = true
-  }
-  
-  // Called when the shareButton is touched up inside
-  // Share solved puzzle + final score
-  @objc func displaySharingOptions() {
+  func handleShareButtonTapped() {
     let text = "My score is \(score)"
-    let items = [hintImage as Any, text as Any]
+    let items = [
+      hintImage as Any,
+      text
+    ]
     let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: nil)
     activityViewController.popoverPresentationController?.sourceView = view
     present(activityViewController, animated: true, completion: nil)
   }
-}
-
-extension PlayViewController: GridViewDelegate {
-  // Called when eyeImageView is touched up inside
-  // Show hint image
-  func eyeImageViewTapped() {
-    playView.bringSubviewToFront(playView.hintView)
-    playView.hintView.appearsTemporarily(for: 2)
-  }
   
-  // Lenght of gaps between tiles
-  func gapLength(gridView tag: Int) -> CGFloat {
-    if tag == 0 { return Constant.Tiles.Container.gapLength }
-    return Constant.Tiles.Puzzle.gapLength
-  }
-}
-
-extension PlayViewController: GridViewDataSource {
-  // Return tile to GridView
-  func getTile(at index: Int, for tag: Int) -> UIView {
-    let tile = UIView()
-    if tag == 0 {
-      tile.layer.borderWidth = 1
-      tile.layer.borderColor = UIColor.janna.cgColor
+  func handlePuzzleViewDrag(_ gestureRecognizer: UIPanGestureRecognizer) {
+    guard let puzzlePieceView = gestureRecognizer.view as? UIImageView else { return }
+    
+    playView.bringSubviewToFront(puzzlePieceView)
+    
+    // Moving the puzzlePieceView
+    if gestureRecognizer.state == .changed {
+      
+      let translation = gestureRecognizer.translation(in: playView)
+      
+      puzzlePieceView.center = CGPoint(x: puzzlePieceView.center.x + translation.x,
+                                       y: puzzlePieceView.center.y + translation.y)
+      gestureRecognizer.setTranslation(CGPoint.zero, in: playView)
     }
-    tile.backgroundColor = UIColor.white
-    return tile
+    
+    // Logic when it stops moving
+    if gestureRecognizer.state == .ended || gestureRecognizer.state == .cancelled {
+      // This is the logic for a drag into the puzzleGridView
+      if playView.puzzleGridView.frame.contains(puzzlePieceView.center) {
+        placeInsidePuzzleGridViewIfPossible(puzzlePieceView)
+      }
+        // This is the logic for a drag outside the puzzleGridView
+      else {
+        if puzzleGridModel.contains(id: puzzlePieceView.tag) {
+          updateScore()
+        }
+        placeInsideContainerGridView(puzzlePieceView)
+      }
+    }
   }
   
-  func numberOfTiles(gridView tag: Int) -> Int {
-    return images.count
+  private func placeInsidePuzzleGridViewIfPossible(_ puzzlePieceView: UIImageView) {
+    let center = playView.convertCenterPointCoordinateSystem(of: puzzlePieceView, to: playView.puzzleGridView)
+    
+    if let position = playView.puzzleGridView.findTilePositionContaining(center),
+      let tile = playView.puzzleGridView.getTile(from: position) {
+      
+      let shouldBePlaced = shouldBePlacedInsidePuzzleGridView(tile,
+                                                              in: position,
+                                                              for: puzzlePieceView)
+      
+      if shouldBePlaced {
+        
+        playView.place(puzzlePieceView, inside: tile)
+        updateScore()
+        
+        if puzzleGridModel.isAwin() {
+          presentWinningAlert()
+          playView.layoutEndGameMode()
+        }
+        
+      } else {
+        placeInInitialTile(puzzlePieceView)
+      }
+      
+    } // Case when the center is inside of PuzzleGridView but outside a tile.
+    else {
+      placeInInitialTile(puzzlePieceView)
+    }
   }
   
-  func numberOfTilesPerRow(gridView tag: Int) -> Int {
-    if tag == 0 { return Constant.Tiles.Container.countByRow }
-    return Constant.Tiles.Puzzle.countByRow
+  private func updateScore() {
+    score += 1
+    playView.headerView.scoreLabel.text = "\(score)"
+  }
+  
+  private func presentWinningAlert() {
+    let title = score == PlayViewController.numberOftile ? "Perfect Score" : "Congratulation"
+    let message = "Puzzle completed.\nYou cannot move the pieces or see the hint anymore."
+    let action = UIAlertAction(title: "Ok", style: .default, handler: nil)
+    let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    alert.addAction(action)
+    present(alert, animated: true, completion: nil)
+  }
+  
+  private func placeInsideContainerGridView(_ puzzlePieceView: UIImageView) {
+    if let position = findFirstEmptyTilePositionFromContainerGrid(puzzlePieceView),
+      let containerGridTile = playView.containerGridView.getTile(from: position) {
+      
+      playView.place(puzzlePieceView, inside: containerGridTile)
+      
+    }
+    else {
+      fatalError("No tile found")
+    }
+  }
+  
+  private func placeInInitialTile(_ puzzlePieceView: UIImageView) {
+    if let position = puzzleGridModel.position(id: puzzlePieceView.tag),
+      let puzzleGridTile = playView.puzzleGridView.getTile(from: position) {
+      
+      playView.place(puzzlePieceView, inside: puzzleGridTile)
+      
+    }
+    else {
+      placeInsideContainerGridView(puzzlePieceView)
+    }
+  }
+  
+  private func findFirstEmptyTilePositionFromContainerGrid(_ puzzlePieceView: UIImageView) -> Int? {
+    let id = puzzlePieceView.tag
+    containerGridModel.updatePosition(id: id, position: nil)
+    puzzleGridModel.updatePosition(id: id, position: nil)
+    let position = containerGridModel.findFirstEmptyTilePosition()
+    containerGridModel.updatePosition(id: id, position: position)
+    return position
+  }
+  
+  private func shouldBePlacedInsidePuzzleGridView(_ tile: UIView, in position: Int, for puzzlePieceView: UIImageView) -> Bool {
+    let isFreeTile = puzzleGridModel.isTileFree(at: position)
+    if isFreeTile {
+      containerGridModel.updatePosition(id: puzzlePieceView.tag, position: nil)
+      puzzleGridModel.updatePosition(id: puzzlePieceView.tag, position: position)
+    }
+    return isFreeTile
   }
 }
 
+// MARK: Delegation to handle New Game Button tap
 extension PlayViewController: HeaderViewDelegate {
-  // Called when newGameButton is touched up inside
-  // Dismiss EditViewController + PlayViewController
+  
   func newGameButtonTapped() {
     self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: nil)
   }

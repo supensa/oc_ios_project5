@@ -16,11 +16,16 @@ class HintView: UIView {
   
   init(image: UIImage) {
     super.init(frame: .zero)
+    
     self.imageView = UIImageView(image: image)
     imageView.translatesAutoresizingMaskIntoConstraints = false
     self.addSubview(imageView)
     imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
     imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+    
+    self.imageView.alpha = 0
+    self.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0)
+    self.isUserInteractionEnabled = false
   }
   
   func appearsTemporarily(for delay: TimeInterval) {
