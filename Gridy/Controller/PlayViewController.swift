@@ -128,7 +128,6 @@ extension PlayViewController: PlayViewDelegate {
         updateScore()
         
         if puzzleGridModel.isAwin() {
-          presentWinningAlert()
           playView.layoutEndGameMode()
         }
         
@@ -145,15 +144,6 @@ extension PlayViewController: PlayViewDelegate {
   private func updateScore() {
     score += 1
     playView.headerView.scoreLabel.text = "\(score)"
-  }
-  
-  private func presentWinningAlert() {
-    let title = score == PlayViewController.numberOftile ? "Perfect Score" : "Congratulation"
-    let message = "Puzzle completed.\nYou cannot move the pieces or see the hint anymore."
-    let action = UIAlertAction(title: "Ok", style: .default, handler: nil)
-    let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-    alert.addAction(action)
-    present(alert, animated: true, completion: nil)
   }
   
   private func placeInsideContainerGridView(_ puzzlePieceView: UIImageView) {
