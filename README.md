@@ -1,5 +1,4 @@
-#  OpenClassrooms - iOS developer path - iOS Project 5
-## Gridy game - Adaptive app (iPhones and iPads) - No Storyboard
+## Gridy App - Adaptive app (iPhones and iPads) - No Storyboard
 
 This is a simple puzzle game of 16 pieces. 
 The user can create a puzzle using a picture from her/his camera or photo library.
@@ -13,6 +12,8 @@ There is a "hint" feature to help the user solve the puzzle.
 3. Solve the puzzle (the fewer the moves, the better)
 4. Share your solved puzzle with friends
 
+## Contact:
+If you have any questions contact me at <a href="mailto:spencer.forrest.ios@gmail.com">spencer.forrest.ios@gmail.com</a>
 
 ## Screenshots:
 ## Portrait
