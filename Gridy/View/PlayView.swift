@@ -37,6 +37,11 @@ class PlayView: UIView {
     return label
   }()
   
+  private var isLandscapeOrientation: Bool {
+    guard let superview = self.superview else { return false }
+    return superview.bounds.width > superview.bounds.height
+  }
+  
   var puzzlePieceViews = [UIImageView]()
   var puzzlePieceViewConstraints = [Int: [NSLayoutConstraint]]()
   
@@ -57,6 +62,7 @@ class PlayView: UIView {
     addSubviews()
     initialLayout(for: puzzlePieceViews)
     setupGestureRecognizers()
+    updateLayoutAccordingToSizeClass()
   }
   
   // Setup and update constraints according to sizeClass
@@ -158,10 +164,12 @@ class PlayView: UIView {
       self.activateLandscapeLayout()
       break
     case (.regular, .regular):
-      self.activateRegularPortraitLayout()
-      break
-    case (.unspecified, .unspecified):
-      self.activateRegularLandscapeLayout()
+      if isLandscapeOrientation {
+        self.activateRegularLandscapeLayout()
+      }
+      else {
+        self.activateRegularPortraitLayout()
+      }
       break
     default:
       break
@@ -178,7 +186,7 @@ class PlayView: UIView {
     self.translatesAutoresizingMaskIntoConstraints = false
     self.backgroundColor = UIColor.white
     
-    headerView.backgroundColor = UIColor.brown
+    headerView.backgroundColor = UIColor.clear
     
     addSubview(centeringView)
     addSubview(puzzleGridView)
@@ -280,22 +288,21 @@ extension PlayView {
     
     let puzzleGridViewConstraints = [
       puzzleGridView.centerYAnchor.constraint(equalTo: centeringView.centerYAnchor, constant: 0),
-      puzzleGridView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
-      puzzleGridView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/2),
-      puzzleGridView.heightAnchor.constraint(equalTo: puzzleGridView.widthAnchor)
+      puzzleGridView.rightAnchor.constraint(equalTo: centeringView.rightAnchor, constant: 0),
+      puzzleGridView.heightAnchor.constraint(equalTo: centeringView.widthAnchor, multiplier: 1/2),
+      puzzleGridView.widthAnchor.constraint(equalTo: centeringView.widthAnchor, multiplier: 1/2)
     ]
     
     let headerViewConstraints = [
       headerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
       headerView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
-      headerView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
-      headerView.heightAnchor.constraint(equalToConstant: 60)
+      headerView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0)
     ]
     
     let containerGridViewConstraints = [
-      containerGridView.leftAnchor.constraint(equalTo: self.leftAnchor),
-      containerGridView.rightAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: -16),
       containerGridView.topAnchor.constraint(equalTo: puzzleGridView.topAnchor, constant: 0),
+      containerGridView.leftAnchor.constraint(equalTo: centeringView.leftAnchor),
+      containerGridView.widthAnchor.constraint(equalTo: centeringView.widthAnchor, multiplier: 1/2, constant: -16),
       containerGridView.heightAnchor.constraint(equalTo: containerGridView.widthAnchor, multiplier: 1/2)
     ]
     
@@ -324,8 +331,7 @@ extension PlayView {
     let headerViewConstraints = [
       headerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
       headerView.leftAnchor.constraint(equalTo: puzzleGridView.leftAnchor, constant: 0),
-      headerView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0),
-      headerView.heightAnchor.constraint(equalToConstant: 30)
+      headerView.rightAnchor.constraint(equalTo: puzzleGridView.rightAnchor, constant: 0)
     ]
     
     let containerGridViewConstraints = [
@@ -342,26 +348,29 @@ extension PlayView {
       instructionLabel.bottomAnchor.constraint(equalTo: puzzleGridView.topAnchor)
     ]
     
+    changePriority(contraints: headerViewConstraints, priority: 800)
+    changePriority(contraints: containerGridViewConstraints, priority: 800)
+    changePriority(contraints: instructionLabelConstraints, priority: 800)
+    
     self.portraitConstraints.append(contentsOf: puzzleGridViewConstraints)
-    self.portraitConstraints.append(contentsOf: headerViewConstraints)
-    self.portraitConstraints.append(contentsOf: containerGridViewConstraints)
     self.portraitConstraints.append(contentsOf: instructionLabelConstraints)
+    self.portraitConstraints.append(contentsOf: containerGridViewConstraints)
+    self.portraitConstraints.append(contentsOf: headerViewConstraints)
   }
   
   private func setupLandscapeConstraints() {
     
-    let headerViewConstraints = [
-      headerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
-      headerView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
-      headerView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
-      headerView.heightAnchor.constraint(equalToConstant: 30)
-    ]
-    
     let puzzleGridViewConstraints = [
       puzzleGridView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16),
       puzzleGridView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
-      puzzleGridView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0),
+      puzzleGridView.rightAnchor.constraint(equalTo: centeringView.rightAnchor, constant: 0),
       puzzleGridView.widthAnchor.constraint(equalTo: puzzleGridView.heightAnchor, constant: 0)
+    ]
+    
+    let headerViewConstraints = [
+      headerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+      headerView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0),
+      headerView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0)
     ]
     
     let containerGridViewConstraints = [
@@ -378,10 +387,20 @@ extension PlayView {
       instructionLabel.bottomAnchor.constraint(equalTo: puzzleGridView.bottomAnchor)
     ]
     
+    changePriority(contraints: headerViewConstraints, priority: 800)
+    changePriority(contraints: containerGridViewConstraints, priority: 800)
+    changePriority(contraints: instructionLabelConstraints, priority: 800)
+    
     self.landscapeConstraints.append(contentsOf: puzzleGridViewConstraints)
     self.landscapeConstraints.append(contentsOf: headerViewConstraints)
     self.landscapeConstraints.append(contentsOf: containerGridViewConstraints)
     self.landscapeConstraints.append(contentsOf: instructionLabelConstraints)
+  }
+  
+  private func changePriority(contraints: [NSLayoutConstraint], priority: Float) {
+    for contraint in constraints {
+      contraint.priority = UILayoutPriority(priority)
+    }
   }
 }
 
