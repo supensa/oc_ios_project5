@@ -1,4 +1,4 @@
-  //
+//
 //  IntroView.swift
 //  Gridy
 //
@@ -9,7 +9,7 @@
 import UIKit
 
 
-/// Use of delegate pattern
+// MARK: Use of delegate pattern
 protocol IntroViewDelegate: AnyObject {
   /// Called when the randomButton has been touched up inside
   func randomButtonTouched()
@@ -63,6 +63,17 @@ class IntroView: UIView {
     self.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
     self.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
     self.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    updateLayoutConstraints()
+  }
+  
+  private func updateLayoutConstraints() {
+    let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
+    let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
+    let forIpad = sizeClass == iPad
+    updateStackViewConstraint(forIpad: forIpad)
+    updateButtonConstraints(forIpad: forIpad)
+    updateTitleLabelConstraint()
+    updateCommentLabelConstraint()
   }
   
   private func updateStackViewConstraint(forIpad: Bool) {
@@ -207,24 +218,11 @@ class IntroView: UIView {
 }
 
 extension IntroView {
-  // Delegation from protocol: UITraitEnvironment
+  // MARK: Delegation from protocol: UITraitEnvironment
   // UIView and UIViewController conform to it
   // Handle SizeClasses here for iPad and iPhone
   override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
     super.traitCollectionDidChange(previousTraitCollection)
-    
-    let horizontaSizeClassChanged = previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
-    let verticalSizeClassChanged = previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass
-    
-    if verticalSizeClassChanged || horizontaSizeClassChanged {
-      let sizeClass = (self.traitCollection.horizontalSizeClass, self.traitCollection.verticalSizeClass)
-      let iPad = (UIUserInterfaceSizeClass.regular, UIUserInterfaceSizeClass.regular)
-      let forIpad = sizeClass == iPad
-      
-      updateStackViewConstraint(forIpad: forIpad)
-      updateButtonConstraints(forIpad: forIpad)
-      updateTitleLabelConstraint()
-      updateCommentLabelConstraint()
-    }
+    updateLayoutConstraints()
   }
 }
