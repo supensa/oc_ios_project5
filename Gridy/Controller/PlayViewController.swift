@@ -19,6 +19,12 @@ class PlayViewController: UIViewController {
   private var containerGridModel = ContainerGridModel(numberOftile: numberOftile)
   private var score = 0
   
+  private var isLandscapeOrientation: Bool {
+    return UIApplication.shared.statusBarOrientation.isLandscape
+  }
+  
+  private var isPreviousOrientationLandscape: Bool?;
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -38,18 +44,28 @@ class PlayViewController: UIViewController {
       playView.rightAnchor.constraint(equalTo: margin.rightAnchor),
       ])
   }
-  
-  // Unspecified trait if iPad is on landscape
-  override public var traitCollection: UITraitCollection {
     
-    if UIDevice.current.userInterfaceIdiom == .pad && UIDevice.current.orientation.isLandscape {
-      let traitCollections = [
-        UITraitCollection(horizontalSizeClass: .unspecified),
-        UITraitCollection(verticalSizeClass: .unspecified)
-      ]
-      return UITraitCollection(traitsFrom: traitCollections)
+  override func viewWillLayoutSubviews() {
+    let isIPad = traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .regular
+    
+    if isIPad  {
+      // first time laying out subviews case
+      if self.isPreviousOrientationLandscape == nil {
+        self.isPreviousOrientationLandscape = !isLandscapeOrientation
+      }
+      
+      guard let isPreviousOrientationLandscape = isPreviousOrientationLandscape else { return }
+      
+      // check if orientation changed and update layout accordingly
+      if isLandscapeOrientation && !isPreviousOrientationLandscape {
+        playView.activateRegularLandscapeLayout()
+        self.isPreviousOrientationLandscape = isLandscapeOrientation
+      }
+      else if !isLandscapeOrientation && isPreviousOrientationLandscape {
+        playView.activateRegularPortraitLayout()
+        self.isPreviousOrientationLandscape = isLandscapeOrientation
+      }
     }
-    return super.traitCollection
   }
   
   private func makeRandomOrderImageViews() -> [UIImageView] {
@@ -77,7 +93,7 @@ extension PlayViewController: PlayViewDelegate {
       text
     ]
     let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: nil)
-    activityViewController.popoverPresentationController?.sourceView = view
+    activityViewController.popoverPresentationController?.sourceView = self.playView.shareButton
     present(activityViewController, animated: true, completion: nil)
   }
   
@@ -128,6 +144,7 @@ extension PlayViewController: PlayViewDelegate {
         updateScore()
         
         if puzzleGridModel.isAwin() {
+          presentWinningAlert()
           playView.layoutEndGameMode()
         }
         
@@ -144,6 +161,15 @@ extension PlayViewController: PlayViewDelegate {
   private func updateScore() {
     score += 1
     playView.headerView.scoreLabel.text = "\(score)"
+  }
+  
+  private func presentWinningAlert() {
+    let title = score == PlayViewController.numberOftile ? "Perfect Score" : "Congratulation"
+    let message = "Puzzle completed.\nYou cannot move the pieces or see the hint anymore."
+    let action = UIAlertAction(title: "Ok", style: .default, handler: nil)
+    let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    alert.addAction(action)
+    present(alert, animated: true, completion: nil)
   }
   
   private func placeInsideContainerGridView(_ puzzlePieceView: UIImageView) {
