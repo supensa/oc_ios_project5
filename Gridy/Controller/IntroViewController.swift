@@ -27,6 +27,8 @@ extension IntroViewController: IntroViewDelegate {
     if let image = UIImage(named: Constant.ImageName.image + "\(random)") {
       let editingViewController = EditViewController()
       editingViewController.image = image
+      editingViewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+      editingViewController.modalTransitionStyle = UIModalTransitionStyle.coverVertical
       self.present(editingViewController, animated: true, completion: nil)
     }
   }
@@ -48,7 +50,7 @@ extension IntroViewController: IntroViewDelegate {
   /// Use the Image Picker for: camera or photo library
   ///
   /// - Parameter sourceType: camera or photo library
-  func displayMediaPicker(sourceType: UIImagePickerController.SourceType) {
+  private func displayMediaPicker(sourceType: UIImagePickerController.SourceType) {
     
     let usingCamera = sourceType == .camera
     let media = usingCamera ? "camera" : "photos"
@@ -73,7 +75,7 @@ extension IntroViewController: IntroViewDelegate {
   /// - Parameters:
   ///   - status: Authorization status to use Camera
   ///   - noPermissionMessage: Message to display if authorization not granted
-  func actionAccordingTo(status: AVAuthorizationStatus , noPermissionMessage: String?) {
+  private func actionAccordingTo(status: AVAuthorizationStatus , noPermissionMessage: String?) {
      let sourceType = UIImagePickerController.SourceType.camera
     switch status {
     case .notDetermined:
@@ -105,7 +107,7 @@ extension IntroViewController: IntroViewDelegate {
       }
     case .authorized:
       self.presentImagePicker(sourceType: sourceType)
-    case .denied, .restricted:
+    case .denied, .restricted, .limited:
       self.openSettingsWithUIAlert(message: noPermissionMessage)
     @unknown default:
       fatalError()
@@ -132,10 +134,12 @@ extension IntroViewController: IntroViewDelegate {
   ///
   /// - Parameter sourceType: Camera or photo library
   func presentImagePicker(sourceType: UIImagePickerController.SourceType) {
-    let imagePickerController = UIImagePickerController()
-    imagePickerController.delegate = self
-    imagePickerController.sourceType = sourceType
-    present(imagePickerController, animated: true, completion: nil)
+    DispatchQueue.main.async {
+      let imagePickerController = UIImagePickerController()
+      imagePickerController.delegate = self
+      imagePickerController.sourceType = sourceType
+      self.present(imagePickerController, animated: true, completion: nil)
+    }
   }
   
   ///   User can go the Settings from here if wanted
@@ -173,10 +177,10 @@ extension IntroViewController: IntroViewDelegate {
 }
 
 extension IntroViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-  // Delegate Function: UIImagePickerControllerDelegate
+  // MARK: Delegate Function: UIImagePickerControllerDelegate
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-// Local variable inserted by Swift 4.2 migrator.
-let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+    // Local variable inserted by Swift 4.2 migrator.
+    let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
 
     picker.dismiss(animated: true, completion: nil)
     
@@ -191,6 +195,8 @@ let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
     if let image = image {
       let editingViewController = EditViewController()
       editingViewController.image = image
+      editingViewController.modalPresentationStyle = .fullScreen
+      editingViewController.modalTransitionStyle = .coverVertical
       self.present(editingViewController, animated: true, completion: nil)
     }
   }
@@ -209,10 +215,10 @@ extension UIImagePickerController {
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+  return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromUIImagePickerControllerInfoKey(_ input: UIImagePickerController.InfoKey) -> String {
-	return input.rawValue
+  return input.rawValue
 }
