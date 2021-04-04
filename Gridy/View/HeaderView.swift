@@ -72,11 +72,13 @@ class HeaderView: UIStackView {
     
     self.movesLabel = UILabel()
     movesLabel.text = Constant.String.movesLabelText
+    movesLabel.textColor = UIColor.vistaBlue
     movesLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
     movesLabel.textAlignment = .center
     
     self.scoreLabel = UILabel()
     scoreLabel.text = Constant.String.scoresLabelText
+    scoreLabel.textColor = UIColor.vistaBlue
     scoreLabel.font = UIFont(name: Constant.Font.Name.helveticaNeue, size: 15)
     scoreLabel.textAlignment = .center
   }
