@@ -59,6 +59,8 @@ extension EditViewController: EditViewDelegate {
     let playViewController = PlayViewController()
     playViewController.imagesWithInitialPosition = self.getSnapshots()
     playViewController.hintImage = self.getHintImage()
+    playViewController.modalPresentationStyle = .fullScreen
+    playViewController.modalTransitionStyle = .coverVertical
     self.present(playViewController, animated: true)
   }
   
