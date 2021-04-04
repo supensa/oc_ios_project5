@@ -15,6 +15,8 @@ There is a "hint" feature to help the user solve the puzzle.
 ## Contact:
 If you have any questions contact me at <a href="mailto:spencer.forrest.ios@gmail.com">spencer.forrest.ios@gmail.com</a>
 
+The application is available on the Apple App Store: <a href="https://apps.apple.com/fr/app/gridy-app/id1560910605?l=en">https://apps.apple.com/fr/app/gridy-app/id1560910605?l=en</a>
+
 ## Screenshots:
 ## Portrait
 
